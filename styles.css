@@ -187,3 +187,12 @@ input,select,textarea,
 .materialGroup.haulGroup{background:#fff0f0;border:1px solid #efcaca;color:#8f2020}
 .materialGroup.deliveryGroup .summaryRow{background:#f7fcf8;border:1px solid #d7eadc}
 .materialGroup.haulGroup .summaryRow{background:#fff8f8;border:1px solid #f4d5d5}
+
+/* Zwischenspeichern: gelb und an der Stelle der bisherigen Weiter-Schaltfläche */
+.draftSaveButton{
+  background:#f4bd45!important;
+  border:1px solid #e3a92e!important;
+  color:#26313d!important;
+}
+.draftSaveFull{width:100%;margin:0 0 12px}
+.draftSaveFull button{display:block;width:100%;min-height:54px}

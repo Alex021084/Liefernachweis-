@@ -119,7 +119,7 @@ function openDraft(r){
     img.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);ink=true;signatureSaved=true;$('signatureStatus').textContent='Gespeicherte Unterschrift übernommen.';};
     img.src=r.signature;
   }
-  closeSignature();setWizardStep(1);show('form');
+  closeSignature();setWizardStep(2);show('form');
 }
 function renderArchive(){
   $('archive').innerHTML=db.reports.slice().sort((a,b)=>b.id-a.id).map(r=>`<div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${r.draft?'Entwurf – weiterbearbeiten':r.pdf?'PDF erstellt':'Gespeichert'}</small></div><button class="soft" data-open-r="${r.id}">${r.draft?'Weiterbearbeiten':'PDF öffnen'}</button></div>`).join('')||'<div class="panel hint">Noch keine Liefernachweise gespeichert.</div>';
