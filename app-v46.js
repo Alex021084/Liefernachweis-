@@ -119,7 +119,7 @@ function rowService(data={}){
   const d=document.createElement('div');d.className='entry service';
   d.innerHTML=`<label class="job">Leistung<button type="button" class="jobv servicePickButton">${esc(data.job||'Leistung auswählen')} ▾</button></label>
   <label class="description">Leistungsbeschreibung<input class="descriptionv" type="text" value="${esc(data.description||'')}" placeholder="Beschreibung frei eingeben"></label>
-  <label class="hours">Stunden<input class="hoursv" type="text" inputmode="decimal" autocomplete="off" value="${esc(data.hours||'')}" placeholder="Std." readonly></label>
+  <label class="hours">Stunden<input class="hoursv" type="text" inputmode="decimal" autocomplete="off" value="${esc(data.hours||'')}" placeholder="Std."></label>
   <label class="start">Anfang<select class="startv">${timeOptions(data.start||'')}</select></label>
   <label class="end">Ende<select class="endv">${timeOptions(data.end||'')}</select></label>
   <label class="pause">Pause<select class="pausev"><option value="">—</option><option value="15" ${String(data.pause)==='15'?'selected':''}>15 Min.</option><option value="30" ${String(data.pause)==='30'?'selected':''}>30 Min.</option><option value="45" ${String(data.pause)==='45'?'selected':''}>45 Min.</option></select></label>`;
@@ -128,7 +128,7 @@ function rowService(data={}){
   const recalcHours=()=>{
     const start=d.querySelector('.startv').value, end=d.querySelector('.endv').value;
     const hoursField=d.querySelector('.hoursv');
-    if(!start||!end){hoursField.value='';return;}
+    if(!start||!end){return;}
     const mins=v=>{const [h,m]=v.split(':').map(Number);return h*60+m;};
     let duration=mins(end)-mins(start);
     if(duration<0)duration+=24*60;
@@ -138,7 +138,6 @@ function rowService(data={}){
   d.querySelector('.startv').addEventListener('change',recalcHours);
   d.querySelector('.endv').addEventListener('change',recalcHours);
   d.querySelector('.pausev').addEventListener('change',recalcHours);
-  if(data.start&&data.end)recalcHours();
   wrap.append(d);
   const del=document.createElement('button');del.type='button';del.className='serviceSwipeDelete';del.setAttribute('aria-label','Zusatzleistung löschen');del.textContent='×';wrap.append(del);
   $('serviceRows').append(wrap);
