@@ -262,16 +262,118 @@ function renderArchive(){
 function txt(page,text,x,y,size=9,bold=false){if(!text)return;page.drawText(String(text).slice(0,110),{x,y,size,font:bold?fontBold:font,color:PDFLib.rgb(.12,.15,.18),maxWidth:500})}
 let font,fontBold;
 function aggregateReportMaterials(rows){const totals=new Map();(rows||[]).forEach(m=>{const name=String(m.name||'').trim(),type=m.type||'delivery',unit=m.unit||'to',qty=parseQuantity(m.qty);if(!name||!qty)return;const key=[type,name,unit].join('||');if(!totals.has(key))totals.set(key,{name,type,unit,qty:0});totals.get(key).qty+=qty});return [...totals.values()].sort((a,b)=>a.type.localeCompare(b.type)||a.name.localeCompare(b.name,'de')||a.unit.localeCompare(b.unit))}
-async function makePdf(r){const {PDFDocument,StandardFonts,rgb}=PDFLib;let pdf=await PDFDocument.create();let page=pdf.addPage([595.28,841.89]);let bg=await pdf.embedPng(await (await fetch('template.png')).arrayBuffer());page.drawImage(bg,{x:0,y:0,width:595.28,height:841.89});font=await pdf.embedFont(StandardFonts.Helvetica);fontBold=await pdf.embedFont(StandardFonts.HelveticaBold);
-// Vorbelegte Musterangaben in der Vorlage abdecken und mit aktuellen Formulardaten befüllen.
-const white=rgb(1,1,1);const cover=(x,y,w,h)=>page.drawRectangle({x,y,width:w,height:h,color:white,borderWidth:0});
-cover(25,720,285,65);txt(page,r.date?new Date(r.date+'T12:00:00').toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}):'',30,786,8);
-txt(page,r.customer,30,760,10,true);(r.address||'').split('\n').slice(0,2).forEach((s,i)=>txt(page,s,30,744-i*12,9));
-cover(150,690,410,35);txt(page,r.project,155,706,9,true);
-cover(25,470,545,175);let y=620;const materialRows=aggregateReportMaterials(r.materials||[]);materialRows.forEach(m=>{if(y<480)return;txt(page,(m.type==='haul'?'Abfuhr: ':'Lieferung: ')+m.name,43,y,8);txt(page,formatQuantity(m.qty)+' '+(m.unit==='to'?'to':'cbm'),280,y,8);y-=17});
-cover(25,175,545,135);let sy=285;r.services.forEach(s=>{if(sy<180)return;txt(page,s.hours,48,sy,8);txt(page,[s.job,s.description].filter(Boolean).join(' – '),145,sy,8);txt(page,s.start,330,sy,8);txt(page,s.end,405,sy,8);txt(page,s.pause,475,sy,8);sy-=17});
-if(r.signature){let bytes=await fetch(r.signature).then(x=>x.arrayBuffer());let sig=await pdf.embedPng(bytes);page.drawImage(sig,{x:35,y:70,width:130,height:38})}if(r.signer)txt(page,r.signer,35,62,8);
-return await pdf.save()}
+async function makePdf(r){
+  const {PDFDocument,StandardFonts,rgb}=PDFLib;
+  const pdf=await PDFDocument.create();
+  font=await pdf.embedFont(StandardFonts.Helvetica);
+  fontBold=await pdf.embedFont(StandardFonts.HelveticaBold);
+  const logoBytes=await fetch('logo.png').then(x=>x.arrayBuffer());
+  const logo=await pdf.embedPng(logoBytes);
+  const W=595.28,H=841.89,M=42;
+  const C={
+    red:rgb(.78,.08,.13),ink:rgb(.13,.16,.20),muted:rgb(.43,.47,.52),
+    line:rgb(.84,.87,.90),pale:rgb(.96,.97,.98),green:rgb(.91,.96,.92),
+    redPale:rgb(1,.94,.94),gold:rgb(.96,.72,.25),white:rgb(1,1,1)
+  };
+  let page=null,y=0,pageNo=0;
+  const draw=(text,x,yy,size=9,bold=false,color=C.ink,maxWidth=500)=>{
+    if(text===undefined||text===null||text==='')return;
+    page.drawText(String(text),{x,y:yy,size,font:bold?fontBold:font,color,maxWidth});
+  };
+  const line=(x1,y1,x2,y2,color=C.line,thick=1)=>page.drawLine({start:{x:x1,y:y1},end:{x:x2,y:y2},thickness:thick,color});
+  const rect=(x,yy,w,h,color,border=null)=>page.drawRectangle({x,y:yy,width:w,height:h,color,borderColor:border||color,borderWidth:border?0.8:0});
+  const wrap=(text,maxWidth,size,bold=false)=>{
+    const words=String(text||'').split(/\s+/);const lines=[];let cur='';
+    for(const word of words){const test=cur?cur+' '+word:word;if((bold?fontBold:font).widthOfTextAtSize(test,size)>maxWidth&&cur){lines.push(cur);cur=word}else cur=test}
+    if(cur)lines.push(cur);return lines;
+  };
+  const footer=()=>{
+    line(M,35,W-M,35,C.line,.8);
+    draw('Dählmann ErdBau GmbH · Südring 11 · 27404 Zeven',M,22,7,false,C.muted);
+    draw(`Seite ${pageNo}`,W-M-42,22,7,false,C.muted,42);
+  };
+  const newPage=()=>{
+    page=pdf.addPage([W,H]);pageNo++;y=H-48;
+    page.drawImage(logo,{x:W-M-174,y:H-104,width:174,height:54});
+    draw('LIEFerNACHWEIS'.toUpperCase(),M,H-72,20,true,C.ink);
+    line(M,H-119,W-M,H-119,C.line,1);
+    footer();
+    y=H-145;
+  };
+  const sectionTitle=(title,subtitle=null)=>{
+    if(y<100)newPage();
+    draw(title,M,y,12,true,C.ink);
+    if(subtitle)draw(subtitle,M+title.length*6.4+8,y,8,false,C.muted);
+    y-=12;line(M,y,W-M,y,C.line,.8);y-=14;
+  };
+  const drawTable=(headers,rows,widths,opts={})=>{
+    const x=M,rowH=opts.rowH||25;
+    const headerH=25;
+    if(y<headerH+rowH+58)newPage();
+    rect(x,y-headerH,W-2*M,headerH,C.pale);
+    let xx=x+9;
+    headers.forEach((h,i)=>{draw(h,xx,y-17,8,true,C.muted,widths[i]-12);xx+=widths[i]});
+    y-=headerH;
+    rows.forEach((row,ri)=>{
+      const cells=row.map((v,i)=>String(v??''));
+      const wrapped=cells.map((v,i)=>wrap(v,widths[i]-12,8,false));
+      const maxLines=Math.max(1,...wrapped.map(a=>a.length));
+      const h=Math.max(rowH,maxLines*10+12);
+      if(y-h<55){newPage();rect(x,y-headerH,W-2*M,headerH,C.pale);let hx=x+9;headers.forEach((t,i)=>{draw(t,hx,y-17,8,true,C.muted,widths[i]-12);hx+=widths[i]});y-=headerH}
+      rect(x,y-h,W-2*M,h,ri%2===0?C.white:C.pale);
+      let cx=x+9;
+      wrapped.forEach((ls,i)=>{ls.slice(0,4).forEach((t,j)=>draw(t,cx,y-15-j*10,8,false,C.ink,widths[i]-12));cx+=widths[i]});
+      line(x,y-h,x+W-2*M,y-h,C.line,.45);y-=h;
+    });
+    y-=18;
+  };
+  newPage();
+  const dateText=r.date?new Date(r.date+'T12:00:00').toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}):'';
+  // Empfänger und Dokumentdaten in zwei klar getrennten Spalten
+  draw('AUFTRAGGEBER',M,y,7,true,C.muted);
+  draw('LIEFERDATUM',W-M-150,y,7,true,C.muted);
+  y-=18;
+  draw(r.customer||'—',M,y,12,true,C.ink,300);
+  draw(dateText,W-M-150,y,9,true,C.ink,150);
+  y-=17;
+  (r.address||'').split(/\n/).filter(Boolean).slice(0,3).forEach(s=>{draw(s,M,y,9,false,C.ink,290);y-=13});
+  y-=12;
+  rect(M,y-42,W-2*M,42,C.pale);
+  draw('BAUVORHABEN',M+12,y-15,7,true,C.muted);
+  draw(r.project||'Kein Bauvorhaben angegeben',M+12,y-31,10,true,r.project?C.ink:C.muted,W-2*M-24);
+  y-=62;
+
+  const materials=aggregateReportMaterials(r.materials||[]);
+  const delivered=materials.filter(m=>m.type!=='haul');
+  const hauled=materials.filter(m=>m.type==='haul');
+  const matRows=list=>list.map(m=>[m.name,formatQuantity(m.qty)+' '+(m.unit==='to'?'to':'cbm')]);
+  if(delivered.length){sectionTitle('Material geliefert');drawTable(['Material','Menge'],matRows(delivered),[390,121]);}
+  if(hauled.length){sectionTitle('Material abgefahren');drawTable(['Material','Menge'],matRows(hauled),[390,121]);}
+  if(!delivered.length&&!hauled.length){sectionTitle('Material');draw('Keine Materialien erfasst.',M,y,9,false,C.muted);y-=22;}
+
+  if((r.services||[]).length){
+    sectionTitle('Zusatzleistungen');
+    const serviceRows=r.services.map(s=>[
+      [s.job,s.description].filter(Boolean).join(' – ')||'—',
+      s.hours?String(s.hours)+' Std.':'—',
+      s.start||'—',s.end||'—',
+      s.pause?String(s.pause)+' Min.':'—'
+    ]);
+    drawTable(['Leistung / Beschreibung','Stunden','Anfang','Ende','Pause'],serviceRows,[235,65,65,65,81],{rowH:30});
+  }
+  // Unterschrift nur anzeigen, wenn vorhanden
+  if(r.signature||r.signer){
+    if(y<150)newPage();
+    y-=4;sectionTitle('Unterschrift');
+    if(r.signature){
+      try{const bytes=await fetch(r.signature).then(x=>x.arrayBuffer());const sig=await pdf.embedPng(bytes);page.drawImage(sig,{x:M,y:y-58,width:145,height:48});}catch(e){}
+    }
+    line(M,y-64,M+210,y-64,C.line,.8);
+    if(r.signer)draw(r.signer,M,y-78,8,false,C.ink);
+    y-=95;
+  }
+  return await pdf.save();
+}
 async function downloadPdf(r){try{let bytes=await makePdf(r);let blob=new Blob([bytes],{type:'application/pdf'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`Liefernachweis-${r.date||'Datum'}.pdf`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}catch(e){alert('PDF konnte nicht erstellt werden: '+e.message)}}
 function validateDocument(r){if(!r.customer){alert('Bitte einen Auftraggeber auswählen.');return false;}if(!r.materials.length&&!r.services.length){alert('Bitte mindestens ein Material oder eine Zusatzleistung eintragen.');return false;}return true}
 $('saveDraftCustomer').onclick=()=>{if(persistDraft())show('home')};
