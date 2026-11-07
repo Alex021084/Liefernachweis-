@@ -332,3 +332,86 @@ html body .draftSaveFull button.draftSaveButton {
 .servicePickButton:not([data-value]){color:#7b8490}
 .entry.service .job{min-width:190px}
 @media(max-width:520px){.servicePickerCard .serviceTiles{grid-template-columns:1fr}}
+
+/* Zusatzleistungs-Einträge: sauberes, mobilfreundliches 2-Spalten-Layout */
+.entry.service{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-areas:
+    "job job"
+    "hours pause"
+    "start end"
+    "remove remove"!important;
+  gap:12px!important;
+  align-items:end!important;
+  padding:14px!important;
+  margin:12px 0!important;
+  border:1px solid #d7dee5!important;
+  border-radius:16px!important;
+  background:#fbfcfd!important;
+}
+.entry.service .job{grid-area:job!important;min-width:0!important;width:100%!important}
+.entry.service .hours{grid-area:hours!important;min-width:0!important}
+.entry.service .pause{grid-area:pause!important;min-width:0!important}
+.entry.service .start{grid-area:start!important;min-width:0!important}
+.entry.service .end{grid-area:end!important;min-width:0!important}
+.entry.service label{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:6px!important;
+  min-width:0!important;
+  color:#46515d!important;
+  font-size:13px!important;
+  font-weight:700!important;
+}
+.entry.service input{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:52px!important;
+  padding:10px 12px!important;
+  border:1px solid #cbd4dd!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  color:#202a35!important;
+  font-size:16px!important;
+}
+.entry.service .servicePickButton{
+  box-sizing:border-box!important;
+  display:block!important;
+  width:100%!important;
+  min-height:54px!important;
+  padding:11px 14px!important;
+  border:1px solid #cbd4dd!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  color:#202a35!important;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  font-family:inherit!important;
+  font-size:16px!important;
+  font-weight:600!important;
+  line-height:1.25!important;
+}
+.entry.service .servicePickButton:not([data-value]){
+  background:#f5f7f9!important;
+  color:#727d89!important;
+}
+.entry.service .removeService{
+  grid-area:remove!important;
+  justify-self:end!important;
+  width:54px!important;
+  min-width:54px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:0!important;
+  border:1px solid #f0cccc!important;
+  border-radius:11px!important;
+  background:#fff1f1!important;
+  color:#b42318!important;
+  font-size:22px!important;
+}
+@media(min-width:700px){
+  .entry.service{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-areas:"job job job job" "hours start end pause" "remove remove remove remove"!important}
+}
