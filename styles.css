@@ -137,3 +137,7 @@ input,select,textarea,
 .materialModalCard .actions{display:flex;gap:10px}
 .materialModalCard .actions button{flex:1;min-height:52px}
 .finishActions{display:grid;gap:11px;margin-top:16px}.finishActions button{width:100%;min-height:58px;font-size:17px}.signatureModal{display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;padding:18px}.signatureModal.open{display:flex}.signatureModalBackdrop{position:absolute;inset:0;background:#111827aa}.signatureModalCard{position:relative;z-index:1;width:min(680px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:20px;box-shadow:0 20px 60px #0004}.signatureModalCard h2{margin:0 0 8px}.signatureModalCard .actions{flex-wrap:wrap}.signatureModalCard .actions button{min-height:50px}
+
+/* Signaturfenster bleibt wirklich verborgen, bis 'Unterschreiben' gedrückt wird. */
+#signatureModal[hidden]{display:none!important}
+#signatureModal.open:not([hidden]){display:flex!important}

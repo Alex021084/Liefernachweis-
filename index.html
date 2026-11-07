@@ -33,8 +33,8 @@
       </label>
       <label>Auftraggeber<select id="customer"></select></label>
       <label>Anschrift<textarea id="address" rows="2" placeholder="Straße, PLZ Ort"></textarea></label>
-      <label>Bauvorhaben<select id="project"></select></label>
-      <label>Oder Bauvorhaben direkt eingeben<input id="projectManual" placeholder="Bauvorhaben"></label>
+      <label>Bauvorhaben (optional)<select id="project"></select></label>
+      <p class="hint">Bauvorhaben ist freiwillig. Du kannst das Feld leer lassen und direkt mit „Weiter zu Material“ fortfahren.</p>
     </div>
     <div class="row actions"><button class="soft" id="cancel">Abbrechen</button><button class="primary" id="toMaterials">Weiter zu Material ›</button></div>
   </div>
@@ -79,7 +79,7 @@
     </div>
     <div class="row actions"><button class="soft" id="backToMaterials">‹ Zurück</button></div>
   </div>
-  <div class="signatureModal" id="signatureModal" aria-hidden="true">
+  <div class="signatureModal" id="signatureModal" aria-hidden="true" hidden>
     <div class="signatureModalBackdrop" data-close-signature></div>
     <div class="signatureModalCard" role="dialog" aria-modal="true" aria-labelledby="signatureTitle">
       <h2 id="signatureTitle">Unterschrift Auftraggeber</h2>
