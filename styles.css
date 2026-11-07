@@ -241,3 +241,40 @@ input,select,textarea,
   border:1px solid #f1d98f!important;color:#59451a!important;
   border-radius:14px!important;
 }
+
+/* Feinschliff: Zwischenspeichern deutlicher und mit runden Ecken */
+.draftSaveFull .draftSaveButton,
+.draftSaveFull button#saveDraftCustomer,
+.draftSaveFull button#saveDraftMaterials,
+.draftSaveFull button#saveDraftServices{
+  font-size:20px!important;
+  font-weight:700!important;
+  min-height:70px!important;
+  border-radius:16px!important;
+}
+/* Materialname und Menge kompakt, schwarz und möglichst einzeilig */
+#materialRows .summaryRow{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  padding:8px 9px!important;
+}
+#materialRows .summaryRow b{
+  color:#111!important;
+  font-size:13px!important;
+  line-height:1.15!important;
+  font-weight:600!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#materialRows .summaryRow span{
+  color:#111!important;
+  font-size:13px!important;
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+}
