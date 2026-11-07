@@ -41,8 +41,10 @@
     <div class="panel">
       <h2>Material und Mengen</h2>
       <p class="hint">Liefer- und Abfuhr-/Annahmemengen jeweils in Tonnen oder Kubikmetern eintragen.</p>
+      <p class="hint">Material auswählen, Menge eintragen und die passende Einheit wählen. Gleiche Materialien werden automatisch nach Material und Einheit zusammengerechnet.</p>
       <div id="materialRows"></div>
       <button class="soft add" id="addMaterialRow">＋ Material hinzufügen</button>
+      <div id="materialSummary" class="materialSummary" aria-live="polite"></div>
     </div>
     <div class="row actions"><button class="soft" id="backToCustomer">‹ Zurück</button><button class="primary" id="toServices">Weiter zu Zusatzleistungen ›</button></div>
   </div>

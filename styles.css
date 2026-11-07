@@ -100,3 +100,14 @@ input,select,textarea,
   min-height:58px!important;
 }
 .dateControl{min-height:58px!important}
+
+/* Materialzeilen mit eigener Mengeneinheit für Lieferung und Abfuhr */
+.materialEntry{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:14px;margin:12px 0;border:1px solid #d9dfe5;border-radius:12px;background:#fbfcfd}
+.materialEntry .quantityPair{display:grid;grid-template-columns:minmax(0,1fr) minmax(125px,.8fr);gap:10px;align-items:end}
+.materialEntry label{min-width:0}
+.materialEntry input,.materialEntry select{width:100%;min-width:0}
+.materialEntry>button{justify-self:end}
+.materialSummary{margin-top:18px;padding:14px;border-radius:12px;background:#f0f6f1;border:1px solid #c7dfce}
+.materialSummary h3{margin:0 0 10px;font-size:16px}
+.summaryRow{display:grid;grid-template-columns:1fr;gap:3px;padding:9px 0;border-top:1px solid #d4e4d8;font-size:14px}
+.summaryRow b{font-size:15px}
