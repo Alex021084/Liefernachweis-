@@ -1,3 +1,14 @@
+
+// Disable browser page zoom gestures on touch devices (normal one-finger scrolling remains available).
+(function preventPageZoom(){
+  ['gesturestart','gesturechange','gestureend'].forEach(function(type){
+    document.addEventListener(type,function(event){event.preventDefault();},{passive:false});
+  });
+  document.addEventListener('touchmove',function(event){
+    if(event.touches && event.touches.length > 1) event.preventDefault();
+  },{passive:false});
+  document.addEventListener('dblclick',function(event){event.preventDefault();},{passive:false});
+})();
 const $=id=>document.getElementById(id);const KEY='daelmann-liefernachweis-v1';
 let db=JSON.parse(localStorage.getItem(KEY)||'{"customers":[],"projects":[],"materials":["Sand SE gesiebt","Schottertragschicht Naturstein"],"services":[],"reports":[]}');
 const save=()=>localStorage.setItem(KEY,JSON.stringify(db));const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
