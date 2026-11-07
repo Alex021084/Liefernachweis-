@@ -196,3 +196,19 @@ input,select,textarea,
 }
 .draftSaveFull{width:100%;margin:0 0 12px}
 .draftSaveFull button{display:block;width:100%;min-height:54px}
+
+/* Große, hervorgehobene Zwischenspeichern-Schaltfläche */
+.draftSaveFull{width:100%;margin:0 0 14px}
+.draftSaveFull .draftSaveButton{
+  display:block;width:100%;min-height:66px;
+  background:#27834b!important;
+  border:2px solid #1e713e!important;
+  color:#fff!important;
+  font-weight:700;
+}
+/* Zurück / Weiter / Abbrechen in hellem Gelb */
+.navPale{
+  background:#fff2c7!important;
+  border:1px solid #f1d98f!important;
+  color:#59451a!important;
+}
