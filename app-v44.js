@@ -377,16 +377,21 @@ async function makePdf(r){
     ]);
     drawTable(['Leistung / Beschreibung','Stunden','Anfang','Ende','Pause'],serviceRows,[235,65,65,65,81],{rowH:30});
   }
-  // Unterschrift nur anzeigen, wenn vorhanden
+  // Unterschrift dezent unten links mit Beschriftung unter der Linie
   if(r.signature||r.signer){
-    if(y<150)newPage();
-    y-=4;sectionTitle('Unterschrift');
+    // Genug Abstand zum übrigen Inhalt lassen; bei sehr langen Nachweisen
+    // wird der Unterschriftsbereich auf eine Folgeseite gesetzt.
+    if(y<165)newPage();
+    const sigLineY=92;
     if(r.signature){
-      try{const bytes=await fetch(r.signature).then(x=>x.arrayBuffer());const sig=await pdf.embedPng(bytes);page.drawImage(sig,{x:M,y:y-58,width:145,height:48});}catch(e){}
+      try{
+        const bytes=await fetch(r.signature).then(x=>x.arrayBuffer());
+        const sig=await pdf.embedPng(bytes);
+        page.drawImage(sig,{x:M+2,y:sigLineY+8,width:145,height:48});
+      }catch(e){}
     }
-    line(M,y-64,M+210,y-64,C.line,.8);
-    if(r.signer)draw(r.signer,M,y-78,8,false,C.ink);
-    y-=95;
+    line(M,sigLineY,M+210,sigLineY,C.line,.7);
+    draw('Unterschrift Auftraggeber / Abholer',M,sigLineY-13,7,false,C.muted,230);
   }
   return await pdf.save();
 }
