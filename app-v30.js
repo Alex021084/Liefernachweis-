@@ -82,8 +82,29 @@ function renderMaterialSummary(){
     });
   });
 }
-function rowService(data={}){let d=document.createElement('div');d.className='entry service';d.innerHTML=`<label class="job">Art der Arbeit<input class="jobv" value="${esc(data.job||'')}" placeholder="Zusatzleistung"></label><label class="hours">Stunden<input class="hoursv" inputmode="decimal" value="${esc(data.hours||'')}" placeholder="Std."></label><label class="start">Anfang<input class="startv" type="time" value="${esc(data.start||'')}"></label><label class="end">Ende<input class="endv" type="time" value="${esc(data.end||'')}"></label><label class="pause">Pause<input class="pausev" value="${esc(data.pause||'')}" placeholder="Min."></label><button type="button" aria-label="Entfernen">×</button>`;d.querySelector('button').onclick=()=>d.remove();$('serviceRows').append(d)}
-$('addServiceRow').onclick=()=>rowService();
+function rowService(data={}){let d=document.createElement('div');d.className='entry service';d.innerHTML=`<label class="job">Art der Arbeit<input class="jobv" value="${esc(data.job||'')}" placeholder="Zusatzleistung" readonly></label><label class="hours">Stunden<input class="hoursv" type="number" inputmode="decimal" step="0.1" min="0" value="${esc(data.hours||'')}" placeholder="Std."></label><label class="start">Anfang<input class="startv" type="time" value="${esc(data.start||'')}"></label><label class="end">Ende<input class="endv" type="time" value="${esc(data.end||'')}"></label><label class="pause">Pause<input class="pausev" type="number" inputmode="numeric" step="1" min="0" value="${esc(data.pause||'')}" placeholder="Min."></label><button type="button" aria-label="Entfernen">×</button>`;d.querySelector('button').onclick=()=>d.remove();$('serviceRows').append(d)}
+let selectedService='';
+function openServiceModal(){
+  const list=db.services||[];
+  if(!list.length){alert('Bitte zuerst unter Stammdaten → Leistungen mindestens eine Leistung anlegen.');return;}
+  selectedService='';
+  $('serviceTiles').innerHTML=list.map(v=>`<button type="button" class="serviceTile" data-service-choice="${esc(v)}">${esc(v)}</button>`).join('');
+  $('serviceTiles').querySelectorAll('[data-service-choice]').forEach(b=>b.onclick=()=>{
+    selectedService=b.dataset.serviceChoice;
+    $('serviceTiles').querySelectorAll('.serviceTile').forEach(x=>x.classList.toggle('selected',x===b));
+  });
+  ['serviceHours','serviceStart','serviceEnd','servicePause'].forEach(id=>$(id).value='');
+  $('serviceModal').hidden=false;$('serviceModal').classList.add('open');$('serviceModal').setAttribute('aria-hidden','false');
+}
+function closeServiceModal(){$('serviceModal').classList.remove('open');$('serviceModal').setAttribute('aria-hidden','true');$('serviceModal').hidden=true}
+$('addServiceRow').onclick=openServiceModal;
+$('cancelService').onclick=closeServiceModal;
+document.querySelectorAll('[data-close-service]').forEach(el=>el.onclick=closeServiceModal);
+$('confirmService').onclick=()=>{
+  if(!selectedService)return alert('Bitte zuerst eine Leistung auswählen.');
+  rowService({job:selectedService,hours:$('serviceHours').value,start:$('serviceStart').value,end:$('serviceEnd').value,pause:$('servicePause').value});
+  closeServiceModal();
+};
 function localDateValue(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 function updateDateDisplay(){const value=$('date').value;const button=$('dateDisplay');if(!value){button.textContent='Datum auswählen';return;}const parts=value.split('-').map(Number);const d=new Date(parts[0],parts[1]-1,parts[2],12);button.textContent=d.toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});}
 $('date').addEventListener('change',updateDateDisplay);
@@ -97,6 +118,7 @@ $('backToMaterials').onclick=()=>setWizardStep(2);
 function fresh(){ currentDraftId=null; $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';fillSelect($('project'),[],'Bauvorhaben wählen');enteredMaterials=[];$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
 $('customer').onchange=()=>{let c=db.customers.find(c=>c.name===$('customer').value);$('address').value=c?.address||'';fillSelect($('project'),db.projects.filter(p=>p.owner===c?.name).map(p=>p.name),'Bauvorhaben wählen')};
 $('newBtn').onclick=fresh;$('cancel').onclick=()=>show('home');
+const serviceModal=$('serviceModal');serviceModal.hidden=true;serviceModal.classList.remove('open');
 const signatureModal=$('signatureModal'); signatureModal.hidden=true; signatureModal.classList.remove('open');
 const canvas=$('signature'),ctx=canvas.getContext('2d');let drawing=false,ink=false,signatureSaved=false;function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='Noch keine Unterschrift hinterlegt.'} $('clearSig').onclick=clearSig;
 function openSignature(){ const modal=$('signatureModal'); modal.hidden=false; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
