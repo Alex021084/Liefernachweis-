@@ -141,3 +141,8 @@ input,select,textarea,
 /* Signaturfenster bleibt wirklich verborgen, bis 'Unterschreiben' gedrückt wird. */
 #signatureModal[hidden]{display:none!important}
 #signatureModal.open:not([hidden]){display:flex!important}
+
+/* Abgefahrene Materialien in der Zusammenfassung hellrot markieren */
+.materialSummary .summaryRow.hauled{background:#fff0f0;border:1px solid #f0caca;border-radius:9px;padding:10px;margin:7px 0;color:#8f2929}
+.materialSummary .summaryRow.hauled + .summaryRow{border-top:0}
+.materialSummary .summaryRow.delivered{background:transparent}
