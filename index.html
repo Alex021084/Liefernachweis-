@@ -41,17 +41,24 @@
   <div class="wizardStep" data-wizard="2">
     <div class="panel">
       <h2>Material und Mengen</h2>
-      <p class="hint">Liefer- und Abfuhr-/Annahmemengen jeweils in Tonnen oder Kubikmetern eintragen.</p>
-      <p class="hint">Material auswählen, Menge eintragen und die passende Einheit wählen. Gleiche Materialien werden automatisch nach Material und Einheit zusammengerechnet.</p>
+      <p class="hint">Wähle aus, ob Material geliefert oder abgefahren wurde. Danach öffnet sich die Eingabe.</p>
       <div class="materialTypeTiles">
-        <button type="button" class="materialTypeTile delivered active" id="chooseDelivered">Material geliefert</button>
+        <button type="button" class="materialTypeTile delivered" id="chooseDelivered">Material geliefert</button>
         <button type="button" class="materialTypeTile hauled" id="chooseHauled">Material abgefahren</button>
       </div>
-      <div id="materialRows"></div>
-      <button class="soft add" id="addMaterialRow">＋ Material hinzufügen</button>
-      <div id="materialSummary" class="materialSummary" aria-live="polite"></div>
+      <div id="materialRows" class="materialSummary" aria-live="polite"><p class="hint">Noch keine Materialien erfasst.</p></div>
     </div>
     <div class="row actions"><button class="soft" id="backToCustomer">‹ Zurück</button><button class="primary" id="toServices">Weiter zu Zusatzleistungen ›</button></div>
+  </div>
+  <div class="materialModal" id="materialModal" aria-hidden="true">
+    <div class="materialModalBackdrop" data-close-material></div>
+    <div class="materialModalCard" role="dialog" aria-modal="true" aria-labelledby="materialModalTitle">
+      <h2 id="materialModalTitle">Material erfassen</h2>
+      <label id="modalMaterialLabel">Material<select id="modalMaterial"><option value="">Material wählen</option></select></label>
+      <label>Menge<input id="modalQuantity" type="text" inputmode="decimal" placeholder="Menge"></label>
+      <label>Einheit<select id="modalUnit"><option value="to">Tonne (to)</option><option value="cbm">Kubikmeter (cbm)</option></select></label>
+      <div class="row actions"><button type="button" class="soft" id="cancelMaterial">Abbrechen</button><button type="button" class="primary" id="confirmMaterial">Hinzufügen</button></div>
+    </div>
   </div>
   <div class="wizardStep" data-wizard="3">
     <div class="panel">

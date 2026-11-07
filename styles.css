@@ -122,3 +122,17 @@ input,select,textarea,
 .materialEntry label{min-width:0}
 .materialEntry input,.materialEntry select{width:100%;min-width:0}
 .materialEntry>button{justify-self:end}
+
+.materialTypeTiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+.materialTypeTile{min-height:92px;padding:16px 10px;border-radius:16px;font-family:inherit;font-size:17px;font-weight:800;cursor:pointer}
+.materialTypeTile.delivered{background:#2f8a4b;border:2px solid #267640;color:#fff}
+.materialTypeTile.hauled{background:#c83b3b;border:2px solid #ad2d2d;color:#fff}
+.materialModal{display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;padding:20px}
+.materialModal.open{display:flex}
+.materialModalBackdrop{position:absolute;inset:0;background:rgba(15,24,34,.55)}
+.materialModalCard{position:relative;z-index:1;width:min(100%,440px);padding:22px;border-radius:18px;background:#fff;box-shadow:0 18px 60px rgba(0,0,0,.25);display:grid;gap:16px}
+.materialModalCard h2{margin:0 0 4px}
+.materialModalCard label{display:grid;gap:7px;font-weight:650}
+.materialModalCard input,.materialModalCard select{width:100%;min-height:52px;font-size:16px}
+.materialModalCard .actions{display:flex;gap:10px}
+.materialModalCard .actions button{flex:1;min-height:52px}
