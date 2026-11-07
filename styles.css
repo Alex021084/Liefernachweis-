@@ -27,3 +27,9 @@ header .brand img{width:min(350px,66vw);max-height:125px}
 /* Startseite: Inhalte etwas tiefer, größerer Abstand nach der ersten Kachel */
 #welcome .welcomeActions{margin-top:38px!important;gap:12px!important}
 #welcome .welcomeActions .welcomeButton:first-child{margin-bottom:24px!important}
+
+/* iPhone/iPad: Safari soll beim Antippen von Eingabefeldern nicht automatisch hineinzoomen */
+input,select,textarea,
+.entry input,.entry select{
+  font-size:16px!important;
+}
