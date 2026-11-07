@@ -187,8 +187,39 @@ function openDraft(r){
   closeSignature();setWizardStep(2);show('form');
 }
 function renderArchive(){
-  $('archive').innerHTML=db.reports.slice().sort((a,b)=>b.id-a.id).map(r=>`<div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${r.draft?'Entwurf – weiterbearbeiten':r.pdf?'PDF erstellt':'Gespeichert'}</small></div><button class="soft" data-open-r="${r.id}">${r.draft?'Weiterbearbeiten':'PDF öffnen'}</button></div>`).join('')||'<div class="panel hint">Noch keine Liefernachweise gespeichert.</div>';
+  $('archive').innerHTML=db.reports.slice().sort((a,b)=>b.id-a.id).map(r=>`<div class="archiveSwipeItem" data-archive-id="${r.id}"><button type="button" class="archiveDelete" aria-label="Liefernachweis löschen">×</button><div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${r.draft?'Entwurf – weiterbearbeiten':r.pdf?'PDF erstellt':'Gespeichert'}</small></div><button class="soft" data-open-r="${r.id}">${r.draft?'Weiterbearbeiten':'PDF öffnen'}</button></div></div>`).join('')||'<div class="panel hint">Noch keine Liefernachweise gespeichert.</div>';
   document.querySelectorAll('[data-open-r]').forEach(b=>b.onclick=()=>{let r=db.reports.find(x=>String(x.id)===b.dataset.openR);if(!r)return;if(r.draft)openDraft(r);else downloadPdf(r)});
+  document.querySelectorAll('.archiveSwipeItem').forEach(item=>{
+    const card=item.querySelector('.archiveCard'),del=item.querySelector('.archiveDelete');
+    let sx=0,sy=0,tracking=false,lastX=0;
+    card.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;lastX=e.clientX;tracking=true;});
+    card.addEventListener('pointermove',e=>{
+      if(!tracking)return;
+      const dx=e.clientX-sx,dy=e.clientY-sy;
+      if(dx<0&&Math.abs(dx)>Math.abs(dy)*1.2)card.style.transform=`translateX(${Math.max(-72,dx)}px)`;
+      lastX=e.clientX;
+    });
+    const finish=e=>{
+      if(!tracking)return;tracking=false;
+      const dx=(e?.clientX??lastX)-sx,dy=(e?.clientY??sy)-sy;
+      if(dx < -42&&Math.abs(dx)>Math.abs(dy)*1.15){
+        item.classList.add('archive-open');card.style.transform='translateX(-72px)';
+      }else if(dx>25){
+        item.classList.remove('archive-open');card.style.transform='';
+      }
+    };
+    card.addEventListener('pointerup',finish);card.addEventListener('pointercancel',finish);
+    del.onclick=()=>{
+      const id=item.dataset.archiveId;
+      const report=db.reports.find(x=>String(x.id)===String(id));
+      if(!report)return;
+      if(confirm(`Liefernachweis vom ${new Date(report.date+'T12:00:00').toLocaleDateString('de-DE')} für „${report.customer||'Ohne Auftraggeber'}“ wirklich löschen?`)){
+        db.reports=db.reports.filter(x=>String(x.id)!==String(id));
+        if(String(currentDraftId)===String(id))currentDraftId=null;
+        save();renderArchive();
+      }
+    };
+  });
 }
 function txt(page,text,x,y,size=9,bold=false){if(!text)return;page.drawText(String(text).slice(0,110),{x,y,size,font:bold?fontBold:font,color:PDFLib.rgb(.12,.15,.18),maxWidth:500})}
 let font,fontBold;

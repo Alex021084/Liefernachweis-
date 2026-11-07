@@ -460,3 +460,19 @@ html body .draftSaveFull button.draftSaveButton {
   padding:0!important;
 }
 .swipeMaterial.swipe-open .summaryRow{transform:translateX(-68px)}
+
+/* Gespeicherte Liefernachweise: iOS-Wischgeste mit rotem X */
+.archiveSwipeItem{position:relative;overflow:hidden;border-radius:18px;margin:12px 0;background:#e3342f;touch-action:pan-y}
+.archiveSwipeItem .archiveCard{position:relative;z-index:2;transition:transform .18s ease;will-change:transform;touch-action:pan-y;margin:0}
+.archiveSwipeItem .archiveDelete{position:absolute;z-index:1;top:0;right:0;bottom:0;width:72px;height:100%;min-height:64px;border:0;border-radius:0;background:#e3342f;color:#fff;font-size:32px;display:flex;align-items:center;justify-content:center;padding:0}
+.archiveSwipeItem.archive-open .archiveCard{transform:translateX(-72px)}
+/* Zwischenspeichern etwas kompakter und weniger dominant */
+.draftSaveFull .draftSaveButton,
+.draftSaveFull button#saveDraftCustomer,
+.draftSaveFull button#saveDraftMaterials,
+.draftSaveFull button#saveDraftServices{
+  min-height:58px!important;
+  font-size:18px!important;
+  border-radius:14px!important;
+  font-weight:650!important;
+}
