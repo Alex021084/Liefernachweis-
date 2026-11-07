@@ -19,3 +19,7 @@ header{padding:24px 18px 18px}
 header .brand img{width:min(350px,66vw);max-height:125px}
 #welcome .welcomeActions{gap:13px;margin:22px 0}
 #welcome .welcomeButton{min-height:88px;font-size:clamp(19px,2.3vw,22px);font-weight:800;padding:18px 16px;border-radius:18px}
+
+/* Startseite: Kacheln kompakter */
+#welcome .welcomeActions{gap:10px!important;margin:18px 0!important}
+#welcome .welcomeButton{min-height:70px!important;font-size:19px!important;padding:14px 16px!important;border-radius:16px!important}
