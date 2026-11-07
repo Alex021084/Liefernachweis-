@@ -13,3 +13,9 @@ header{padding:30px 18px 24px}
 header .brand img{width:min(460px,76vw);max-height:175px}
 #welcome .welcomeActions{gap:16px;margin:28px 0}
 #welcome .welcomeButton{min-height:112px;font-size:clamp(21px,2.6vw,25px);font-weight:800;padding:22px 18px;border-radius:21px}
+
+/* Startseite: kompaktere Maße und transparentes Logo */
+header{padding:24px 18px 18px}
+header .brand img{width:min(350px,66vw);max-height:125px}
+#welcome .welcomeActions{gap:13px;margin:22px 0}
+#welcome .welcomeButton{min-height:88px;font-size:clamp(19px,2.3vw,22px);font-weight:800;padding:18px 16px;border-radius:18px}
