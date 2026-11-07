@@ -23,3 +23,7 @@ header .brand img{width:min(350px,66vw);max-height:125px}
 /* Startseite: Kacheln kompakter */
 #welcome .welcomeActions{gap:10px!important;margin:18px 0!important}
 #welcome .welcomeButton{min-height:70px!important;font-size:19px!important;padding:14px 16px!important;border-radius:16px!important}
+
+/* Startseite: Inhalte etwas tiefer, größerer Abstand nach der ersten Kachel */
+#welcome .welcomeActions{margin-top:38px!important;gap:12px!important}
+#welcome .welcomeActions .welcomeButton:first-child{margin-bottom:24px!important}
