@@ -318,3 +318,17 @@ html body .draftSaveFull button.draftSaveButton {
 .serviceModalCard .actions{display:flex;gap:10px}
 .serviceModalCard .actions button{flex:1;min-height:52px}
 @media(max-width:420px){.serviceTiles{grid-template-columns:1fr}.serviceModalCard{padding:16px}.serviceDetails{gap:8px}}
+
+/* Leistung wird erst nach Antippen des Feldes in einem eigenen Auswahl-Popup gewählt */
+.servicePickerCard{max-height:82vh;overflow-y:auto}
+.servicePickerCard .serviceTiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.servicePickerCard .serviceTile{min-height:66px;border-radius:14px;font-size:15px;font-weight:700}
+.servicePickButton{
+  width:100%;min-height:48px;padding:10px 12px;
+  border:1px solid #cbd4dd;border-radius:10px;
+  background:#f8fafc;color:#202a35;text-align:left;
+  font:inherit;font-size:15px;cursor:pointer;
+}
+.servicePickButton:not([data-value]){color:#7b8490}
+.entry.service .job{min-width:190px}
+@media(max-width:520px){.servicePickerCard .serviceTiles{grid-template-columns:1fr}}
