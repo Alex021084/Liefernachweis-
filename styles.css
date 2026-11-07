@@ -111,3 +111,14 @@ input,select,textarea,
 .materialSummary h3{margin:0 0 10px;font-size:16px}
 .summaryRow{display:grid;grid-template-columns:1fr;gap:3px;padding:9px 0;border-top:1px solid #d4e4d8;font-size:14px}
 .summaryRow b{font-size:15px}
+
+.materialTypeTiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 18px}
+.materialTypeTile{min-width:0;min-height:76px;padding:14px 10px;border:2px solid #b9d8c2;border-radius:14px;background:#eef7f0;color:#28643c;font-family:inherit;font-size:16px;font-weight:750;line-height:1.25;cursor:pointer}
+.materialTypeTile.hauled{border-color:#e6b6b6;background:#fff0f0;color:#a72f2f}
+.materialTypeTile.delivered.active{background:#2f8a4b;border-color:#267640;color:#fff;box-shadow:0 3px 10px #2f8a4b30}
+.materialTypeTile.hauled.active{background:#c83b3b;border-color:#ad2d2d;color:#fff;box-shadow:0 3px 10px #c83b3b30}
+.materialEntry{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:14px;margin:12px 0;border:1px solid #d9dfe5;border-radius:12px;background:#fbfcfd}
+.materialEntry .quantityPair{display:grid;grid-template-columns:minmax(0,1fr) minmax(125px,.8fr);gap:10px;align-items:end}
+.materialEntry label{min-width:0}
+.materialEntry input,.materialEntry select{width:100%;min-width:0}
+.materialEntry>button{justify-self:end}

@@ -14,7 +14,8 @@
   <div class="masterActions">
     <button class="soft masterButton" data-open="customers">Kunden verwalten</button>
     <button class="soft masterButton" data-open="projects">Bauvorhaben verwalten</button>
-    <button class="soft masterButton" data-open="materials">Material verwalten</button>
+    <button class="soft masterButton" data-open="deliveryMaterials">Liefermaterial verwalten</button>
+    <button class="soft masterButton" data-open="haulMaterials">Abfuhrmaterial verwalten</button>
     <button class="soft masterButton" data-open="services">Leistungen verwalten</button>
   </div>
   <button class="soft back">Zurück zur Startseite</button>
@@ -42,6 +43,10 @@
       <h2>Material und Mengen</h2>
       <p class="hint">Liefer- und Abfuhr-/Annahmemengen jeweils in Tonnen oder Kubikmetern eintragen.</p>
       <p class="hint">Material auswählen, Menge eintragen und die passende Einheit wählen. Gleiche Materialien werden automatisch nach Material und Einheit zusammengerechnet.</p>
+      <div class="materialTypeTiles">
+        <button type="button" class="materialTypeTile delivered active" id="chooseDelivered">Material geliefert</button>
+        <button type="button" class="materialTypeTile hauled" id="chooseHauled">Material abgefahren</button>
+      </div>
       <div id="materialRows"></div>
       <button class="soft add" id="addMaterialRow">＋ Material hinzufügen</button>
       <div id="materialSummary" class="materialSummary" aria-live="polite"></div>
@@ -65,6 +70,7 @@
 </section>
 <section id="customers" class="screen"><div class="panel"><h2>Kunden verwalten</h2><label>Kundenname<input id="newCustomer" placeholder="Firma / Auftraggeber"></label><label>Anschrift<textarea id="newAddress" rows="2"></textarea></label><button class="primary" id="saveCustomer">Kunden speichern</button></div><div id="customerList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="projects" class="screen"><div class="panel"><h2>Bauvorhaben verwalten</h2><label>Auftraggeber<select id="projectOwner"></select></label><label>Bauvorhaben<input id="newProject" placeholder="Bezeichnung"></label><button class="primary" id="saveProject">Bauvorhaben speichern</button></div><div id="projectList" class="stack"></div><button class="soft back">Zurück</button></section>
-<section id="materials" class="screen"><div class="panel"><h2>Material verwalten</h2><label>Materialbezeichnung<input id="newMaterial" placeholder="z. B. Sand SE gesiebt"></label><button class="primary" id="saveMaterial">Material speichern</button></div><div id="materialsList" class="stack"></div><button class="soft back">Zurück</button></section>
+<section id="deliveryMaterials" class="screen"><div class="panel"><h2>Liefermaterial verwalten</h2><label>Materialbezeichnung<input id="newDeliveryMaterial" placeholder="z. B. Sand SE gesiebt"></label><button class="primary" id="saveDeliveryMaterial">Liefermaterial speichern</button></div><div id="deliveryMaterialsList" class="stack"></div><button class="soft back">Zurück</button></section>
+<section id="haulMaterials" class="screen"><div class="panel"><h2>Abfuhrmaterial verwalten</h2><label>Materialbezeichnung<input id="newHaulMaterial" placeholder="z. B. Boden, Bauschutt"></label><button class="primary" id="saveHaulMaterial">Abfuhrmaterial speichern</button></div><div id="haulMaterialsList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="services" class="screen"><div class="panel"><h2>Leistungen verwalten</h2><label>Leistungsbezeichnung<input id="newService" placeholder="z. B. Radlader, Sieben, Waschen"></label><button class="primary" id="saveService">Leistung speichern</button></div><div id="servicesList" class="stack"></div><button class="soft back">Zurück</button></section>
 </main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js"></script></body></html>
