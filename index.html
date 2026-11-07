@@ -68,11 +68,26 @@
       <button class="soft add" id="addServiceRow">＋ Zusatzleistung hinzufügen</button>
     </div>
     <div class="panel">
-      <h2>Unterschrift Auftraggeber</h2>
-      <canvas id="signature" width="900" height="260"></canvas>
-      <div class="row"><button class="soft" id="clearSig">Unterschrift löschen</button><input id="signer" placeholder="Name (optional)"></div>
+      <h2>Abschluss</h2>
+      <p class="hint">Du kannst unterschreiben, direkt ein PDF ohne Unterschrift erstellen oder das Dokument zunächst nur speichern.</p>
+      <div class="finishActions">
+        <button type="button" class="primary" id="openSignature">Unterschreiben</button>
+        <button type="button" class="soft" id="savePdf">Ohne Unterschrift PDF erstellen</button>
+        <button type="button" class="soft" id="saveDocument">Dokument speichern</button>
+      </div>
+      <p id="signatureStatus" class="hint">Noch keine Unterschrift hinterlegt.</p>
     </div>
-    <div class="row actions"><button class="soft" id="backToMaterials">‹ Zurück</button><button class="primary" id="savePdf">PDF erstellen und speichern</button></div>
+    <div class="row actions"><button class="soft" id="backToMaterials">‹ Zurück</button></div>
+  </div>
+  <div class="signatureModal" id="signatureModal" aria-hidden="true">
+    <div class="signatureModalBackdrop" data-close-signature></div>
+    <div class="signatureModalCard" role="dialog" aria-modal="true" aria-labelledby="signatureTitle">
+      <h2 id="signatureTitle">Unterschrift Auftraggeber</h2>
+      <p class="hint">Bitte im Feld unterschreiben.</p>
+      <canvas id="signature" width="900" height="260"></canvas>
+      <label>Name (optional)<input id="signer" placeholder="Name"></label>
+      <div class="row actions"><button type="button" class="soft" id="clearSig">Löschen</button><button type="button" class="soft" id="cancelSignature">Abbrechen</button><button type="button" class="primary" id="confirmSignature">Unterschrift übernehmen</button></div>
+    </div>
   </div>
 </section>
 <section id="customers" class="screen"><div class="panel"><h2>Kunden verwalten</h2><label>Kundenname<input id="newCustomer" placeholder="Firma / Auftraggeber"></label><label>Anschrift<textarea id="newAddress" rows="2"></textarea></label><button class="primary" id="saveCustomer">Kunden speichern</button></div><div id="customerList" class="stack"></div><button class="soft back">Zurück</button></section>
