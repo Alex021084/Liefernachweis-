@@ -61,7 +61,13 @@ $('confirmMaterial').onclick=()=>{
 function parseQuantity(value){let s=String(value||'').trim().replace(/\s/g,'');if(!s)return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\\./g,'').replace(',','.');else s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>0?n:0}
 function formatQuantity(n){return n.toLocaleString('de-DE',{maximumFractionDigits:3})}
 function materialTotals(){const totals=new Map();enteredMaterials.forEach(m=>{const key=[m.type,m.name,m.unit].join('||');if(!totals.has(key))totals.set(key,{...m,qty:0});totals.get(key).qty+=parseQuantity(m.qty)});return [...totals.values()].sort((a,b)=>a.type.localeCompare(b.type)||a.name.localeCompare(b.name,'de')||a.unit.localeCompare(b.unit))}
-function renderMaterialSummary(){const el=$('materialRows');if(!el)return;const totals=materialTotals();el.innerHTML=totals.length?'<h3>Erfasste Materialien</h3>'+totals.map(t=>`<div class="summaryRow ${t.type==='haul'?'hauled':'delivered'}"><b>${t.type==='delivery'?'Material geliefert':'Material abgefahren'} · ${esc(t.name)}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'cbm'}</span></div>`).join(''):'<p class="hint">Noch keine Materialien erfasst.</p>'}
+function renderMaterialSummary(){
+  const el=$('materialRows');if(!el)return;
+  const totals=materialTotals();
+  if(!totals.length){el.innerHTML='<h3>Erfasste Materialien</h3><p class="hint">Noch keine Materialien erfasst.</p>';return;}
+  const group=(type,title,cls)=>{const rows=totals.filter(t=>t.type===type);return rows.length?`<section class="materialGroup ${cls}"><h4>${title}</h4>${rows.map(t=>`<div class="summaryRow"><b>${esc(t.name)}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'cbm'}</span></div>`).join('')}</section>`:''};
+  el.innerHTML='<h3>Erfasste Materialien</h3>'+group('delivery','Material geliefert','deliveryGroup')+group('haul','Material abgefahren','haulGroup');
+}
 function rowService(data={}){let d=document.createElement('div');d.className='entry service';d.innerHTML=`<label class="job">Art der Arbeit<input class="jobv" value="${esc(data.job||'')}" placeholder="Zusatzleistung"></label><label class="hours">Stunden<input class="hoursv" inputmode="decimal" value="${esc(data.hours||'')}" placeholder="Std."></label><label class="start">Anfang<input class="startv" type="time" value="${esc(data.start||'')}"></label><label class="end">Ende<input class="endv" type="time" value="${esc(data.end||'')}"></label><label class="pause">Pause<input class="pausev" value="${esc(data.pause||'')}" placeholder="Min."></label><button type="button" aria-label="Entfernen">×</button>`;d.querySelector('button').onclick=()=>d.remove();$('serviceRows').append(d)}
 $('addServiceRow').onclick=()=>rowService();
 function localDateValue(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
