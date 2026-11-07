@@ -33,6 +33,7 @@ $('saveHaulMaterial').onclick=()=>{let m=$('newHaulMaterial').value.trim();if(!m
 $('saveService').onclick=()=>{let v=$('newService').value.trim();if(!v)return;db.services=db.services||[];if(db.services.includes(v))return alert('Diese Leistung ist bereits vorhanden.');db.services.push(v);$('newService').value='';save();renderServices()};
 let activeMaterialType='delivery';
 let enteredMaterials=[];
+let currentDraftId=null;
 function openMaterialModal(type){
   activeMaterialType=type;
   const list=type==='haul'?(db.haulMaterials||[]):(db.deliveryMaterials||[]);
@@ -73,7 +74,7 @@ $('toMaterials').onclick=()=>{if(!$('customer').value)return alert('Bitte zuerst
 $('backToCustomer').onclick=()=>setWizardStep(1);
 $('toServices').onclick=()=>setWizardStep(3);
 $('backToMaterials').onclick=()=>setWizardStep(2);
-function fresh(){ $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';fillSelect($('project'),[],'Bauvorhaben wählen');enteredMaterials=[];$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
+function fresh(){ currentDraftId=null; $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';fillSelect($('project'),[],'Bauvorhaben wählen');enteredMaterials=[];$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
 $('customer').onchange=()=>{let c=db.customers.find(c=>c.name===$('customer').value);$('address').value=c?.address||'';fillSelect($('project'),db.projects.filter(p=>p.owner===c?.name).map(p=>p.name),'Bauvorhaben wählen')};
 $('newBtn').onclick=fresh;$('cancel').onclick=()=>show('home');
 const signatureModal=$('signatureModal'); signatureModal.hidden=true; signatureModal.classList.remove('open');
@@ -83,7 +84,41 @@ function closeSignature(){ const modal=$('signatureModal'); modal.classList.remo
 $('openSignature').onclick=openSignature;$('cancelSignature').onclick=closeSignature;document.querySelectorAll('[data-close-signature]').forEach(el=>el.onclick=closeSignature);
 $('confirmSignature').onclick=()=>{if(!ink)return alert('Bitte zuerst unterschreiben.');signatureSaved=true;$('signatureStatus').textContent='Unterschrift übernommen'+($('signer').value.trim()?' · '+$('signer').value.trim():'')+'.';closeSignature();};
 function collect(){return {id:Date.now(),date:$('date').value,customer:$('customer').value,address:$('address').value,project:$('project').value||'',materials:enteredMaterials.map(m=>({...m})),services:[...$('serviceRows').querySelectorAll('.entry')].map(d=>({job:d.querySelector('.jobv').value,hours:d.querySelector('.hoursv').value,start:d.querySelector('.startv').value,end:d.querySelector('.endv').value,pause:d.querySelector('.pausev').value})).filter(x=>Object.values(x).some(Boolean)),signature:signatureSaved&&ink?canvas.toDataURL('image/png'):null,signer:signatureSaved?$('signer').value:''}}
-function renderArchive(){$('archive').innerHTML=db.reports.slice().sort((a,b)=>b.id-a.id).map(r=>`<div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${r.pdf?'PDF erstellt':'Gespeichert'}</small></div><button class="soft" data-open-r="${r.id}">Öffnen</button></div>`).join('')||'<div class="panel hint">Noch keine Liefernachweise gespeichert.</div>';document.querySelectorAll('[data-open-r]').forEach(b=>b.onclick=()=>{let r=db.reports.find(x=>x.id==b.dataset.openR);downloadPdf(r)})}
+
+function persistDraft(){
+  const r=collect();
+  if(!r.customer){alert('Bitte zuerst einen Auftraggeber auswählen.');return false;}
+  r.draft=true;r.pdf=false;
+  if(currentDraftId){const i=db.reports.findIndex(x=>String(x.id)===String(currentDraftId));if(i>=0)db.reports[i]=r;else db.reports.push(r);}
+  else {db.reports.push(r);currentDraftId=r.id;}
+  save();renderArchive();alert('Zwischenstand wurde gespeichert. Du kannst den Liefernachweis später unter „Liefernachweise“ öffnen und weiterbearbeiten.');return true;
+}
+function openDraft(r){
+  currentDraftId=r.id;
+  fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');
+  $('customer').value=r.customer||'';
+  $('date').value=r.date||localDateValue();updateDateDisplay();
+  $('address').value=r.address||'';
+  const owner=db.customers.find(c=>c.name===r.customer);
+  fillSelect($('project'),db.projects.filter(p=>p.owner===owner?.name).map(p=>p.name),'Bauvorhaben wählen');
+  $('project').value=r.project||'';
+  enteredMaterials=(r.materials||[]).map(m=>({...m}));
+  renderMaterialSummary();
+  $('serviceRows').innerHTML='';
+  (r.services||[]).forEach(v=>rowService(v));
+  $('signer').value=r.signer||'';
+  clearSig();
+  if(r.signature){
+    const img=new Image();
+    img.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);ink=true;signatureSaved=true;$('signatureStatus').textContent='Gespeicherte Unterschrift übernommen.';};
+    img.src=r.signature;
+  }
+  closeSignature();setWizardStep(1);show('form');
+}
+function renderArchive(){
+  $('archive').innerHTML=db.reports.slice().sort((a,b)=>b.id-a.id).map(r=>`<div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${r.draft?'Entwurf – weiterbearbeiten':r.pdf?'PDF erstellt':'Gespeichert'}</small></div><button class="soft" data-open-r="${r.id}">${r.draft?'Weiterbearbeiten':'PDF öffnen'}</button></div>`).join('')||'<div class="panel hint">Noch keine Liefernachweise gespeichert.</div>';
+  document.querySelectorAll('[data-open-r]').forEach(b=>b.onclick=()=>{let r=db.reports.find(x=>String(x.id)===b.dataset.openR);if(!r)return;if(r.draft)openDraft(r);else downloadPdf(r)});
+}
 function txt(page,text,x,y,size=9,bold=false){if(!text)return;page.drawText(String(text).slice(0,110),{x,y,size,font:bold?fontBold:font,color:PDFLib.rgb(.12,.15,.18),maxWidth:500})}
 let font,fontBold;
 function aggregateReportMaterials(rows){const totals=new Map();(rows||[]).forEach(m=>{const name=String(m.name||'').trim(),type=m.type||'delivery',unit=m.unit||'to',qty=parseQuantity(m.qty);if(!name||!qty)return;const key=[type,name,unit].join('||');if(!totals.has(key))totals.set(key,{name,type,unit,qty:0});totals.get(key).qty+=qty});return [...totals.values()].sort((a,b)=>a.type.localeCompare(b.type)||a.name.localeCompare(b.name,'de')||a.unit.localeCompare(b.unit))}
@@ -99,6 +134,9 @@ if(r.signature){let bytes=await fetch(r.signature).then(x=>x.arrayBuffer());let 
 return await pdf.save()}
 async function downloadPdf(r){try{let bytes=await makePdf(r);let blob=new Blob([bytes],{type:'application/pdf'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`Liefernachweis-${r.date||'Datum'}.pdf`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}catch(e){alert('PDF konnte nicht erstellt werden: '+e.message)}}
 function validateDocument(r){if(!r.customer){alert('Bitte einen Auftraggeber auswählen.');return false;}if(!r.materials.length&&!r.services.length){alert('Bitte mindestens ein Material oder eine Zusatzleistung eintragen.');return false;}return true}
-$('savePdf').onclick=async()=>{let r=collect();if(!validateDocument(r))return;r.signature=null;r.signer='';r.pdf=true;db.reports.push(r);save();await downloadPdf(r);show('home')};
-$('saveDocument').onclick=()=>{let r=collect();if(!validateDocument(r))return;r.pdf=false;db.reports.push(r);save();alert('Dokument wurde gespeichert.');show('home')};
+$('saveDraftCustomer').onclick=()=>{if(persistDraft())show('home')};
+$('saveDraftMaterials').onclick=()=>{if(persistDraft())show('home')};
+$('saveDraftServices').onclick=()=>{if(persistDraft())show('home')};
+$('savePdf').onclick=async()=>{let r=collect();if(!validateDocument(r))return;r.signature=null;r.signer='';r.pdf=true;r.draft=false;const i=currentDraftId?db.reports.findIndex(x=>String(x.id)===String(currentDraftId)):-1;if(i>=0)db.reports[i]=r;else db.reports.push(r);save();await downloadPdf(r);currentDraftId=null;show('home')};
+$('saveDocument').onclick=()=>{if(persistDraft())show('home')};
 renderArchive();

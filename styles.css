@@ -165,3 +165,7 @@ input,select,textarea,
   margin:8px 0!important;
   color:#245c36!important;
 }
+
+/* Drei Aktionsschaltflächen dürfen auf schmalen Mobilgeräten umbrechen. */
+.row.actions{flex-wrap:wrap}
+.row.actions button{flex:1 1 145px;min-width:0}
