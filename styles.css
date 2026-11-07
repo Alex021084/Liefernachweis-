@@ -87,3 +87,16 @@ input,select,textarea,
 .dateControl input#date{position:absolute!important;left:8px!important;bottom:4px!important;width:1px!important;height:1px!important;min-height:1px!important;margin:0!important;padding:0!important;opacity:0!important;pointer-events:none!important;border:0!important}
 .wizardStep .actions{margin-top:18px}
 .wizardStep .actions button{min-height:56px}
+
+/* Datum kompakter und immer einzeilig */
+.dateDisplay{
+  font-size:15px!important;
+  font-weight:750!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  padding:12px 14px!important;
+  min-height:58px!important;
+}
+.dateControl{min-height:58px!important}
