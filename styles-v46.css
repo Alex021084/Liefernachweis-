@@ -617,3 +617,15 @@ header{padding-top:58px!important}
   color:#4b5563!important;
   font-weight:600!important;
 }
+
+
+/* V49: Stundenfeld ist jederzeit manuell bearbeitbar. */
+.serviceSwipeItem .entry.service .hoursv{
+  background:#fff!important;
+  color:#202833!important;
+  font-weight:500!important;
+  text-align:center!important;
+  cursor:text!important;
+  -webkit-appearance:none;
+  appearance:none;
+}
