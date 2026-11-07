@@ -415,3 +415,48 @@ html body .draftSaveFull button.draftSaveButton {
 @media(min-width:700px){
   .entry.service{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-areas:"job job job job" "hours start end pause" "remove remove remove remove"!important}
 }
+
+/* iOS-ähnliches Wischen: erst rotes X zeigen, Löschen erst nach Antippen */
+.swipeMaterial{
+  position:relative!important;
+  overflow:hidden!important;
+  border-radius:12px!important;
+  margin:8px 0!important;
+  background:#e3342f!important;
+  touch-action:pan-y!important;
+}
+.swipeMaterial .summaryRow{
+  position:relative!important;
+  z-index:2!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  min-height:54px!important;
+  margin:0!important;
+  transition:transform .18s ease!important;
+  will-change:transform;
+  touch-action:pan-y!important;
+  cursor:grab;
+}
+.swipeMaterial .swipeDelete{
+  position:absolute!important;
+  z-index:1!important;
+  top:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:68px!important;
+  height:100%!important;
+  min-height:54px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#e3342f!important;
+  color:#fff!important;
+  font-size:30px!important;
+  font-weight:400!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+}
+.swipeMaterial.swipe-open .summaryRow{transform:translateX(-68px)}

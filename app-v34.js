@@ -65,19 +65,43 @@ function renderMaterialSummary(){
   const el=$('materialRows');if(!el)return;
   const totals=materialTotals();
   if(!totals.length){el.innerHTML='<h3>Erfasste Materialien</h3><p class="hint">Noch keine Materialien erfasst.</p>';return;}
-  const group=(type,title,cls)=>{const rows=totals.filter(t=>t.type===type);return rows.length?`<section class="materialGroup ${cls}"><h4>${title}</h4>${rows.map(t=>`<div class="summaryRow" data-swipe-type="${t.type}" data-swipe-name="${esc(t.name)}" data-swipe-unit="${t.unit}"><b>${esc(t.name)}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'cbm'}</span></div>`).join('')}</section>`:''};
-  el.innerHTML='<h3>Erfasste Materialien</h3><p class="swipeHint">Zum Löschen ein Material nach links wischen.</p>'+group('delivery','Material geliefert','deliveryGroup')+group('haul','Material abgefahren','haulGroup');
-  el.querySelectorAll('.summaryRow[data-swipe-type]').forEach(row=>{
-    let startX=0,startY=0;
-    row.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY;});
-    row.addEventListener('pointerup',e=>{
+  const group=(type,title,cls)=>{const rows=totals.filter(t=>t.type===type);return rows.length?`<section class="materialGroup ${cls}"><h4>${title}</h4>${rows.map(t=>`<div class="swipeMaterial" data-swipe-type="${t.type}" data-swipe-name="${esc(t.name)}" data-swipe-unit="${t.unit}"><button type="button" class="swipeDelete" aria-label="Material löschen">×</button><div class="summaryRow"><b>${esc(t.name)}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'cbm'}</span></div></div>`).join('')}</section>`:''};
+  el.innerHTML='<h3>Erfasste Materialien</h3><p class="swipeHint">Nach links wischen und zum Löschen auf das rote X tippen.</p>'+group('delivery','Material geliefert','deliveryGroup')+group('haul','Material abgefahren','haulGroup');
+  el.querySelectorAll('.swipeMaterial').forEach(item=>{
+    const row=item.querySelector('.summaryRow'),del=item.querySelector('.swipeDelete');
+    let startX=0,startY=0,lastX=0,tracking=false;
+    row.addEventListener('pointerdown',e=>{
+      startX=e.clientX;startY=e.clientY;lastX=e.clientX;tracking=true;
+      row.setPointerCapture?.(e.pointerId);
+    });
+    row.addEventListener('pointermove',e=>{
+      if(!tracking)return;
       const dx=e.clientX-startX,dy=e.clientY-startY;
-      if(dx < -55 && Math.abs(dx)>Math.abs(dy)*1.3){
-        const type=row.dataset.swipeType,name=row.dataset.swipeName,unit=row.dataset.swipeUnit;
-        if(confirm(`„${name}“ (${unit==='to'?'to':'cbm'}) wirklich aus den erfassten Materialien löschen?`)){
-          enteredMaterials=enteredMaterials.filter(m=>!(m.type===type&&m.name===name&&m.unit===unit));
-          renderMaterialSummary();
-        }
+      if(Math.abs(dx)>Math.abs(dy)*1.2 && dx<0){
+        row.style.transform=`translateX(${Math.max(-76,dx)}px)`;
+      }
+      lastX=e.clientX;
+    });
+    const finish=e=>{
+      if(!tracking)return;tracking=false;
+      const dx=(e?.clientX??lastX)-startX,dy=(e?.clientY??startY)-startY;
+      if(dx < -42 && Math.abs(dx)>Math.abs(dy)*1.15){
+        item.classList.add('swipe-open');row.style.transform='translateX(-68px)';
+      }else if(dx>25){
+        item.classList.remove('swipe-open');row.style.transform='';
+      }else if(Math.abs(dx)<12){
+        el.querySelectorAll('.swipeMaterial.swipe-open').forEach(other=>{
+          if(other!==item){other.classList.remove('swipe-open');const r=other.querySelector('.summaryRow');if(r)r.style.transform='';}
+        });
+      }
+    };
+    row.addEventListener('pointerup',finish);
+    row.addEventListener('pointercancel',finish);
+    del.addEventListener('click',()=>{
+      const type=item.dataset.swipeType,name=item.dataset.swipeName,unit=item.dataset.swipeUnit;
+      if(confirm(`„${name}“ (${unit==='to'?'to':'cbm'}) wirklich aus den erfassten Materialien löschen?`)){
+        enteredMaterials=enteredMaterials.filter(m=>!(m.type===type&&m.name===name&&m.unit===unit));
+        renderMaterialSummary();
       }
     });
   });
