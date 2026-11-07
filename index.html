@@ -19,10 +19,48 @@
   </div>
   <button class="soft back">Zurück zur Startseite</button>
 </section>
-<section id="form" class="screen"><div class="step">Neuer Liefernachweis</div><div class="panel"><h2>Lieferdaten</h2><label>Datum<div class="dateControl"><span id="dateDisplay"></span><input id="date" type="date" aria-label="Datum auswählen"></div></label><label>Auftraggeber<select id="customer"></select></label><label>Anschrift<textarea id="address" rows="2" placeholder="Straße, PLZ Ort"></textarea></label><label>Bauvorhaben<select id="project"></select></label><label>Oder Bauvorhaben direkt eingeben<input id="projectManual" placeholder="Bauvorhaben"></label></div>
-<div class="panel"><h2>Material und Mengen</h2><p class="hint">Liefer- und Abfuhr-/Annahmemengen jeweils in Tonnen oder Kubikmetern eintragen.</p><div id="materialRows"></div><button class="soft add" id="addMaterialRow">＋ Material hinzufügen</button></div>
-<div class="panel"><h2>Zusatzleistungen</h2><div id="serviceRows"></div><button class="soft add" id="addServiceRow">＋ Zusatzleistung hinzufügen</button></div>
-<div class="panel"><h2>Unterschrift Auftraggeber</h2><canvas id="signature" width="900" height="260"></canvas><div class="row"><button class="soft" id="clearSig">Unterschrift löschen</button><input id="signer" placeholder="Name (optional)"></div></div><div class="row actions"><button class="soft" id="cancel">Zurück</button><button class="primary" id="savePdf">PDF erstellen und speichern</button></div></section>
+<section id="form" class="screen">
+  <div class="step" id="wizardProgress">Schritt 1 von 3 · Auftraggeber</div>
+  <div class="wizardStep active" data-wizard="1">
+    <div class="panel">
+      <h2>Auftraggeber und Lieferdaten</h2>
+      <label>Datum
+        <div class="dateControl">
+          <button type="button" id="dateDisplay" class="dateDisplay">Datum auswählen</button>
+          <input id="date" type="date" aria-label="Datum auswählen">
+        </div>
+      </label>
+      <label>Auftraggeber<select id="customer"></select></label>
+      <label>Anschrift<textarea id="address" rows="2" placeholder="Straße, PLZ Ort"></textarea></label>
+      <label>Bauvorhaben<select id="project"></select></label>
+      <label>Oder Bauvorhaben direkt eingeben<input id="projectManual" placeholder="Bauvorhaben"></label>
+    </div>
+    <div class="row actions"><button class="soft" id="cancel">Abbrechen</button><button class="primary" id="toMaterials">Weiter zu Material ›</button></div>
+  </div>
+  <div class="wizardStep" data-wizard="2">
+    <div class="panel">
+      <h2>Material und Mengen</h2>
+      <p class="hint">Liefer- und Abfuhr-/Annahmemengen jeweils in Tonnen oder Kubikmetern eintragen.</p>
+      <div id="materialRows"></div>
+      <button class="soft add" id="addMaterialRow">＋ Material hinzufügen</button>
+    </div>
+    <div class="row actions"><button class="soft" id="backToCustomer">‹ Zurück</button><button class="primary" id="toServices">Weiter zu Zusatzleistungen ›</button></div>
+  </div>
+  <div class="wizardStep" data-wizard="3">
+    <div class="panel">
+      <h2>Zusatzleistungen</h2>
+      <p class="hint">Dieser Schritt ist optional. Wenn es keine Zusatzleistungen gibt, einfach ohne Eintrag fortfahren.</p>
+      <div id="serviceRows"></div>
+      <button class="soft add" id="addServiceRow">＋ Zusatzleistung hinzufügen</button>
+    </div>
+    <div class="panel">
+      <h2>Unterschrift Auftraggeber</h2>
+      <canvas id="signature" width="900" height="260"></canvas>
+      <div class="row"><button class="soft" id="clearSig">Unterschrift löschen</button><input id="signer" placeholder="Name (optional)"></div>
+    </div>
+    <div class="row actions"><button class="soft" id="backToMaterials">‹ Zurück</button><button class="primary" id="savePdf">PDF erstellen und speichern</button></div>
+  </div>
+</section>
 <section id="customers" class="screen"><div class="panel"><h2>Kunden verwalten</h2><label>Kundenname<input id="newCustomer" placeholder="Firma / Auftraggeber"></label><label>Anschrift<textarea id="newAddress" rows="2"></textarea></label><button class="primary" id="saveCustomer">Kunden speichern</button></div><div id="customerList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="projects" class="screen"><div class="panel"><h2>Bauvorhaben verwalten</h2><label>Auftraggeber<select id="projectOwner"></select></label><label>Bauvorhaben<input id="newProject" placeholder="Bezeichnung"></label><button class="primary" id="saveProject">Bauvorhaben speichern</button></div><div id="projectList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="materials" class="screen"><div class="panel"><h2>Material verwalten</h2><label>Materialbezeichnung<input id="newMaterial" placeholder="z. B. Sand SE gesiebt"></label><button class="primary" id="saveMaterial">Material speichern</button></div><div id="materialsList" class="stack"></div><button class="soft back">Zurück</button></section>
