@@ -65,8 +65,22 @@ function renderMaterialSummary(){
   const el=$('materialRows');if(!el)return;
   const totals=materialTotals();
   if(!totals.length){el.innerHTML='<h3>Erfasste Materialien</h3><p class="hint">Noch keine Materialien erfasst.</p>';return;}
-  const group=(type,title,cls)=>{const rows=totals.filter(t=>t.type===type);return rows.length?`<section class="materialGroup ${cls}"><h4>${title}</h4>${rows.map(t=>`<div class="summaryRow"><b>${esc(t.name)}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'cbm'}</span></div>`).join('')}</section>`:''};
-  el.innerHTML='<h3>Erfasste Materialien</h3>'+group('delivery','Material geliefert','deliveryGroup')+group('haul','Material abgefahren','haulGroup');
+  const group=(type,title,cls)=>{const rows=totals.filter(t=>t.type===type);return rows.length?`<section class="materialGroup ${cls}"><h4>${title}</h4>${rows.map(t=>`<div class="summaryRow" data-swipe-type="${t.type}" data-swipe-name="${esc(t.name)}" data-swipe-unit="${t.unit}"><b>${esc(t.name)}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'cbm'}</span></div>`).join('')}</section>`:''};
+  el.innerHTML='<h3>Erfasste Materialien</h3><p class="swipeHint">Zum Löschen ein Material nach links wischen.</p>'+group('delivery','Material geliefert','deliveryGroup')+group('haul','Material abgefahren','haulGroup');
+  el.querySelectorAll('.summaryRow[data-swipe-type]').forEach(row=>{
+    let startX=0,startY=0;
+    row.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY;});
+    row.addEventListener('pointerup',e=>{
+      const dx=e.clientX-startX,dy=e.clientY-startY;
+      if(dx < -55 && Math.abs(dx)>Math.abs(dy)*1.3){
+        const type=row.dataset.swipeType,name=row.dataset.swipeName,unit=row.dataset.swipeUnit;
+        if(confirm(`„${name}“ (${unit==='to'?'to':'cbm'}) wirklich aus den erfassten Materialien löschen?`)){
+          enteredMaterials=enteredMaterials.filter(m=>!(m.type===type&&m.name===name&&m.unit===unit));
+          renderMaterialSummary();
+        }
+      }
+    });
+  });
 }
 function rowService(data={}){let d=document.createElement('div');d.className='entry service';d.innerHTML=`<label class="job">Art der Arbeit<input class="jobv" value="${esc(data.job||'')}" placeholder="Zusatzleistung"></label><label class="hours">Stunden<input class="hoursv" inputmode="decimal" value="${esc(data.hours||'')}" placeholder="Std."></label><label class="start">Anfang<input class="startv" type="time" value="${esc(data.start||'')}"></label><label class="end">Ende<input class="endv" type="time" value="${esc(data.end||'')}"></label><label class="pause">Pause<input class="pausev" value="${esc(data.pause||'')}" placeholder="Min."></label><button type="button" aria-label="Entfernen">×</button>`;d.querySelector('button').onclick=()=>d.remove();$('serviceRows').append(d)}
 $('addServiceRow').onclick=()=>rowService();

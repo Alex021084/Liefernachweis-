@@ -212,3 +212,32 @@ input,select,textarea,
   border:1px solid #f1d98f!important;
   color:#59451a!important;
 }
+
+/* Materialzeilen kompakter und in schwarzer Schrift */
+#materialRows .materialGroup{color:#171b20!important}
+#materialRows .materialGroup h4{color:#171b20!important;font-size:15px!important}
+#materialRows .summaryRow{color:#171b20!important;font-size:13px!important;min-height:42px;align-items:center;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+#materialRows .summaryRow b{color:#171b20!important;font-size:13px!important;font-weight:600}
+#materialRows .summaryRow span{color:#171b20!important;font-size:13px!important;white-space:nowrap}
+#materialRows .swipeHint{margin:0 0 10px;color:#606a75;font-size:12px}
+#materialRows .summaryRow:active{filter:brightness(.97)}
+
+/* Aktionsfarben eindeutig erzwingen: Speichern grün, Zurück/Weiter hellgelb */
+.draftSaveFull .draftSaveButton,
+.draftSaveFull button#saveDraftCustomer,
+.draftSaveFull button#saveDraftMaterials,
+.draftSaveFull button#saveDraftServices{
+  background:#27834b!important;background-image:none!important;
+  border:2px solid #1e713e!important;color:#fff!important;
+  border-radius:14px!important;font-weight:700!important;
+}
+.row.actions button.navPale,
+.row.actions button#cancel,
+.row.actions button#toMaterials,
+.row.actions button#toServices,
+.row.actions button#backToCustomer,
+.row.actions button#backToMaterials{
+  background:#fff2c7!important;background-image:none!important;
+  border:1px solid #f1d98f!important;color:#59451a!important;
+  border-radius:14px!important;
+}
