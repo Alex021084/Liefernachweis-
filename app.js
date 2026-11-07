@@ -10,10 +10,11 @@
   document.addEventListener('dblclick',function(event){event.preventDefault();},{passive:false});
 })();
 const $=id=>document.getElementById(id);const KEY='daelmann-liefernachweis-v1';
-let db=JSON.parse(localStorage.getItem(KEY)||'{"customers":[],"projects":[],"materials":["Sand SE gesiebt","Schottertragschicht Naturstein"],"services":[],"reports":[]}');
-db.deliveryMaterials=db.deliveryMaterials||db.materials||[];
-db.haulMaterials=db.haulMaterials||[];
-const save=()=>localStorage.setItem(KEY,JSON.stringify(db));const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const EMPTY_DB={customers:[],projects:[],materials:['Sand SE gesiebt','Schottertragschicht Naturstein'],services:[],reports:[],deliveryMaterials:null,haulMaterials:[]};
+// Defensives Laden: Ein beschädigter oder unvollständiger lokaler Speicher darf nicht die gesamte App lahmlegen.
+function loadDatabase(){try{const raw=localStorage.getItem(KEY);const parsed=raw?JSON.parse(raw):{};if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))return {...EMPTY_DB};return {...EMPTY_DB,...parsed,customers:Array.isArray(parsed.customers)?parsed.customers:[],projects:Array.isArray(parsed.projects)?parsed.projects:[],materials:Array.isArray(parsed.materials)?parsed.materials:EMPTY_DB.materials,services:Array.isArray(parsed.services)?parsed.services:[],reports:Array.isArray(parsed.reports)?parsed.reports:[],deliveryMaterials:Array.isArray(parsed.deliveryMaterials)?parsed.deliveryMaterials:(Array.isArray(parsed.materials)?parsed.materials:EMPTY_DB.materials),haulMaterials:Array.isArray(parsed.haulMaterials)?parsed.haulMaterials:[]};}catch(error){console.error('Lokale Daten konnten nicht gelesen werden:',error);return {...EMPTY_DB};}}
+let db=loadDatabase();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db));}catch(error){console.error('Speichern fehlgeschlagen:',error);alert('Die Daten konnten nicht im Browser gespeichert werden. Bitte prüfen Sie den freien Speicherplatz.');}};const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='home')renderArchive();if(id==='customers')renderCustomers();if(id==='projects')renderProjects();if(id==='deliveryMaterials')renderDeliveryMaterials();if(id==='haulMaterials')renderHaulMaterials();if(id==='services')renderServices()}
 document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>show(b.dataset.open));
 $('goNew').onclick=fresh;$('goDeliveries').onclick=()=>show('home');$('goMaster').onclick=()=>show('master');$('homeMaster').onclick=()=>show('master');$('homeWelcome').onclick=()=>show('welcome');document.querySelectorAll('.back').forEach(b=>b.onclick=()=>show(b.closest('#master')?'welcome':'master'));
@@ -56,7 +57,7 @@ $('confirmMaterial').onclick=()=>{
   enteredMaterials.push({name,type:activeMaterialType,qty,unit});
   renderMaterialSummary();closeMaterialModal();
 };
-function parseQuantity(value){let s=String(value||'').trim().replace(/\\s/g,'');if(!s)return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\\./g,'').replace(',','.');else s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>0?n:0}
+function parseQuantity(value){let s=String(value||'').trim().replace(/\s/g,'');if(!s)return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\\./g,'').replace(',','.');else s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>0?n:0}
 function formatQuantity(n){return n.toLocaleString('de-DE',{maximumFractionDigits:3})}
 function materialTotals(){const totals=new Map();enteredMaterials.forEach(m=>{const key=[m.type,m.name,m.unit].join('||');if(!totals.has(key))totals.set(key,{...m,qty:0});totals.get(key).qty+=parseQuantity(m.qty)});return [...totals.values()].sort((a,b)=>a.type.localeCompare(b.type)||a.name.localeCompare(b.name,'de')||a.unit.localeCompare(b.unit))}
 function renderMaterialSummary(){const el=$('materialRows');if(!el)return;const totals=materialTotals();el.innerHTML=totals.length?'<h3>Erfasste Materialien</h3>'+totals.map(t=>`<div class="summaryRow"><b>${t.type==='delivery'?'Material geliefert':'Material abgefahren'} · ${esc(t.name)}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'cbm'}</span></div>`).join(''):'<p class="hint">Noch keine Materialien erfasst.</p>'}
