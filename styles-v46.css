@@ -651,3 +651,17 @@ header{padding-top:58px!important}
 .materialUnitPicker button.selected{background:#e8f5eb;border-color:#438653;color:#28663a;box-shadow:inset 0 0 0 1px #438653}
 .materialModalCard .visuallyHidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .materialModalCard{max-height:90vh;overflow-y:auto}
+
+
+/* Version 56: großes Touch-Zahlenfeld für die Materialmenge */
+.materialUnitPicker{gap:12px}
+.materialUnitPicker button{min-height:64px;font-size:17px;border-radius:14px}
+.quantityDisplayLabel{display:grid;gap:7px;font-weight:700}
+.materialModalCard .quantityDisplay{min-height:66px!important;text-align:center;font-size:30px!important;font-weight:800;letter-spacing:.5px;background:#f3f5f8;border:2px solid #dce2e9;border-radius:14px;color:#182235;padding:10px}
+.materialNumericKeypad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.materialNumericKeypad button{min-height:58px;border:2px solid #d7dee7;border-radius:13px;background:#edf1f6;color:#182235;font-size:25px;font-weight:800;touch-action:manipulation}
+.materialNumericKeypad button:active{background:#dce5ef;transform:scale(.98)}
+.materialKeypadSpacer{min-height:1px}
+.materialModalCard .modalDateTimeToggle{display:flex!important;align-items:center;gap:11px;font-size:16px!important;font-weight:700}
+.materialModalCard .modalDateTimeToggle input{width:25px!important;height:25px!important;flex:0 0 25px;accent-color:#398650}
+@media(max-height:760px){.materialModalCard{max-height:94vh;gap:12px;padding:18px}.materialNumericKeypad button{min-height:48px}}
