@@ -1,4 +1,4 @@
-# Dählmann – Liefernachweis
+# Dählmann – Liefernachweis (Version 73)
 
 Statische Web-App für GitHub Pages mit Startbildschirm für Liefernachweis und Stammdaten. Kundendaten, Bauvorhaben, Materialstammdaten und gespeicherte Liefernachweise werden lokal im Browser (localStorage) gespeichert. PDF-Erstellung nutzt pdf-lib über CDN und die mitgelieferte Vorlage.
 
@@ -10,3 +10,6 @@ Statische Web-App für GitHub Pages mit Startbildschirm für Liefernachweis und 
 5. Die veröffentlichte Adresse nach Abschluss unter Settings → Pages öffnen.
 
 Hinweis: Diese erste Version speichert Daten nur auf dem jeweiligen Gerät/Browser. Noch keine Supabase-Anbindung und keine geräteübergreifende Synchronisierung.
+
+
+Version 73: In der PDF-Vorschau bleibt „Zurück zur Bearbeitung“ oben rechts. Der doppelte Zurück-Button unten wurde entfernt; „PDF speichern“ steht dort nun mittig.

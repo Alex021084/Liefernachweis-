@@ -1137,6 +1137,6 @@ header{padding-top:58px!important}
 .pdfPreviewHeader h2{margin:0;font-size:18px}.pdfPreviewHeader .hint{margin:3px 0 0;font-size:12px;overflow-wrap:anywhere}
 .pdfPreviewClose{min-height:42px;white-space:nowrap;font-size:14px}
 #pdfPreviewFrame{border:0;display:block;flex:1;width:100%;min-height:0;background:#e9edf1}
-.pdfPreviewFooter{display:flex;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #dce2e8}
-.pdfPreviewFooter button{flex:1;min-height:48px}
-@media(max-width:600px){.pdfPreviewModal{padding:0}.pdfPreviewCard{height:100%;height:100dvh;border-radius:0}.pdfPreviewHeader{align-items:flex-start}.pdfPreviewClose{font-size:12px;padding:8px}.pdfPreviewFooter{gap:8px}}
+.pdfPreviewFooter{display:flex;align-items:center;justify-content:center;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #dce2e8}
+.pdfPreviewFooter button{flex:0 1 420px;width:min(420px,100%);min-height:48px}
+@media(max-width:600px){.pdfPreviewModal{padding:0}.pdfPreviewCard{height:100%;height:100dvh;border-radius:0}.pdfPreviewHeader{align-items:flex-start}.pdfPreviewClose{font-size:12px;padding:8px}.pdfPreviewFooter{padding-left:16px;padding-right:16px}.pdfPreviewFooter button{flex-basis:420px}}
