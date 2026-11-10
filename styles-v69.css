@@ -1195,11 +1195,50 @@ header{padding-top:58px!important}
 #form > .formTopBar { display: flex !important; }
 #form > .formTopBar > #formHomeButton { display: inline-flex !important; visibility: visible !important; opacity: 1 !important; }
 
-/* Version 82: slightly larger, still discreet home button */
-#form > .formTopBar > #formHomeButton {
-  min-height: 46px !important;
-  min-width: 112px !important;
-  padding: 9px 16px !important;
-  border-radius: 12px !important;
-  font-size: 15px !important;
+
+/* Version 82: progress strip removed from markup; keep a quiet right-aligned home link */
+#form .formTopBar { display:flex !important; justify-content:flex-end !important; text-align:right !important; }
+#form .formHomeButton { margin-left:auto !important; }
+
+
+/* Version 83: in-app Entwurfsauswahl statt nativer Betriebssystem-Abfrage */
+.resumeDraftModal[hidden] { display:none !important; }
+.resumeDraftModal {
+  position:fixed; inset:0; z-index:10050; display:flex;
+  align-items:center; justify-content:center; padding:22px;
+}
+.resumeDraftBackdrop {
+  position:absolute; inset:0; background:rgba(25,31,40,.58);
+  backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+}
+.resumeDraftCard {
+  position:relative; z-index:1; width:min(100%,540px); max-height:min(82vh,760px);
+  overflow:auto; background:#fff; border:1px solid #e0e5eb; border-radius:25px;
+  padding:27px 22px 21px; box-shadow:0 24px 75px rgba(0,0,0,.24);
+}
+.resumeDraftIcon {
+  width:46px; height:46px; border-radius:15px; display:flex; align-items:center;
+  justify-content:center; background:#edf5ef; color:#39764d; font-size:27px;
+  font-weight:700; margin-bottom:15px;
+}
+.resumeDraftCard h2 { margin:0 42px 9px 0; color:#242b36; font-size:25px; line-height:1.2; }
+.resumeDraftIntro { margin:0 0 19px; color:#687381; font-size:15px; line-height:1.5; }
+.resumeDraftList { display:flex; flex-direction:column; gap:10px; }
+.resumeDraftItem {
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  text-align:left; padding:15px 16px; border:1px solid #dce3e9; border-radius:15px;
+  background:#f7f9fb; color:#28313d; box-shadow:0 2px 0 #e5eaf0; cursor:pointer;
+}
+.resumeDraftItem:active { background:#edf5ef; transform:translateY(1px); }
+.resumeDraftItemMain { min-width:0; display:flex; flex-direction:column; gap:5px; }
+.resumeDraftItemMain strong { font-size:16px; line-height:1.3; overflow-wrap:anywhere; }
+.resumeDraftItemMain small { color:#74808d; font-size:12px; line-height:1.35; }
+.resumeDraftArrow { flex:none; color:#39764d; font-weight:700; font-size:14px; }
+.resumeDraftCancel {
+  width:100%; margin-top:17px; min-height:47px; border:1px solid #cfe0d2;
+  border-radius:13px; background:#f0f7f1; color:#477653; font-weight:650;
+}
+.resumeDraftClose {
+  position:absolute; right:16px; top:13px; width:36px; height:36px; border:0;
+  border-radius:50%; background:#f1f3f5; color:#66717d; font-size:25px; line-height:1;
 }

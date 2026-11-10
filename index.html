@@ -21,10 +21,9 @@
   <button class="soft back">Zurück zur Startseite</button>
 </section>
 <section id="form" class="screen">
-  <div class="formTopBar" style="display:flex!important;justify-content:flex-end!important;align-items:center!important;margin:2px 0 8px!important;min-height:38px!important;">
-    <button type="button" class="formHomeButton" id="formHomeButton" aria-label="Zur Startseite" style="display:inline-flex!important;visibility:visible!important;opacity:1!important;align-items:center!important;justify-content:center!important;gap:6px!important;min-height:46px!important;min-width:112px!important;padding:9px 16px!important;border:1px solid #d9dfe5!important;border-radius:12px!important;background:transparent!important;color:#65707d!important;font-size:15px!important;font-weight:650!important;box-shadow:none!important;">⌂ <span>Startseite</span></button>
+  <div class="formTopBar" style="display:flex!important;justify-content:flex-end!important;align-items:center!important;text-align:right!important;margin:2px 0 8px!important;min-height:38px!important;">
+    <button type="button" class="formHomeButton" id="formHomeButton" aria-label="Zur Startseite" style="display:inline-flex!important;visibility:visible!important;opacity:1!important;align-items:center!important;justify-content:center!important;gap:6px!important;min-height:36px!important;padding:6px 12px!important;border:1px solid #d9dfe5!important;border-radius:10px!important;background:transparent!important;color:#65707d!important;font-size:13px!important;font-weight:650!important;box-shadow:none!important;margin-left:auto!important;">⌂ <span>Startseite</span></button>
   </div>
-  <div class="step" id="wizardProgress" style="display:none!important" aria-hidden="true">Schritt 1 von 5 · Auftraggeber</div>
   <div id="autoSaveStatus" class="autoSaveStatus" role="status" aria-live="polite">Noch kein Entwurf begonnen</div>
   <div class="wizardStep active" data-wizard="1">
     <div class="panel">
@@ -209,6 +208,17 @@
         <button type="button" class="soft" id="cancelQuickMaterial">Abbrechen</button>
         <button type="button" class="primary" id="saveQuickMaterial">Material speichern</button>
       </div>
+    </div>
+  </div>
+  <div class="resumeDraftModal" id="resumeDraftModal" hidden aria-hidden="true">
+    <div class="resumeDraftBackdrop"></div>
+    <div class="resumeDraftCard" role="dialog" aria-modal="true" aria-labelledby="resumeDraftTitle">
+      <div class="resumeDraftIcon">↻</div>
+      <h2 id="resumeDraftTitle">Entwurf fortsetzen?</h2>
+      <p class="resumeDraftIntro">Es gibt noch nicht abgeschlossene Liefernachweise. Wähle aus, welchen du weiterbearbeiten möchtest.</p>
+      <div class="resumeDraftList" id="resumeDraftList"></div>
+      <button type="button" class="resumeDraftCancel" id="skipResumeDrafts">Später entscheiden</button>
+      <button type="button" class="resumeDraftClose" id="closeResumeDraftModal" aria-label="Fenster schließen">×</button>
     </div>
   </div>
   <div class="pdfPreviewModal" id="pdfPreviewModal" hidden aria-hidden="true">

@@ -325,7 +325,7 @@ function updateDateDisplay(){const value=$('date').value;const button=$('dateDis
 $('date').addEventListener('change',updateDateDisplay);
 $('dateDisplay').addEventListener('click',()=>{const input=$('date');if(typeof input.showPicker==='function'){try{input.showPicker();return;}catch(e){}}input.click();});
 let wizardStep=1;
-function setWizardStep(step){wizardStep=step;document.querySelectorAll('.wizardStep').forEach(el=>el.classList.toggle('active',Number(el.dataset.wizard)===step));$('wizardProgress').textContent=['','Schritt 1 von 5 · Auftraggeber','Schritt 2 von 5 · Material','Schritt 3 von 5 · Zusatzleistungen','Schritt 4 von 5 · Zusammenfassung','Schritt 5 von 5 · Abschluss'][step];window.scrollTo(0,0);}
+function setWizardStep(step){wizardStep=step;document.querySelectorAll('.wizardStep').forEach(el=>el.classList.toggle('active',Number(el.dataset.wizard)===step));if($('wizardProgress'))$('wizardProgress').textContent=['','Schritt 1 von 5 · Auftraggeber','Schritt 2 von 5 · Material','Schritt 3 von 5 · Zusatzleistungen','Schritt 4 von 5 · Zusammenfassung','Schritt 5 von 5 · Abschluss'][step];window.scrollTo(0,0);}
 $('toMaterials').onclick=()=>{if(!$('customer').value)return alert('Bitte zuerst einen Auftraggeber auswählen.');setWizardStep(2)};
 $('backToCustomer').onclick=()=>setWizardStep(1);
 $('toServices').onclick=()=>setWizardStep(3);
@@ -435,6 +435,35 @@ function openDraft(r){
   closeSignature();setWizardStep(Number(r.wizardStep)||2);setAutoSaveStatus('✓ Entwurf geladen');show('form');
 }
 let pdfPreviewUrl=null; let pdfPreviewBlob=null; let archiveMode='customers',archiveCustomer='',archiveProject='';
+
+function closeResumeDraftModal(){
+  const modal=$('resumeDraftModal');
+  if(modal){modal.hidden=true;modal.setAttribute('aria-hidden','true');}
+}
+function showResumeDraftModal(){
+  const drafts=db.reports.filter(r=>r.draft).sort((a,b)=>Number(b.id)-Number(a.id));
+  if(!drafts.length)return;
+  const modal=$('resumeDraftModal'),list=$('resumeDraftList');
+  if(!modal||!list)return;
+  list.innerHTML=drafts.map((r,i)=>{
+    const date=r.date?new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'):'';
+    const details=[r.project,date].filter(Boolean).join(' · ');
+    const customer=r.customer||'Noch ohne Auftraggeber';
+    return `<button type="button" class="resumeDraftItem" data-resume-draft="${esc(String(r.id))}">
+      <span class="resumeDraftItemMain"><strong>${esc(customer)}</strong><small>${esc(details||'Unvollständiger Liefernachweis')}</small></span>
+      <span class="resumeDraftArrow">Weiter ›</span>
+    </button>`;
+  }).join('');
+  list.querySelectorAll('[data-resume-draft]').forEach(button=>{
+    button.addEventListener('click',()=>{
+      const draft=db.reports.find(r=>String(r.id)===button.dataset.resumeDraft&&r.draft);
+      if(draft){closeResumeDraftModal();openDraft(draft);}
+    });
+  });
+  modal.hidden=false;modal.setAttribute('aria-hidden','false');
+}
+$('closeResumeDraftModal').onclick=closeResumeDraftModal;
+$('skipResumeDrafts').onclick=closeResumeDraftModal;
 function archiveTabs(){return `<div class="archiveTabs"><button type="button" data-archive-tab="customers" class="${archiveMode==='customers'?'active':''}">Kunden / Nachweise</button><button type="button" data-archive-tab="drafts" class="${archiveMode==='drafts'?'active':''}">Zwischengespeichert</button></div>`}
 function archiveCard(r,buttonLabel){return `<div class="archiveSwipeItem" data-archive-id="${r.id}"><button type="button" class="archiveDelete" aria-label="Liefernachweis löschen">×</button><div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${r.draft?'Entwurf – weiterbearbeiten':'PDF erstellt'}</small></div><button class="soft" data-open-r="${r.id}">${buttonLabel|| (r.draft?'Weiterbearbeiten':'PDF öffnen')}</button></div></div>`}
 function bindArchiveCards(){
@@ -675,6 +704,7 @@ $('savePdf').onclick=async()=>{
   const i=db.reports.findIndex(x=>String(x.id)===String(r.id));
   if(i>=0)db.reports[i]=r;else db.reports.push(r);
   save();currentDraftId=r.id;renderArchive();
+setTimeout(showResumeDraftModal, 350);
 
 // Automatische Entwurfssicherung: Änderungen im Formular werden nach kurzer Pause lokal gespeichert.
 $('form').addEventListener('input',scheduleAutoSave,true);
@@ -683,9 +713,7 @@ $('form').addEventListener('click',event=>{if(event.target.closest('button'))sch
 canvas.addEventListener('pointerup',scheduleAutoSave);
 window.addEventListener('pagehide',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
 window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
-// Beim erneuten Öffnen der App kann ein zuletzt automatisch gespeicherter Entwurf fortgesetzt werden.
-const resumableDrafts=db.reports.filter(r=>r.draft).sort((a,b)=>Number(b.id)-Number(a.id));
-if(resumableDrafts.length){const latest=resumableDrafts[0];setTimeout(()=>{if(confirm(`Ein nicht abgeschlossener Liefernachweis für „${latest.customer||'noch ohne Auftraggeber'}“ wurde gefunden. Möchtest du ihn fortsetzen?`))openDraft(latest);},250);}
+
   await openPdfPreview(r);
 };
 $('saveDocument').onclick=()=>{if(persistDraft())show('home')};
@@ -698,6 +726,4 @@ $('form').addEventListener('click',event=>{if(event.target.closest('button'))sch
 canvas.addEventListener('pointerup',scheduleAutoSave);
 window.addEventListener('pagehide',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
 window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
-// Beim erneuten Öffnen der App kann ein zuletzt automatisch gespeicherter Entwurf fortgesetzt werden.
-const resumableDrafts=db.reports.filter(r=>r.draft).sort((a,b)=>Number(b.id)-Number(a.id));
-if(resumableDrafts.length){const latest=resumableDrafts[0];setTimeout(()=>{if(confirm(`Ein nicht abgeschlossener Liefernachweis für „${latest.customer||'noch ohne Auftraggeber'}“ wurde gefunden. Möchtest du ihn fortsetzen?`))openDraft(latest);},250);}
+
