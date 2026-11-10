@@ -1188,3 +1188,9 @@ header{padding-top:58px!important}
   box-shadow: none;
 }
 #form .formHomeButton:active { background: #edf0f3; }
+
+
+/* Version 81: definitive wizard-bar removal and visible home control */
+#form > #wizardProgress { display: none !important; visibility: hidden !important; height: 0 !important; margin: 0 !important; padding: 0 !important; }
+#form > .formTopBar { display: flex !important; }
+#form > .formTopBar > #formHomeButton { display: inline-flex !important; visibility: visible !important; opacity: 1 !important; }
