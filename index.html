@@ -54,20 +54,34 @@
   </div>
   <div class="materialModal" id="materialModal" aria-hidden="true">
     <div class="materialModalBackdrop" data-close-material></div>
-    <div class="materialModalCard" role="dialog" aria-modal="true" aria-labelledby="materialModalTitle">
+    <div class="materialModalCard" id="materialModalCard" role="dialog" aria-modal="true" aria-labelledby="materialModalTitle">
+      <p class="materialStepIndicator" id="materialStepIndicator">Schritt 1 von 2 · Material</p>
       <h2 id="materialModalTitle">Material erfassen</h2>
-      <label id="modalMaterialLabel">Material<select id="modalMaterial"><option value="">Material wählen</option></select></label>
-      <div id="materialQuantityFields" hidden>
+      <div id="materialStepSelect">
+        <label id="modalMaterialLabel">Material<select id="modalMaterial"><option value="">Material wählen</option></select></label>
+        <div class="row actions">
+          <button type="button" class="soft" id="cancelMaterial">Abbrechen</button>
+          <button type="button" class="primary" id="nextMaterialDetails">Weiter</button>
+        </div>
+      </div>
+      <div id="materialStepDetails" hidden>
         <p id="selectedMaterialHeading" class="hint">Menge für das ausgewählte Material</p>
         <label>Menge<input id="modalQuantity" type="text" inputmode="decimal" autocomplete="off" placeholder="z. B. 12,75"></label>
-        <label>Einheit<select id="modalUnit"><option value="to">Tonne (to)</option><option value="cbm">Kubikmeter (m³)</option></select></label>
-        <label class="modalDateTimeToggle"><input id="modalIncludeDateTime" type="checkbox"> Datum und Uhrzeit im Liefernachweis anzeigen</label>
+        <div class="materialUnitPicker" role="group" aria-label="Einheit auswählen">
+          <button type="button" data-material-unit="to" class="selected" aria-pressed="true">Tonne (to)</button>
+          <button type="button" data-material-unit="cbm" aria-pressed="false">Kubikmeter (m³)</button>
+        </div>
+        <select id="modalUnit" class="visuallyHidden" aria-hidden="true" tabindex="-1"><option value="to">Tonne (to)</option><option value="cbm">Kubikmeter (m³)</option></select>
+        <label class="modalDateTimeToggle"><input id="modalIncludeDateTime" type="checkbox"> Zeitstempel hinzufügen</label>
         <div id="modalDateTimeFields" class="modalDateTimeFields" hidden>
           <label>Datum<input id="modalMaterialDate" type="date"></label>
           <label>Uhrzeit<input id="modalMaterialTime" type="time"></label>
         </div>
+        <div class="row actions">
+          <button type="button" class="soft" id="backToMaterialSelect">Zurück</button>
+          <button type="button" class="primary" id="confirmMaterial">Hinzufügen</button>
+        </div>
       </div>
-      <div class="row actions"><button type="button" class="soft" id="cancelMaterial">Abbrechen</button><button type="button" class="primary" id="confirmMaterial">Hinzufügen</button></div>
     </div>
   </div>
   <div class="serviceModal" id="serviceModal" aria-hidden="true" hidden>
@@ -130,4 +144,4 @@
 <section id="deliveryMaterials" class="screen"><div class="panel"><h2>Liefermaterial verwalten</h2><label>Materialbezeichnung<input id="newDeliveryMaterial" placeholder="z. B. Sand SE gesiebt"></label><button class="primary" id="saveDeliveryMaterial">Liefermaterial speichern</button></div><div id="deliveryMaterialsList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="haulMaterials" class="screen"><div class="panel"><h2>Abfuhrmaterial verwalten</h2><label>Materialbezeichnung<input id="newHaulMaterial" placeholder="z. B. Boden, Bauschutt"></label><button class="primary" id="saveHaulMaterial">Abfuhrmaterial speichern</button></div><div id="haulMaterialsList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="services" class="screen"><div class="panel"><h2>Leistungen verwalten</h2><label>Leistungsbezeichnung<input id="newService" placeholder="z. B. Radlader, Sieben, Waschen"></label><button class="primary" id="saveService">Leistung speichern</button></div><div id="servicesList" class="stack"></div><button class="soft back">Zurück</button></section>
-</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app-v54.js"></script></body></html>
+</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app-v55.js"></script></body></html>

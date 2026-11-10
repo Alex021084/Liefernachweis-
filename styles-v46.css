@@ -642,3 +642,12 @@ header{padding-top:58px!important}
 #materialQuantityFields[hidden]{display:none!important}
 #selectedMaterialHeading{margin:14px 0 8px;font-weight:700;color:#59636f}
 .materialDateStamp{display:block!important;margin-top:4px;font-size:11px!important;line-height:1.3;font-weight:400!important;color:#7b8490!important}
+
+/* Version 55: zweistufige Materialeingabe mit klarer Einheitenwahl */
+.materialStepIndicator{margin:0;color:#8a672e;background:#fff5dc;border:1px solid #f0d48a;border-radius:12px;padding:9px 12px;font-size:13px;font-weight:750}
+#materialStepSelect[hidden],#materialStepDetails[hidden]{display:none!important}
+.materialUnitPicker{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.materialUnitPicker button{min-height:58px;border:2px solid #d5dbe2;border-radius:13px;background:#f8fafc;color:#27313d;font-weight:750;font-size:16px;padding:10px}
+.materialUnitPicker button.selected{background:#e8f5eb;border-color:#438653;color:#28663a;box-shadow:inset 0 0 0 1px #438653}
+.materialModalCard .visuallyHidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.materialModalCard{max-height:90vh;overflow-y:auto}
