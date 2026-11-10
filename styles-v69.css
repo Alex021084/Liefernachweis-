@@ -1162,3 +1162,29 @@ header{padding-top:58px!important}
   box-shadow: none !important;
 }
 #autoSaveStatus[data-state="saved"] { color: #34764a !important; }
+
+
+/* Version 80: kompakte Kopfzeile im Liefernachweis, ohne gelben Schrittbalken */
+#form #wizardProgress { display: none !important; }
+#form .formTopBar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 2px 0 5px;
+}
+#form .formHomeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 11px;
+  border: 1px solid #d9dfe5;
+  border-radius: 10px;
+  background: transparent;
+  color: #65707d;
+  font-size: 13px;
+  font-weight: 650;
+  box-shadow: none;
+}
+#form .formHomeButton:active { background: #edf0f3; }
