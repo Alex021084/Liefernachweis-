@@ -1140,3 +1140,9 @@ header{padding-top:58px!important}
 .pdfPreviewFooter{display:flex;align-items:center;justify-content:center;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #dce2e8}
 .pdfPreviewFooter button{flex:0 1 420px;width:min(420px,100%);min-height:48px}
 @media(max-width:600px){.pdfPreviewModal{padding:0}.pdfPreviewCard{height:100%;height:100dvh;border-radius:0}.pdfPreviewHeader{align-items:flex-start}.pdfPreviewClose{font-size:12px;padding:8px}.pdfPreviewFooter{padding-left:16px;padding-right:16px}.pdfPreviewFooter button{flex-basis:420px}}
+
+/* Dezenter Status für die automatische Entwurfssicherung */
+.autoSaveStatus{margin:8px 0 14px;padding:7px 11px;border-radius:10px;font-size:12px;font-weight:600;color:#64748b;background:#f1f5f9;text-align:right;}
+.autoSaveStatus[data-state="saved"]{color:#34764a;background:#edf7ef;}
+.autoSaveStatus[data-state="pending"]{color:#8a6728;background:#fff7df;}
+.autoSaveStatus[data-state="error"]{color:#a33d38;background:#fff0ef;}
