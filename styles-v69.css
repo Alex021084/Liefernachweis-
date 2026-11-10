@@ -1194,3 +1194,12 @@ header{padding-top:58px!important}
 #form > #wizardProgress { display: none !important; visibility: hidden !important; height: 0 !important; margin: 0 !important; padding: 0 !important; }
 #form > .formTopBar { display: flex !important; }
 #form > .formTopBar > #formHomeButton { display: inline-flex !important; visibility: visible !important; opacity: 1 !important; }
+
+/* Version 82: slightly larger, still discreet home button */
+#form > .formTopBar > #formHomeButton {
+  min-height: 46px !important;
+  min-width: 112px !important;
+  padding: 9px 16px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+}
