@@ -1146,3 +1146,19 @@ header{padding-top:58px!important}
 .autoSaveStatus[data-state="saved"]{color:#34764a;background:transparent;padding:0;border-radius:0;}
 .autoSaveStatus[data-state="pending"]{color:#8a6728;background:#fff7df;}
 .autoSaveStatus[data-state="error"]{color:#a33d38;background:#fff0ef;}
+
+
+/* Version 79: Speicherstatus ohne farbige Fläche in allen Zuständen */
+#autoSaveStatus,
+#autoSaveStatus[data-state],
+#autoSaveStatus[data-state="saved"],
+#autoSaveStatus[data-state="pending"],
+#autoSaveStatus[data-state="error"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#autoSaveStatus[data-state="saved"] { color: #34764a !important; }
