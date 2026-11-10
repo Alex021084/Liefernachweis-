@@ -1242,3 +1242,10 @@ header{padding-top:58px!important}
   position:absolute; right:16px; top:13px; width:36px; height:36px; border:0;
   border-radius:50%; background:#f1f3f5; color:#66717d; font-size:25px; line-height:1;
 }
+
+
+/* Version 85: reliable in-app draft chooser and primary create action */
+.resumeDraftModal[hidden]{display:none!important}
+.resumeDraftModal:not([hidden]){display:flex!important}
+.resumeDraftModal{z-index:20000!important}
+.resumeDraftCard{z-index:20001!important}
