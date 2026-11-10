@@ -1249,3 +1249,16 @@ header{padding-top:58px!important}
 .resumeDraftModal:not([hidden]){display:flex!important}
 .resumeDraftModal{z-index:20000!important}
 .resumeDraftCard{z-index:20001!important}
+
+
+/* Version 86: Dählmann confirmation dialog */
+.appConfirmModal[hidden]{display:none!important}
+.appConfirmModal{position:fixed;inset:0;z-index:22000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(25,31,40,.58);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.appConfirmCard{width:min(100%,460px);background:#fff;border:1px solid #e0e5eb;border-radius:24px;padding:25px 22px 20px;box-shadow:0 24px 75px rgba(0,0,0,.24)}
+.appConfirmIcon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#fff4dc;color:#946b25;font-size:24px;font-weight:800;margin-bottom:13px}
+.appConfirmCard h2{margin:0 0 9px;color:#242b36;font-size:23px}
+.appConfirmCard p{margin:0 0 22px;color:#657080;font-size:16px;line-height:1.45}
+.appConfirmActions{display:flex;gap:10px}
+.appConfirmActions button{flex:1;min-height:48px;border-radius:14px;font-size:16px;font-weight:650}
+.appConfirmCancel{background:#eef5ef;border:1px solid #c8dfce;color:#39734c}
+.appConfirmAccept{background:#c83b35;border:1px solid #b8312c;color:#fff}
