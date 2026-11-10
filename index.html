@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#f3f5f7"><title>Dählmann – Liefernachweis</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles-v67.css"></head><body>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#f3f5f7"><title>Dählmann – Liefernachweis</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles-v69.css"></head><body>
 <header><div class="brand"><img src="logo.png" alt="Dählmann Sand · Kies · Baustoffe"></div></header>
 <main>
 <section id="welcome" class="screen active">
@@ -145,13 +145,16 @@
   <div class="wizardStep" data-wizard="5">
     <div class="panel">
       <h2>Abschluss</h2>
-      <p class="hint">Du kannst unterschreiben, direkt ein PDF ohne Unterschrift erstellen oder das Dokument zunächst nur speichern.</p>
+      <p class="hint">Hier kann der Auftraggeber oder Abholer direkt auf dem Bildschirm unterschreiben. Die Unterschrift wird anschließend auf dem PDF-Liefernachweis eingefügt.</p>
+      <div class="signatureCapturePanel">
+        <div class="signatureCaptureHeading">Unterschrift Auftraggeber / Abholer</div>
+        <button type="button" class="primary" id="openSignature">✍ Unterschrift erfassen</button>
+        <p id="signatureStatus" class="hint">Noch keine Unterschrift hinterlegt.</p>
+      </div>
       <div class="finishActions">
-        <button type="button" class="primary" id="openSignature">Unterschreiben</button>
         <button type="button" class="soft" id="savePdf">PDF erstellen</button>
         <button type="button" class="soft" id="saveDocument">Dokument speichern</button>
       </div>
-      <p id="signatureStatus" class="hint">Noch keine Unterschrift hinterlegt.</p>
     </div>
 
     <div class="draftSaveFull"><button type="button" class="draftSaveButton" id="saveDraftServices">Zwischenspeichern</button></div>
@@ -209,4 +212,18 @@
       </div>
     </div>
   </div>
-</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app-v69.js"></script></body></html>
+  <div class="pdfPreviewModal" id="pdfPreviewModal" hidden aria-hidden="true">
+    <div class="pdfPreviewBackdrop"></div>
+    <div class="pdfPreviewCard" role="dialog" aria-modal="true" aria-labelledby="pdfPreviewHeading">
+      <div class="pdfPreviewHeader">
+        <div><h2 id="pdfPreviewHeading">PDF-Vorschau</h2><p id="pdfPreviewTitle" class="hint"></p></div>
+        <button type="button" class="soft pdfPreviewClose" id="closePdfPreview">Zurück zur Bearbeitung</button>
+      </div>
+      <iframe id="pdfPreviewFrame" title="Vorschau des Liefernachweises"></iframe>
+      <div class="pdfPreviewFooter">
+        <button type="button" class="primary" id="downloadPreviewPdf">PDF speichern</button>
+        <button type="button" class="soft" id="closePdfPreviewBottom">Zurück zur Bearbeitung</button>
+      </div>
+    </div>
+  </div>
+</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app-v72.js"></script></body></html>
