@@ -1143,6 +1143,6 @@ header{padding-top:58px!important}
 
 /* Dezenter Status für die automatische Entwurfssicherung */
 .autoSaveStatus{margin:8px 0 14px;padding:7px 11px;border-radius:10px;font-size:12px;font-weight:600;color:#64748b;background:#f1f5f9;text-align:right;}
-.autoSaveStatus[data-state="saved"]{color:#34764a;background:#edf7ef;}
+.autoSaveStatus[data-state="saved"]{color:#34764a;background:transparent;padding:0;border-radius:0;}
 .autoSaveStatus[data-state="pending"]{color:#8a6728;background:#fff7df;}
 .autoSaveStatus[data-state="error"]{color:#a33d38;background:#fff0ef;}
