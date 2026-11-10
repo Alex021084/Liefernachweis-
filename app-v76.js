@@ -686,9 +686,7 @@ $('form').addEventListener('click',event=>{if(event.target.closest('button'))sch
 canvas.addEventListener('pointerup',scheduleAutoSave);
 window.addEventListener('pagehide',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
 window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
-// Beim erneuten Öffnen der App kann ein zuletzt automatisch gespeicherter Entwurf fortgesetzt werden.
-const resumableDrafts=db.reports.filter(r=>r.draft).sort((a,b)=>Number(b.id)-Number(a.id));
-if(resumableDrafts.length){const latest=resumableDrafts[0];setTimeout(()=>{if(confirm(`Ein nicht abgeschlossener Liefernachweis für „${latest.customer||'noch ohne Auftraggeber'}“ wurde gefunden. Möchtest du ihn fortsetzen?`))openDraft(latest);},250);}
+/* Legacy native resume prompt removed; current app uses its in-app draft chooser. */
   await openPdfPreview(r);
 };
 $('saveDocument').onclick=()=>{if(persistDraft())show('home')};
@@ -701,6 +699,4 @@ $('form').addEventListener('click',event=>{if(event.target.closest('button'))sch
 canvas.addEventListener('pointerup',scheduleAutoSave);
 window.addEventListener('pagehide',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
 window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
-// Beim erneuten Öffnen der App kann ein zuletzt automatisch gespeicherter Entwurf fortgesetzt werden.
-const resumableDrafts=db.reports.filter(r=>r.draft).sort((a,b)=>Number(b.id)-Number(a.id));
-if(resumableDrafts.length){const latest=resumableDrafts[0];setTimeout(()=>{if(confirm(`Ein nicht abgeschlossener Liefernachweis für „${latest.customer||'noch ohne Auftraggeber'}“ wurde gefunden. Möchtest du ihn fortsetzen?`))openDraft(latest);},250);}
+/* Legacy native resume prompt removed; current app uses its in-app draft chooser. */
