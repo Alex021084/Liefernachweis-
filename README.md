@@ -1,14 +1,5 @@
-# Dählmann Liefernachweis – Version 76
+Dählmann Liefernachweis – Version 77
 
-## Neu in Version 76
-- Automatische Zwischenspeicherung eines begonnenen Liefernachweises.
-- Speicherung nach Eingaben und Änderungen im Formular; kein manueller Klick auf „Zwischenspeichern“ erforderlich.
-- Dezenter Statushinweis mit Uhrzeit der letzten Speicherung.
-- Beim erneuten Öffnen der App wird gefragt, ob ein nicht abgeschlossener Entwurf fortgesetzt werden soll.
-- Entwürfe bleiben zusätzlich in der bisherigen Übersicht „Zwischengespeichert“ verfügbar.
+Änderung gegenüber Version 76: Die manuellen „Zwischenspeichern“-Schaltflächen wurden aus den Eingabeschritten entfernt. Die automatische Speicherung im Hintergrund bleibt aktiv.
 
-## Hinweis zur Speicherung
-Die automatische Sicherung erfolgt lokal im Browser-Speicher (localStorage) des verwendeten Geräts und Browsers. Sie ist damit auf demselben iPad in Safari verfügbar. Sie ist keine geräteübergreifende Cloud-Synchronisierung. Browserdaten sollten nicht gelöscht werden, solange Entwürfe benötigt werden.
-
-## Installation
-Den Inhalt des Ordners `kiesapp` wie bisher auf GitHub Pages veröffentlichen.
+Installation: Inhalt des Ordners kiesapp wie bisher auf GitHub Pages veröffentlichen.
