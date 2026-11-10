@@ -57,8 +57,13 @@
     <div class="materialModalCard" role="dialog" aria-modal="true" aria-labelledby="materialModalTitle">
       <h2 id="materialModalTitle">Material erfassen</h2>
       <label id="modalMaterialLabel">Material<select id="modalMaterial"><option value="">Material wählen</option></select></label>
-      <label>Menge<input id="modalQuantity" type="number" inputmode="decimal" step="any" min="0" placeholder="Menge"></label>
-      <label>Einheit<select id="modalUnit"><option value="to">Tonne (to)</option><option value="cbm">Kubikmeter (cbm)</option></select></label>
+      <label>Menge<input id="modalQuantity" type="text" inputmode="decimal" placeholder="z. B. 12,75"></label>
+      <label>Einheit<select id="modalUnit"><option value="to">Tonne (to)</option><option value="cbm">Kubikmeter (m³)</option></select></label>
+      <label class="modalDateTimeToggle"><input id="modalIncludeDateTime" type="checkbox"> Datum und Uhrzeit im Liefernachweis anzeigen</label>
+      <div id="modalDateTimeFields" class="modalDateTimeFields" hidden>
+        <label>Datum<input id="modalMaterialDate" type="date"></label>
+        <label>Uhrzeit<input id="modalMaterialTime" type="time"></label>
+      </div>
       <div class="row actions"><button type="button" class="soft" id="cancelMaterial">Abbrechen</button><button type="button" class="primary" id="confirmMaterial">Hinzufügen</button></div>
     </div>
   </div>

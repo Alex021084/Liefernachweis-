@@ -42,6 +42,10 @@ function openMaterialModal(type){
   fillSelect($('modalMaterial'),list,'Material wählen');
   $('modalQuantity').value='';
   $('modalUnit').value='to';
+  $('modalIncludeDateTime').checked=false;
+  $('modalMaterialDate').value=localDateValue();
+  $('modalMaterialTime').value=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',hour12:false});
+  $('modalDateTimeFields').hidden=true;
   $('materialModal').classList.add('open');
   $('materialModal').setAttribute('aria-hidden','false');
   if(!list.length){alert(type==='haul'?'Bitte zuerst unter Stammdaten Abfuhrmaterial anlegen.':'Bitte zuerst unter Stammdaten Liefermaterial anlegen.');closeMaterialModal();return;}
@@ -51,21 +55,28 @@ $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
 $('cancelMaterial').onclick=closeMaterialModal;
 document.querySelectorAll('[data-close-material]').forEach(el=>el.onclick=closeMaterialModal);
+$('modalIncludeDateTime').onchange=()=>{
+  $('modalDateTimeFields').hidden=!$('modalIncludeDateTime').checked;
+};
 $('confirmMaterial').onclick=()=>{
   const name=$('modalMaterial').value,qty=$('modalQuantity').value.trim(),unit=$('modalUnit').value;
   if(!name)return alert('Bitte ein Material auswählen.');
   if(!qty||parseQuantity(qty)<=0)return alert('Bitte eine gültige Menge eingeben.');
-  enteredMaterials.push({name,type:activeMaterialType,qty,unit});
+  const includeDateTime=$('modalIncludeDateTime').checked;
+  const date=$('modalMaterialDate').value,time=$('modalMaterialTime').value;
+  if(includeDateTime&&(!date||!time))return alert('Bitte Datum und Uhrzeit vollständig eingeben.');
+  enteredMaterials.push({name,type:activeMaterialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:''});
   renderMaterialSummary();closeMaterialModal();
 };
 function parseQuantity(value){let s=String(value||'').trim().replace(/\s/g,'');if(!s)return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\\./g,'').replace(',','.');else s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>0?n:0}
 function formatQuantity(n){return n.toLocaleString('de-DE',{maximumFractionDigits:3})}
-function materialTotals(){const totals=new Map();enteredMaterials.forEach(m=>{const key=[m.type,m.name,m.unit].join('||');if(!totals.has(key))totals.set(key,{...m,qty:0});totals.get(key).qty+=parseQuantity(m.qty)});return [...totals.values()].sort((a,b)=>a.type.localeCompare(b.type)||a.name.localeCompare(b.name,'de')||a.unit.localeCompare(b.unit))}
+function formatMaterialDateTime(date,time){if(!date)return '';const d=new Date(date+'T12:00:00');const weekday=['So','Mo','Di','Mi','Do','Fr','Sa'][d.getDay()];return weekday+' '+d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'})+(time?' – '+time+' Uhr':'')}
+function materialTotals(){const totals=new Map();enteredMaterials.forEach(m=>{const stamp=m.includeDateTime?[m.date||'',m.time||''].join('T'):'';const key=[m.type,m.name,m.unit,stamp].join('||');if(!totals.has(key))totals.set(key,{...m,qty:0});totals.get(key).qty+=parseQuantity(m.qty)});return [...totals.values()].sort((a,b)=>a.type.localeCompare(b.type)||a.name.localeCompare(b.name,'de')||a.unit.localeCompare(b.unit)||(a.date||'').localeCompare(b.date||'')||(a.time||'').localeCompare(b.time||''))}
 function renderMaterialSummary(){
   const el=$('materialRows');if(!el)return;
   const totals=materialTotals();
   if(!totals.length){el.innerHTML='<h3>Erfasste Materialien</h3><p class="hint">Noch keine Materialien erfasst.</p>';return;}
-  const group=(type,title,cls)=>{const rows=totals.filter(t=>t.type===type);return rows.length?`<section class="materialGroup ${cls}"><h4>${title}</h4>${rows.map(t=>`<div class="swipeMaterial" data-swipe-type="${t.type}" data-swipe-name="${esc(t.name)}" data-swipe-unit="${t.unit}"><button type="button" class="swipeDelete" aria-label="Material löschen">×</button><div class="summaryRow"><b>${esc(t.name)}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'cbm'}</span></div></div>`).join('')}</section>`:''};
+  const group=(type,title,cls)=>{const rows=totals.filter(t=>t.type===type);return rows.length?`<section class="materialGroup ${cls}"><h4>${title}</h4>${rows.map(t=>`<div class="swipeMaterial" data-swipe-type="${t.type}" data-swipe-name="${esc(t.name)}" data-swipe-unit="${t.unit}" data-swipe-stamp="${t.includeDateTime?esc([t.date||'',t.time||''].join('T')):''}"><button type="button" class="swipeDelete" aria-label="Material löschen">×</button><div class="summaryRow"><b>${esc(t.name)}${t.includeDateTime?`<small class="materialDateStamp">${esc(formatMaterialDateTime(t.date,t.time))}</small>`:''}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'m³'}</span></div></div>`).join('')}</section>`:''};
   el.innerHTML='<h3>Erfasste Materialien</h3><p class="swipeHint">Nach links wischen und zum Löschen auf das rote X tippen.</p>'+group('delivery','Material geliefert','deliveryGroup')+group('haul','Material abgefahren','haulGroup');
   el.querySelectorAll('.swipeMaterial').forEach(item=>{
     const row=item.querySelector('.summaryRow'),del=item.querySelector('.swipeDelete');
@@ -100,7 +111,7 @@ function renderMaterialSummary(){
     del.addEventListener('click',()=>{
       const type=item.dataset.swipeType,name=item.dataset.swipeName,unit=item.dataset.swipeUnit;
       if(confirm(`„${name}“ (${unit==='to'?'to':'cbm'}) wirklich aus den erfassten Materialien löschen?`)){
-        enteredMaterials=enteredMaterials.filter(m=>!(m.type===type&&m.name===name&&m.unit===unit));
+        const stamp=item.dataset.swipeStamp||'';enteredMaterials=enteredMaterials.filter(m=>!(m.type===type&&m.name===name&&m.unit===unit&&((m.includeDateTime?[m.date||'',m.time||''].join('T'):'')===stamp)));
         renderMaterialSummary();
       }
     });
@@ -204,7 +215,7 @@ $('backToMaterials').onclick=()=>setWizardStep(2);
 function renderReportSummary(){
   const r=collect(),el=$('reportSummary');if(!el)return;
   const mats=materialTotals(),delivered=mats.filter(m=>m.type!=='haul'),hauled=mats.filter(m=>m.type==='haul');
-  const block=(title,list,cls)=>list.length?`<section class="summaryBlock ${cls}"><h3>${title}</h3>${list.map(m=>`<div class="summaryLine"><b>${esc(m.name)}</b><span>${formatQuantity(m.qty)} ${m.unit==='to'?'to':'cbm'}</span></div>`).join('')}</section>`:'';
+  const block=(title,list,cls)=>list.length?`<section class="summaryBlock ${cls}"><h3>${title}</h3>${list.map(m=>`<div class="summaryLine"><b>${esc(m.name)}${m.includeDateTime?`<small class="materialDateStamp">${esc(formatMaterialDateTime(m.date,m.time))}</small>`:''}</b><span>${formatQuantity(m.qty)} ${m.unit==='to'?'to':'m³'}</span></div>`).join('')}</section>`:'';
   const services=r.services.map(s=>`<div class="summaryService"><b>${esc(s.job||'Leistung')}</b>${s.description?`<div>${esc(s.description)}</div>`:''}<small>${esc(s.hours||'—')} Std. · ${esc(s.start||'—')} bis ${esc(s.end||'—')} · Pause ${esc(s.pause||'0')} Min.</small></div>`).join('');
   el.innerHTML=`<div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div><div>Bauvorhaben: ${esc(r.project||'Kein Bauvorhaben')}</div></div>${block('Material geliefert',delivered,'deliveryGroup')}${block('Material abgefahren',hauled,'haulGroup')}${services?`<section class="summaryBlock"><h3>Zusatzleistungen</h3>${services}</section>`:'<p class="hint">Keine Zusatzleistungen erfasst.</p>'}`;
 }
@@ -384,7 +395,7 @@ async function makePdf(r){
   const materials=aggregateReportMaterials(r.materials||[]);
   const delivered=materials.filter(m=>m.type!=='haul');
   const hauled=materials.filter(m=>m.type==='haul');
-  const matRows=list=>list.map(m=>[m.name,formatQuantity(m.qty)+' '+(m.unit==='to'?'to':'cbm')]);
+  const matRows=list=>list.map(m=>[m.name+(m.includeDateTime?'\n'+formatMaterialDateTime(m.date,m.time):''),formatQuantity(m.qty)+' '+(m.unit==='to'?'to':'m³')]);
   if(delivered.length){sectionTitle('Material geliefert');drawTable(['Material','Menge'],matRows(delivered),[390,121]);}
   if(hauled.length){sectionTitle('Material abgefahren');drawTable(['Material','Menge'],matRows(hauled),[390,121]);}
   if(!delivered.length&&!hauled.length){sectionTitle('Material');draw('Keine Materialien erfasst.',M,y,9,false,C.muted);y-=22;}
