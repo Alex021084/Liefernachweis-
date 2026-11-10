@@ -637,3 +637,8 @@ header{padding-top:58px!important}
 .modalDateTimeFields[hidden]{display:none!important}
 .materialDateStamp{display:block;margin-top:3px;font-size:11px;font-weight:400;color:#7b8490}
 .summaryLine .materialDateStamp{font-size:11px}
+
+/* Version 54: Materialauswahl zuerst, Mengenfelder erst nach Auswahl */
+#materialQuantityFields[hidden]{display:none!important}
+#selectedMaterialHeading{margin:14px 0 8px;font-weight:700;color:#59636f}
+.materialDateStamp{display:block!important;margin-top:4px;font-size:11px!important;line-height:1.3;font-weight:400!important;color:#7b8490!important}
