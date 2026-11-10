@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#f3f5f7"><title>Dählmann – Liefernachweis</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles-v63.css"></head><body>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#f3f5f7"><title>Dählmann – Liefernachweis</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles-v64.css"></head><body>
 <header><div class="brand"><img src="logo.png" alt="Dählmann Sand · Kies · Baustoffe"></div></header>
 <main>
 <section id="welcome" class="screen active">
@@ -32,8 +32,10 @@
         </div>
       </label>
       <label>Auftraggeber<select id="customer"></select></label>
+      <button type="button" class="inlineAddButton" id="openQuickCustomer">＋ Kunde hinzufügen</button>
       <label>Anschrift<textarea id="address" rows="2" placeholder="Straße, PLZ Ort"></textarea></label>
       <label>Bauvorhaben (optional)<select id="project"></select></label>
+      <button type="button" class="inlineAddButton" id="openQuickProject">＋ Bauvorhaben hinzufügen</button>
       
     </div>
     <div class="draftSaveFull"><button type="button" class="draftSaveButton" id="saveDraftCustomer">Zwischenspeichern</button></div>
@@ -167,4 +169,28 @@
 <section id="deliveryMaterials" class="screen"><div class="panel"><h2>Liefermaterial verwalten</h2><label>Materialbezeichnung<input id="newDeliveryMaterial" placeholder="z. B. Sand SE gesiebt"></label><button class="primary" id="saveDeliveryMaterial">Liefermaterial speichern</button></div><div id="deliveryMaterialsList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="haulMaterials" class="screen"><div class="panel"><h2>Abfuhrmaterial verwalten</h2><label>Materialbezeichnung<input id="newHaulMaterial" placeholder="z. B. Boden, Bauschutt"></label><button class="primary" id="saveHaulMaterial">Abfuhrmaterial speichern</button></div><div id="haulMaterialsList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="services" class="screen"><div class="panel"><h2>Leistungen verwalten</h2><label>Leistungsbezeichnung<input id="newService" placeholder="z. B. Radlader, Sieben, Waschen"></label><button class="primary" id="saveService">Leistung speichern</button></div><div id="servicesList" class="stack"></div><button class="soft back">Zurück</button></section>
-</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app-v63.js"></script></body></html>
+  <div class="quickAddModal" id="quickCustomerModal" hidden aria-hidden="true">
+    <div class="quickAddBackdrop" data-close-quick-customer></div>
+    <div class="quickAddCard" role="dialog" aria-modal="true" aria-labelledby="quickCustomerTitle">
+      <h2 id="quickCustomerTitle">Kunde hinzufügen</h2>
+      <label>Kundenname<input id="quickCustomerName" type="text" placeholder="Firma / Auftraggeber" autocomplete="organization"></label>
+      <label>Anschrift<textarea id="quickCustomerAddress" rows="3" placeholder="Straße, PLZ Ort" autocomplete="street-address"></textarea></label>
+      <div class="quickAddActions">
+        <button type="button" class="soft" id="cancelQuickCustomer">Abbrechen</button>
+        <button type="button" class="primary" id="saveQuickCustomer">Kunden speichern</button>
+      </div>
+    </div>
+  </div>
+  <div class="quickAddModal" id="quickProjectModal" hidden aria-hidden="true">
+    <div class="quickAddBackdrop" data-close-quick-project></div>
+    <div class="quickAddCard" role="dialog" aria-modal="true" aria-labelledby="quickProjectTitle">
+      <h2 id="quickProjectTitle">Bauvorhaben hinzufügen</h2>
+      <p class="quickAddHint" id="quickProjectOwnerHint"></p>
+      <label>Bezeichnung des Bauvorhabens<input id="quickProjectName" type="text" placeholder="z. B. Neubau Lagerhalle"></label>
+      <div class="quickAddActions">
+        <button type="button" class="soft" id="cancelQuickProject">Abbrechen</button>
+        <button type="button" class="primary" id="saveQuickProject">Bauvorhaben speichern</button>
+      </div>
+    </div>
+  </div>
+</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app-v64.js"></script></body></html>
