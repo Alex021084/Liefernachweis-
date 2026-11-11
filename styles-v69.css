@@ -1283,3 +1283,8 @@ header{padding-top:58px!important}
 
 /* Das Kamera-Dateifeld bleibt unsichtbar; geöffnet wird es nur über „Wiegenote scannen“. */
 #weighNoteFile[hidden]{display:none!important;visibility:hidden!important;width:0!important;height:0!important;padding:0!important;margin:0!important;border:0!important;}
+
+/* Version 104: Datei-Input auf allen Browsern sicher ausblenden und Scan-Icon formatieren. */
+input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; visibility:hidden !important; position:absolute !important; width:1px !important; height:1px !important; overflow:hidden !important; clip:rect(0,0,0,0) !important; white-space:nowrap !important; }
+.scanWeighNoteButton{display:flex;align-items:center;justify-content:center;gap:10px}
+.scanButtonIcon{width:24px;height:24px;flex:0 0 24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
