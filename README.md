@@ -1,5 +1,4 @@
-Dählmann Liefernachweis – Version 77
+Dählmann Liefernachweis – Version 89
 
-Änderung gegenüber Version 76: Die manuellen „Zwischenspeichern“-Schaltflächen wurden aus den Eingabeschritten entfernt. Die automatische Speicherung im Hintergrund bleibt aktiv.
-
-Installation: Inhalt des Ordners kiesapp wie bisher auf GitHub Pages veröffentlichen.
+GitHub Pages: Dateien in das Hauptverzeichnis hochladen.
+Entwurfsauswahl nur beim App-Start; letzte Aktualisierung sichtbar; Schließen unten; alte JS-Versionen entfernt.
