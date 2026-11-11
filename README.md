@@ -1,4 +1,4 @@
-Dählmann Liefernachweis – Version 93
+Dählmann Liefernachweis – Version 94
 
 Diese Version basiert auf der bereitgestellten Version 87.
 - Entwurfsauswahl nur beim initialen Laden der App, nicht beim PDF-Erstellen oder pageshow.
@@ -10,4 +10,4 @@ Diese Version basiert auf der bereitgestellten Version 87.
 GitHub: Dateien aus dem ZIP ins Projekt-Hauptverzeichnis kopieren/ersetzen.
 
 
-Version 93: Fehler behoben, durch den ein nicht mehr vorhandener Schließen-Button einen JavaScript-Abbruch ausgelöst hat. Dadurch konnten Entwurfsauswahl und Löschbestätigung nicht initialisiert werden.
+Version 94: Fehler behoben, durch den ein nicht mehr vorhandener Schließen-Button einen JavaScript-Abbruch ausgelöst hat. Dadurch konnten Entwurfsauswahl und Löschbestätigung nicht initialisiert werden.
