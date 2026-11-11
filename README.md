@@ -1,7 +1,5 @@
-# Dählmann Liefernachweis – Version 97
+# Dählmann Liefernachweis – Version 98
 
-- Start-Entwurfsauswahl öffnet den gewählten Entwurf direkt und synchron im Formular.
-- Entwurfseinträge in der Archivliste zeigen nun sowohl „Angelegt“ als auch „Zuletzt bearbeitet“ mit Datum und Uhrzeit.
-- Die übrigen Funktionen aus Version 96 bleiben erhalten.
+Beim Fortsetzen eines Entwurfs über die Startabfrage oder über „Zwischengespeichert“ wird direkt das Formular im Schritt 2 „Material und Mengen“ geöffnet. Die vorhandenen Entwurfsdaten werden übernommen. Die Anzeige von Anlegezeit und letzter Bearbeitung bleibt erhalten.
 
-`index.html` lädt `app-v97.js`. Beide Dateien gemeinsam hochladen.
+`index.html` lädt `app-v98.js`. Beide Dateien gemeinsam hochladen.
