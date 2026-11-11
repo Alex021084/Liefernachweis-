@@ -1,4 +1,4 @@
-# Dählmann Liefernachweis – Version 105
+# Dählmann Liefernachweis – Version 106
 
 Kleine Darstellungs-Korrektur:
 - Das interne Kamera-/Datei-Eingabefeld `weighNoteFile` wird mit einer CSS-Regel ausdrücklich verborgen.
