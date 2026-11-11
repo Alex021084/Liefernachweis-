@@ -1,13 +1,9 @@
-Dählmann Liefernachweis – Version 95
+# Dählmann Liefernachweis – Version 96
 
-Diese Version basiert auf der bereitgestellten Version 87.
-- Entwurfsauswahl nur beim initialen Laden der App, nicht beim PDF-Erstellen oder pageshow.
-- Aktualisierungsdatum und Uhrzeit werden beim Autospeichern gespeichert und in der Entwurfsauswahl angezeigt.
-- Grüner Icon-Kreis und X-Schließen im Entwurfs-Popup entfernt; unten steht Schließen.
-- Löschen im Archiv verwendet den App-eigenen Bestätigungsdialog.
-- index.html lädt app-v92.js.
+Änderungen:
+- Entwürfe aus der Startabfrage werden nach dem Schließen des Dialogs zuverlässig im Formular geöffnet.
+- „Weiterbearbeiten“ in der Liste der zwischengespeicherten Liefernachweise öffnet den Entwurf direkt im Formular.
+- Zwischengespeicherte Liefernachweise zeigen zusätzlich Datum und Uhrzeit der letzten Speicherung.
+- Materiallieferung und Materialabfuhr bleiben getrennte Materialarten; die Zeitstempel-Regel aus Version 95 bleibt erhalten.
 
-GitHub: Dateien aus dem ZIP ins Projekt-Hauptverzeichnis kopieren/ersetzen.
-
-
-Version 95: Fehler behoben, durch den ein nicht mehr vorhandener Schließen-Button einen JavaScript-Abbruch ausgelöst hat. Dadurch konnten Entwurfsauswahl und Löschbestätigung nicht initialisiert werden.
+Bitte alle Dateien gemeinsam hochladen. `index.html` lädt `app-v96.js`.
