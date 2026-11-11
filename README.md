@@ -1,9 +1,7 @@
-# Dählmann Liefernachweis – Version 96
+# Dählmann Liefernachweis – Version 97
 
-Änderungen:
-- Entwürfe aus der Startabfrage werden nach dem Schließen des Dialogs zuverlässig im Formular geöffnet.
-- „Weiterbearbeiten“ in der Liste der zwischengespeicherten Liefernachweise öffnet den Entwurf direkt im Formular.
-- Zwischengespeicherte Liefernachweise zeigen zusätzlich Datum und Uhrzeit der letzten Speicherung.
-- Materiallieferung und Materialabfuhr bleiben getrennte Materialarten; die Zeitstempel-Regel aus Version 95 bleibt erhalten.
+- Start-Entwurfsauswahl öffnet den gewählten Entwurf direkt und synchron im Formular.
+- Entwurfseinträge in der Archivliste zeigen nun sowohl „Angelegt“ als auch „Zuletzt bearbeitet“ mit Datum und Uhrzeit.
+- Die übrigen Funktionen aus Version 96 bleiben erhalten.
 
-Bitte alle Dateien gemeinsam hochladen. `index.html` lädt `app-v96.js`.
+`index.html` lädt `app-v97.js`. Beide Dateien gemeinsam hochladen.
