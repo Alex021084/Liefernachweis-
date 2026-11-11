@@ -1280,3 +1280,6 @@ header{padding-top:58px!important}
 .weighScanActions button{flex:1;min-height:46px}
 .swipeMaterial .summaryRow .materialVehicle{display:block;margin-top:3px;color:#687482;font-size:12px;font-weight:500}
 @media(max-width:420px){.weighScanCard{padding:17px}.weighScanActions{flex-direction:column}}
+
+/* Das Kamera-Dateifeld bleibt unsichtbar; geöffnet wird es nur über „Wiegenote scannen“. */
+#weighNoteFile[hidden]{display:none!important;visibility:hidden!important;width:0!important;height:0!important;padding:0!important;margin:0!important;border:0!important;}
