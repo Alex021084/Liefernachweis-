@@ -1262,3 +1262,5 @@ header{padding-top:58px!important}
 .appConfirmActions button{flex:1;min-height:48px;border-radius:14px;font-size:16px;font-weight:650}
 .appConfirmCancel{background:#eef5ef;border:1px solid #c8dfce;color:#39734c}
 .appConfirmAccept{background:#c83b35;border:1px solid #b8312c;color:#fff}
+
+.resumeDraftIcon{display:none!important}.resumeDraftModal[hidden],.appConfirmModal[hidden]{display:none!important}

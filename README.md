@@ -1,10 +1,10 @@
-Dählmann Liefernachweis – Version 90
+Dählmann Liefernachweis – Version 92
 
-Änderungen:
-- Entwurfsauswahl erscheint einmalig beim Laden der App, sofern offene Entwürfe vorhanden sind.
-- Keine Entwurfsauswahl beim Öffnen/Erstellen einer PDF oder bei normalem Seitenwechsel.
-- Löschbutton ist explizit mit dem app-internen Bestätigungsdialog verdrahtet.
-- Alte JavaScript-Versionen entfernt; index.html lädt app-v90.js.
+Diese Version basiert auf der bereitgestellten Version 87.
+- Entwurfsauswahl nur beim initialen Laden der App, nicht beim PDF-Erstellen oder pageshow.
+- Aktualisierungsdatum und Uhrzeit werden beim Autospeichern gespeichert und in der Entwurfsauswahl angezeigt.
+- Grüner Icon-Kreis und X-Schließen im Entwurfs-Popup entfernt; unten steht Schließen.
+- Löschen im Archiv verwendet den App-eigenen Bestätigungsdialog.
+- index.html lädt app-v92.js.
 
-GitHub Pages: Dateien in das Hauptverzeichnis hochladen und vorhandene Dateien ersetzen.
-Die alten app-vXX.js-Dateien im Repository bitte zusätzlich löschen, da GitHub beim Hochladen keine nicht mehr enthaltenen Dateien entfernt.
+GitHub: Dateien aus dem ZIP ins Projekt-Hauptverzeichnis kopieren/ersetzen.
