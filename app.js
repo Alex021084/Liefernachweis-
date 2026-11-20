@@ -60,8 +60,6 @@ let enteredMaterials=[];
 let currentDraftId=null;
 let autoSaveTimer=null;
 let autoSaveBusy=false;
-// Signatur-Canvas früh initialisieren, bevor Entwürfe oder UI-Callbacks darauf zugreifen.
-const canvas=$('signature'),ctx=canvas.getContext('2d');let drawing=false,ink=false,signatureSaved=false;
 function setAutoSaveStatus(message,kind='saved'){const el=$('autoSaveStatus');if(!el)return;el.textContent=message;el.dataset.state=kind;}
 function autoSaveDraft(){
   if(autoSaveBusy||!$('form').classList.contains('active')||!$('pdfPreviewModal').hidden)return;
@@ -328,7 +326,7 @@ function updateDateDisplay(){const value=$('date').value;const button=$('dateDis
 $('date').addEventListener('change',updateDateDisplay);
 $('dateDisplay').addEventListener('click',()=>{const input=$('date');if(typeof input.showPicker==='function'){try{input.showPicker();return;}catch(e){}}input.click();});
 let wizardStep=1;
-function setWizardStep(step){wizardStep=step;document.querySelectorAll('.wizardStep').forEach(el=>el.classList.toggle('active',Number(el.dataset.wizard)===step));if($('wizardProgress'))$('wizardProgress').textContent=['','Schritt 1 von 4 · Auftraggeber','Schritt 2 von 4 · Material','Schritt 3 von 4 · Zusatzleistungen','Schritt 4 von 4 · Zusammenfassung'][step];window.scrollTo(0,0);}
+function setWizardStep(step){wizardStep=step;document.querySelectorAll('.wizardStep').forEach(el=>el.classList.toggle('active',Number(el.dataset.wizard)===step));if($('wizardProgress'))$('wizardProgress').textContent=['','Schritt 1 von 5 · Auftraggeber','Schritt 2 von 5 · Material','Schritt 3 von 5 · Zusatzleistungen','Schritt 4 von 5 · Zusammenfassung','Schritt 5 von 5 · Abschluss'][step];window.scrollTo(0,0);}
 $('toMaterials').onclick=()=>{if(!$('customer').value)return alert('Bitte zuerst einen Auftraggeber auswählen.');setWizardStep(2)};
 $('backToCustomer').onclick=()=>setWizardStep(1);
 $('toServices').onclick=()=>setWizardStep(3);
@@ -340,25 +338,10 @@ function renderReportSummary(){
   const services=r.services.map(s=>`<div class="summaryService"><b>${esc(s.job||'Leistung')}</b>${s.description?`<div>${esc(s.description)}</div>`:''}<small>${esc(s.hours||'—')} Std. · ${esc(s.start||'—')} bis ${esc(s.end||'—')} · Pause ${esc(s.pause||'0')} Min.</small></div>`).join('');
   el.innerHTML=`<div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div><div>Bauvorhaben: ${esc(r.project||'Kein Bauvorhaben')}</div></div>${block('Material geliefert',delivered,'deliveryGroup')}${block('Material ab Grube/Lager',stock,'deliveryGroup')}${block('Material abgefahren',hauled,'haulGroup')}${services?`<section class="summaryBlock"><h3>Zusatzleistungen</h3>${services}</section>`:'<p class="hint">Keine Zusatzleistungen erfasst.</p>'}`;
 }
-function updateSummarySignatureState(){
-  const status=$('signatureStatus'),button=$('openSignature');
-  if(!status||!button)return;
-  if(signatureSaved){
-    status.textContent='✓ Unterschrift übernommen'+($('signer').value.trim()?' · '+$('signer').value.trim():'');
-    status.classList.add('signed');
-    button.textContent='✓ Unterschrift erledigt';
-    button.classList.add('signatureDone');
-  }else{
-    status.textContent='× Noch nicht unterschrieben';
-    status.classList.remove('signed');
-    button.textContent='✍ Unterschreiben';
-    button.classList.remove('signatureDone');
-  }
-}
-$('toSummary').onclick=()=>{renderReportSummary();updateSummarySignatureState();setWizardStep(4)};
-$('summaryBackButton').onclick=()=>setWizardStep(3);
-$('summaryHomeButton').onclick=()=>{try{autoSaveDraft();}finally{show('welcome');}};
+$('toSummary').onclick=()=>{renderReportSummary();setWizardStep(4)};
 $('backToServices').onclick=()=>setWizardStep(3);
+$('toFinish').onclick=()=>setWizardStep(5);
+$('backToSummary').onclick=()=>{renderReportSummary();setWizardStep(4)};
 
 $('formHomeButton').addEventListener('click',()=>{try{autoSaveDraft();}finally{show('welcome');}});
 function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';fillSelect($('project'),[],'Bauvorhaben wählen');enteredMaterials=[];$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
@@ -416,11 +399,11 @@ $('saveQuickProject').onclick=()=>{
 if($('newBtn'))$('newBtn').onclick=fresh;if($('cancel'))$('cancel').onclick=()=>show('home');
 const serviceModal=$('serviceModal');serviceModal.hidden=true;serviceModal.classList.remove('open');
 const signatureModal=$('signatureModal'); signatureModal.hidden=true; signatureModal.classList.remove('open');
-function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='Noch keine Unterschrift hinterlegt.';$('openSignature').classList.remove('signatureDone');$('openSignature').textContent='Unterschreiben'} $('clearSig').onclick=clearSig;
+const canvas=$('signature'),ctx=canvas.getContext('2d');let drawing=false,ink=false,signatureSaved=false;function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='Noch keine Unterschrift hinterlegt.';$('openSignature').classList.remove('signatureDone');$('openSignature').textContent='Unterschreiben'} $('clearSig').onclick=clearSig;
 function openSignature(){ const modal=$('signatureModal'); modal.hidden=false; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
 function closeSignature(){ const modal=$('signatureModal'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); modal.hidden=true; }
 $('openSignature').onclick=openSignature;$('cancelSignature').onclick=closeSignature;document.querySelectorAll('[data-close-signature]').forEach(el=>el.onclick=closeSignature);
-$('confirmSignature').onclick=()=>{if(!ink)return alert('Bitte zuerst unterschreiben.');signatureSaved=true;updateSummarySignatureState();closeSignature();};
+$('confirmSignature').onclick=()=>{if(!ink)return alert('Bitte zuerst unterschreiben.');signatureSaved=true;$('signatureStatus').textContent='Unterschrift übernommen'+($('signer').value.trim()?' · '+$('signer').value.trim():'')+'.';$('openSignature').classList.add('signatureDone');$('openSignature').textContent='✓ Unterschrift erledigt';closeSignature();};
 function collect(){return {id:currentDraftId||Date.now(),date:$('date').value,customer:$('customer').value,address:$('address').value,project:$('project').value||'',materials:enteredMaterials.map(m=>({...m})),services:[...$('serviceRows').querySelectorAll('.entry')].map(d=>({job:d.querySelector('.servicePickButton')?.dataset.value||'',description:d.querySelector('.descriptionv').value,hours:d.querySelector('.hoursv').value,start:d.querySelector('.startv').value,end:d.querySelector('.endv').value,pause:d.querySelector('.pausev').value})).filter(x=>Object.values(x).some(Boolean)),signature:signatureSaved&&ink?canvas.toDataURL('image/png'):null,signer:signatureSaved?$('signer').value:''}}
 
 function persistDraft(){
@@ -836,6 +819,7 @@ $('savePdf').onclick=async()=>{
   const i=db.reports.findIndex(x=>String(x.id)===String(r.id));
   if(i>=0)db.reports[i]=r;else db.reports.push(r);
   save();currentDraftId=r.id;renderArchive();
+setTimeout(showResumeDraftModal, 350);
 
 // Automatische Entwurfssicherung: Änderungen im Formular werden nach kurzer Pause lokal gespeichert.
 $('form').addEventListener('input',scheduleAutoSave,true);
