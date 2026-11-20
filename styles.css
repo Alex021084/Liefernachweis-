@@ -1714,21 +1714,22 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
 .summaryBottomNav button{min-height:54px;border:1px solid #bddcc6;border-radius:14px;background:#edf7f0;color:#326b45;font-size:16px;font-weight:750}
 
 
-/* Version 137: Zurück-Button nochmals um 50 Prozent verkleinert */
+/* Version 138: kompakte, textbreite Zurück-Kachel mit etwas größerer Schrift */
 #master .masterBackButton{
-  display:block!important;
-  width:50%!important;
-  height:28px!important;
-  min-height:28px!important;
+  display:inline-flex!important;
+  width:auto!important;
+  min-width:0!important;
+  height:34px!important;
+  min-height:34px!important;
   margin:22px 0 0!important;
-  padding:4px 9px!important;
+  padding:6px 16px!important;
   box-sizing:border-box!important;
   border:1px solid #edcf75!important;
-  border-radius:9px!important;
+  border-radius:11px!important;
   background:linear-gradient(110deg,#e8b34f,#f3d06d)!important;
   color:#171717!important;
   font-family:inherit!important;
-  font-size:14px!important;
+  font-size:17px!important;
   font-weight:750!important;
   line-height:1!important;
   text-align:center!important;
