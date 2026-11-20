@@ -889,49 +889,67 @@ window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSa
   // Die gedruckten Felder werden gezielt anhand ihrer Beschriftung erkannt.
   const parseTicket=text=>{
     const lines=String(text||'').split(/\r?\n/).map(x=>x.replace(/[|]/g,'I').replace(/\s+/g,' ').trim()).filter(Boolean);
+    const all=lines.join(' ');
     const clean=s=>String(s||'').replace(/^[\s:;|.,-]+|[\s:;|.,-]+$/g,'').replace(/\s+/g,' ').trim();
-    const labelIndex=label=>lines.findIndex(l=>new RegExp(label,'i').test(l));
-    const around=(label,pattern)=>{
-      const i=labelIndex(label);
+    const findLabel=label=>lines.findIndex(l=>new RegExp(label,'i').test(l));
+    const valueNear=(label,pattern)=>{
+      const i=findLabel(label);
+      if(i<0)return '';
       const candidates=[];
-      if(i>=0){
-        const line=lines[i], re=new RegExp(label,'i'), m=re.exec(line);
-        if(m){
-          candidates.push(clean(line.slice(m.index+m[0].length)));
-          candidates.push(clean(line.slice(0,m.index)));
-        }
-        for(let d=1;d<=2;d++){
-          if(lines[i-d])candidates.push(clean(lines[i-d]));
-          if(lines[i+d])candidates.push(clean(lines[i+d]));
-        }
+      const line=lines[i], re=new RegExp(label,'i'), m=re.exec(line);
+      if(m){
+        candidates.push(clean(line.slice(0,m.index)));
+        candidates.push(clean(line.slice(m.index+m[0].length)));
       }
-      for(const c of candidates){const hit=c.match(pattern);if(hit)return hit[0];}
+      // Ticketdruck: Werte stehen oberhalb der kleinen Feldbeschriftung,
+      // aber nie einfach einen beliebigen Nachbarwert übernehmen.
+      for(let d=1;d<=2;d++) if(lines[i-d]) candidates.push(clean(lines[i-d]));
+      for(const c of candidates){
+        const hit=c.match(pattern);
+        if(hit)return hit[0];
+      }
       return '';
     };
-    const all=lines.join('\n');
-    const bon=around('Bon\\s*[-.]?\\s*Nr\\.?',/\b\d{3,7}\b/) ||
+    const bon=valueNear('Bon\\s*[-.]?\\s*Nr\\.?',/\b\d{3,7}\b/) ||
       (all.match(/\bBon\s*[-.]?\s*Nr\.?\s*[:#]?\s*(\d{3,7})\b/i)||[])[1]||'';
-    const weightRaw=around('Gewicht',/\b\d{1,3}\s*[,.]\s*\d{1,3}\s*t?\b/i) ||
-      (all.match(/\b(\d{1,3}\s*[,.]\s*\d{1,3})\s*t?\s*(?:Gewicht)?\b/i)||[])[1]||'';
+    const weightRaw=valueNear('Gewicht',/\b\d{1,3}\s*[,.]\s*\d{1,3}\s*t?\b/i) ||
+      (all.match(/\b(\d{1,3}\s*[,.]\s*\d{1,3})\s*t\b/i)||[])[1]||'';
     const weight=(weightRaw.match(/\d{1,3}\s*[,.]\s*\d{1,3}/)||[])[0]?.replace(/\s/g,'').replace(',', '.')||'';
-    let customer=around('Kunde',/[A-ZÄÖÜ][A-Za-zÄÖÜäöüß.& -]{4,}/);
-    if(!customer && /Dählmann\s+Erdbau\s+GmbH/i.test(all)) customer=(all.match(/Dählmann\s+Erdbau\s+GmbH/i)||[])[0];
+    // Kundenfeld nur mit einem plausiblen Firmennamen befüllen.
+    let customer='';
+    const knownCustomer=all.match(/D[äa]hlmann\s+Erdbau\s+GmbH/i);
+    if(knownCustomer)customer=knownCustomer[0].replace(/^Dahlmann/i,'Dählmann');
+    else {
+      const c=valueNear('Kunde',/[A-ZÄÖÜ][A-Za-zÄÖÜäöüß.&-]{2,}(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß.&-]{2,}){1,4}/);
+      if(c && !/Schaufeln|Gewicht|Material|Baustelle|Fahrzeug/i.test(c))customer=c;
+    }
+    // Material nur übernehmen, wenn die Erkennung echte, plausible Materialwörter liefert.
     let material='';
-    const mi=labelIndex('Material');
+    const materialCandidates=[];
+    const mi=findLabel('Material');
     if(mi>=0){
-      const before=[lines[mi-2],lines[mi-1]].filter(Boolean).map(clean).filter(s=>s&&!/^(?:Material|Baustelle|Fahrzeug|Datum|Uhrzeit|Kunde|Gewicht|Bon)/i.test(s));
+      for(let d=1;d<=3;d++) if(lines[mi-d])materialCandidates.push(clean(lines[mi-d]));
       const same=clean(lines[mi].replace(/Material/i,''));
-      material=[...before,same].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+      if(same)materialCandidates.push(same);
     }
-    if(!material){
-      const m=all.match(/(Schottertragschicht[\s\S]{0,45}?)(?=Baustelle|Fahrzeug|Datum|Uhrzeit|$)/i);
-      if(m)material=clean(m[1]);
+    materialCandidates.push((all.match(/Schottertragschicht(?:\s+[A-Za-z0-9+./-]+){0,5}/i)||[])[0]||'');
+    for(const candidate of materialCandidates){
+      const c=clean(candidate);
+      if(c && /[A-Za-zÄÖÜäöüß]{4}/.test(c) &&
+         !/^(Schaufeln|Kunde|Baustelle|Fahrzeug|Datum|Uhrzeit|Gewicht|Material)$/i.test(c) &&
+         !/^[,;:=\\|\\\/\sXo¥]+$/.test(c) &&
+         !/Schaufeln|D[äa]hlmann|Baustelle|Fahrzeug/i.test(c)){
+        // Avoid accepting OCR punctuation noise or long symbol sequences.
+        const letters=(c.match(/[A-Za-zÄÖÜäöüß]/g)||[]).length;
+        const symbols=(c.match(/[^A-Za-zÄÖÜäöüß0-9 +./-]/g)||[]).length;
+        if(letters>=5 && symbols<=2){material=c;break;}
+      }
     }
-    // Nur gedruckte Kennzeichen übernehmen; Baustellenfeld (oft handschriftlich) bleibt leer.
+    // Baustellenfeld wird absichtlich ignoriert (dort steht häufig Handschrift).
     const vehicle=(all.match(/\bROW[\s-]*[A-Z]{1,3}[\s-]*\d{1,4}\b/i)||[])[0]?.replace(/\s+/g,' ').toUpperCase()||'';
-    let date=around('Datum',/\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b/) ||
+    let date=valueNear('Datum',/\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b/) ||
       (all.match(/\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b/)||[])[0]||'';
-    let time=around('Uhrzeit',/\b\d{1,2}[:.]\d{2}\b/) ||
+    let time=valueNear('Uhrzeit',/\b\d{1,2}[:.]\d{2}\b/) ||
       (all.match(/\b\d{1,2}[:.]\d{2}\b/)||[])[0]||'';
     const dm=date.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})$/);
     if(dm){const year=dm[3].length===2?'20'+dm[3]:dm[3];date=year+'-'+dm[2].padStart(2,'0')+'-'+dm[1].padStart(2,'0');}
