@@ -63,3 +63,16 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Die gespeicherten Liefernachweise werden wieder regulär über die Archivansicht gerendert.
 - Die Startseiten-Kachel erscheint ausschließlich in der Archivansicht, kompakt linksbündig, gelb mit schwarzer Schrift.
 - CSS- und JavaScript-Cache-Version auf 116 angehoben, damit Safari die aktualisierten Dateien lädt.
+
+
+## Version 117 – Fehler beim Starten eines neuen Liefernachweises behoben
+- Der alte Event-Handler für den entfernten `newBtn` wurde abgesichert. Das fehlende Element hatte zuvor einen JavaScript-Fehler ausgelöst und die restliche App-Initialisierung abgebrochen.
+- Dadurch werden Formularinitialisierung, Archivdarstellung und weitere Event-Handler wieder ausgeführt.
+- Startseiten-Kachel in der Archivansicht bleibt kompakt, gelb und linksbündig.
+
+
+## Version 118 – Start-Button mit zusätzlicher Ereignisbehandlung
+- Ein zusätzlicher Klick-Handler wird nach dem App-Skript im Capture-Modus registriert.
+- Der Handler ruft die bestehende Formular-Startfunktion direkt auf und verhindert, dass ein veralteter Button-Handler den Klick verschluckt.
+- Falls die Formularinitialisierung weiterhin fehlschlägt, wird die konkrete Fehlermeldung angezeigt statt dass scheinbar nichts passiert.
+- JavaScript-Syntax mit Node geprüft.

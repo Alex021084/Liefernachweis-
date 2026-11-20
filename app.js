@@ -395,7 +395,7 @@ $('saveQuickProject').onclick=()=>{
   closeQuickModal('quickProjectModal');
 };
 
-$('newBtn').onclick=fresh;$('cancel').onclick=()=>show('home');
+if($('newBtn'))$('newBtn').onclick=fresh;$('cancel').onclick=()=>show('home');
 const serviceModal=$('serviceModal');serviceModal.hidden=true;serviceModal.classList.remove('open');
 const signatureModal=$('signatureModal'); signatureModal.hidden=true; signatureModal.classList.remove('open');
 const canvas=$('signature'),ctx=canvas.getContext('2d');let drawing=false,ink=false,signatureSaved=false;function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='Noch keine Unterschrift hinterlegt.';$('openSignature').classList.remove('signatureDone');$('openSignature').textContent='Unterschreiben'} $('clearSig').onclick=clearSig;
@@ -881,3 +881,5 @@ function openStartupDraftChooser(){
 if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",()=>window.setTimeout(openStartupDraftChooser,500),{once:true}); else window.setTimeout(openStartupDraftChooser,500);
 
 // Version 98: reliable draft opening and date/time in saved-draft archive.\n
+// Version 118: public entry point for the create-delivery action.
+window.startNewDelivery = function(){ return fresh(); };
