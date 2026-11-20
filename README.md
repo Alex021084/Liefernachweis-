@@ -151,3 +151,8 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Nur darunter wurde der Abschlussbereich ergänzt: Unterschrift Auftraggeber, Statusmeldung, Unterschreiben/Unterschrift erledigt, PDF erstellen, Dokument speichern.
 - Startseite und Zurück stehen unten nebeneinander.
 - Der separate Abschluss-Schritt wurde in den Zusammenfassungsschritt integriert.
+
+## Version 133 – Fehlerbehebung beim Öffnen gespeicherter Entwürfe
+- Initialisierung des Signatur-Canvas und seines Zeichenkontexts (`ctx`) nach vorne verschoben.
+- Dadurch ist der Zeichenkontext initialisiert, bevor Funktionen zum Wiederherstellen eines Entwurfs ihn verwenden.
+- Die Layout- und Zusammenfassungsänderungen aus Version 132 bleiben unverändert.

@@ -60,6 +60,8 @@ let enteredMaterials=[];
 let currentDraftId=null;
 let autoSaveTimer=null;
 let autoSaveBusy=false;
+// Signatur-Canvas früh initialisieren, bevor Entwürfe oder UI-Callbacks darauf zugreifen.
+const canvas=$('signature'),ctx=canvas.getContext('2d');let drawing=false,ink=false,signatureSaved=false;
 function setAutoSaveStatus(message,kind='saved'){const el=$('autoSaveStatus');if(!el)return;el.textContent=message;el.dataset.state=kind;}
 function autoSaveDraft(){
   if(autoSaveBusy||!$('form').classList.contains('active')||!$('pdfPreviewModal').hidden)return;
@@ -414,7 +416,7 @@ $('saveQuickProject').onclick=()=>{
 if($('newBtn'))$('newBtn').onclick=fresh;if($('cancel'))$('cancel').onclick=()=>show('home');
 const serviceModal=$('serviceModal');serviceModal.hidden=true;serviceModal.classList.remove('open');
 const signatureModal=$('signatureModal'); signatureModal.hidden=true; signatureModal.classList.remove('open');
-const canvas=$('signature'),ctx=canvas.getContext('2d');let drawing=false,ink=false,signatureSaved=false;function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='Noch keine Unterschrift hinterlegt.';$('openSignature').classList.remove('signatureDone');$('openSignature').textContent='Unterschreiben'} $('clearSig').onclick=clearSig;
+function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='Noch keine Unterschrift hinterlegt.';$('openSignature').classList.remove('signatureDone');$('openSignature').textContent='Unterschreiben'} $('clearSig').onclick=clearSig;
 function openSignature(){ const modal=$('signatureModal'); modal.hidden=false; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
 function closeSignature(){ const modal=$('signatureModal'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); modal.hidden=true; }
 $('openSignature').onclick=openSignature;$('cancelSignature').onclick=closeSignature;document.querySelectorAll('[data-close-signature]').forEach(el=>el.onclick=closeSignature);
