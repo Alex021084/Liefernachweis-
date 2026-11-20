@@ -88,3 +88,8 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 ## Version 120 – zweizeiliger Speicherhinweis
 - Der Autospeicher-Hinweis steht jetzt oberhalb des Startseiten-Buttons und wird durch eine begrenzte Breite auf zwei Zeilen umbrochen.
 - Die Startseiten-Kachel sitzt darunter; die übrige Formularnavigation bleibt unverändert.
+
+
+## Version 121 – Speicherstatus auf zwei Zeilen
+- Der rechte Autospeicher-/Entwurfshinweis ist auf eine feste schmalere Breite gesetzt, damit auch kurze Statusmeldungen zweizeilig umbrechen.
+- Der Startseiten-Button bleibt links darunter und wird durch die zusätzliche Zeilenhöhe nach unten versetzt.
