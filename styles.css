@@ -1697,23 +1697,9 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
 }
 
 
-/* Version 131 – Zusammenfassung im Stil der gewünschten Abschlussansicht */
-.summaryPagePanel{padding:16px!important}
-#reportSummary{display:grid;gap:12px}
-#reportSummary .summaryMeta{background:#f7f9fb;border:1px solid #dce3e9;border-radius:14px;padding:14px;line-height:1.55;color:#59636f}
-#reportSummary .summaryMeta b{display:block;color:#202833;font-size:17px;margin-bottom:3px}
-.summaryReviewCard{position:relative;background:#fff;border:1px solid #dce1e5;border-radius:15px;padding:16px 48px 16px 16px;min-height:105px}
-.summaryReviewCard h3{margin:0 0 12px;font-size:17px;color:#202833}
-.summaryEditButton{position:absolute;right:12px;top:12px;width:40px;height:40px;border:1px solid #d3e0e8;border-radius:12px;background:#f4f8fb;color:#355a78;font-size:20px;line-height:1}
-.summaryWorkList{margin:0;padding-left:20px;line-height:1.55;color:#303946}
-.summaryWorkList li{padding:1px 0 4px}
-.summaryWorkList small{display:block;color:#68727e;margin-top:2px}
-.summaryReviewCard .summaryLine{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid #e3e8ec;color:#202833}
-.summaryReviewCard .summaryLine:first-of-type{border-top:0}
-.summaryReviewCard .summaryLine b{font-weight:600}
-.summaryReviewCard .summaryLine span{white-space:nowrap}
-.summaryEmpty{margin:0;color:#68727e}
-.summarySignatureSection{margin-top:16px;padding:16px;border:1px solid #dce1e5;border-radius:14px;background:#fff}
+/* Version 132 – ursprüngliche Material-Zusammenfassung bleibt; nur Abschlussbereich angepasst */
+.summarySignaturePanel{padding:16px!important}
+.summarySignatureSection{padding:16px;border:1px solid #dce1e5;border-radius:14px;background:#fff}
 .summarySignatureSection h3{font-size:17px;margin:0 0 10px;color:#202833}
 .summarySignatureSection p{margin:0;color:#68727e;line-height:1.5}
 .signatureStatusNotice{margin-top:14px;padding:14px 12px;text-align:center;border:1px solid #e5bcbc;border-radius:13px;background:#fff7f7;color:#9b3030;font-weight:750}

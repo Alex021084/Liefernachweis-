@@ -334,40 +334,30 @@ $('backToMaterials').onclick=()=>setWizardStep(2);
 function renderReportSummary(){
   const r=collect(),el=$('reportSummary');if(!el)return;
   const mats=materialTotals(),delivered=mats.filter(m=>m.type==='delivery'),stock=mats.filter(m=>m.type==='stock'),hauled=mats.filter(m=>m.type==='haul');
-  const allMaterials=[...delivered,...stock,...hauled];
-  const materialLines=allMaterials.map(m=>`<div class="summaryLine"><b>${esc(m.name)}${m.includeDateTime?`<small class="materialDateStamp">${esc(formatMaterialDateTime(m.date,m.time))}</small>`:''}</b><span>${formatQuantity(m.qty)} ${m.unit==='to'?'to':'m³'}</span></div>`).join('');
-  const services=r.services.map(s=>`<li><b>${esc(s.job||'Leistung')}</b>${s.description?` – ${esc(s.description)}`:''}<small>${esc(s.hours||'—')} Std. · ${esc(s.start||'—')} bis ${esc(s.end||'—')} · Pause ${esc(s.pause||'0')} Min.</small></li>`).join('');
-  el.innerHTML=`
-    <div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div><div>Bauvorhaben: ${esc(r.project||'Kein Bauvorhaben')}</div></div>
-    <section class="summaryReviewCard">
-      <h3>Ausgeführte Arbeiten</h3>
-      <button type="button" class="summaryEditButton" data-summary-edit="services" aria-label="Ausgeführte Arbeiten bearbeiten">✎</button>
-      ${services?`<ul class="summaryWorkList">${services}</ul>`:'<p class="summaryEmpty">Keine Angaben.</p>'}
-    </section>
-    <section class="summaryReviewCard">
-      <h3>Material / sonstige Leistungen</h3>
-      <button type="button" class="summaryEditButton" data-summary-edit="materials" aria-label="Material und sonstige Leistungen bearbeiten">✎</button>
-      ${materialLines||'<p class="summaryEmpty">Keine Angaben.</p>'}
-    </section>`;
-  el.querySelectorAll('[data-summary-edit]').forEach(button=>button.addEventListener('click',()=>{
-    setWizardStep(button.dataset.summaryEdit==='services'?3:2);
-  }));
-  const status=$('signatureStatus'),signButton=$('openSignature');
+  const block=(title,list,cls)=>list.length?`<section class="summaryBlock ${cls}"><h3>${title}</h3>${list.map(m=>`<div class="summaryLine"><b>${esc(m.name)}${m.includeDateTime?`<small class="materialDateStamp">${esc(formatMaterialDateTime(m.date,m.time))}</small>`:''}</b><span>${formatQuantity(m.qty)} ${m.unit==='to'?'to':'m³'}</span></div>`).join('')}</section>`:'';
+  const services=r.services.map(s=>`<div class="summaryService"><b>${esc(s.job||'Leistung')}</b>${s.description?`<div>${esc(s.description)}</div>`:''}<small>${esc(s.hours||'—')} Std. · ${esc(s.start||'—')} bis ${esc(s.end||'—')} · Pause ${esc(s.pause||'0')} Min.</small></div>`).join('');
+  el.innerHTML=`<div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div><div>Bauvorhaben: ${esc(r.project||'Kein Bauvorhaben')}</div></div>${block('Material geliefert',delivered,'deliveryGroup')}${block('Material ab Grube/Lager',stock,'deliveryGroup')}${block('Material abgefahren',hauled,'haulGroup')}${services?`<section class="summaryBlock"><h3>Zusatzleistungen</h3>${services}</section>`:'<p class="hint">Keine Zusatzleistungen erfasst.</p>'}`;
+}
+function updateSummarySignatureState(){
+  const status=$('signatureStatus'),button=$('openSignature');
+  if(!status||!button)return;
   if(signatureSaved){
     status.textContent='✓ Unterschrift übernommen'+($('signer').value.trim()?' · '+$('signer').value.trim():'');
     status.classList.add('signed');
-    signButton.textContent='✓ Unterschrift erledigt';
-    signButton.classList.add('signatureDone');
+    button.textContent='✓ Unterschrift erledigt';
+    button.classList.add('signatureDone');
   }else{
     status.textContent='× Noch nicht unterschrieben';
     status.classList.remove('signed');
-    signButton.textContent='✍ Unterschreiben';
-    signButton.classList.remove('signatureDone');
+    button.textContent='✍ Unterschreiben';
+    button.classList.remove('signatureDone');
   }
 }
-$('toSummary').onclick=()=>{renderReportSummary();setWizardStep(4)};
+$('toSummary').onclick=()=>{renderReportSummary();updateSummarySignatureState();setWizardStep(4)};
 $('summaryBackButton').onclick=()=>setWizardStep(3);
 $('summaryHomeButton').onclick=()=>{try{autoSaveDraft();}finally{show('welcome');}};
+$('backToServices').onclick=()=>setWizardStep(3);
+
 $('formHomeButton').addEventListener('click',()=>{try{autoSaveDraft();}finally{show('welcome');}});
 function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';fillSelect($('project'),[],'Bauvorhaben wählen');enteredMaterials=[];$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
 $('customer').onchange=()=>{let c=db.customers.find(c=>c.name===$('customer').value);$('address').value=c?.address||'';fillSelect($('project'),db.projects.filter(p=>p.owner===c?.name).map(p=>p.name),'Bauvorhaben wählen');scheduleAutoSave()};
@@ -424,11 +414,11 @@ $('saveQuickProject').onclick=()=>{
 if($('newBtn'))$('newBtn').onclick=fresh;if($('cancel'))$('cancel').onclick=()=>show('home');
 const serviceModal=$('serviceModal');serviceModal.hidden=true;serviceModal.classList.remove('open');
 const signatureModal=$('signatureModal'); signatureModal.hidden=true; signatureModal.classList.remove('open');
-const canvas=$('signature'),ctx=canvas.getContext('2d');let drawing=false,ink=false,signatureSaved=false;function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='× Noch nicht unterschrieben';$('signatureStatus').classList.remove('signed');$('openSignature').classList.remove('signatureDone');$('openSignature').textContent='Unterschreiben'} $('clearSig').onclick=clearSig;
+const canvas=$('signature'),ctx=canvas.getContext('2d');let drawing=false,ink=false,signatureSaved=false;function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='Noch keine Unterschrift hinterlegt.';$('openSignature').classList.remove('signatureDone');$('openSignature').textContent='Unterschreiben'} $('clearSig').onclick=clearSig;
 function openSignature(){ const modal=$('signatureModal'); modal.hidden=false; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
 function closeSignature(){ const modal=$('signatureModal'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); modal.hidden=true; }
 $('openSignature').onclick=openSignature;$('cancelSignature').onclick=closeSignature;document.querySelectorAll('[data-close-signature]').forEach(el=>el.onclick=closeSignature);
-$('confirmSignature').onclick=()=>{if(!ink)return alert('Bitte zuerst unterschreiben.');signatureSaved=true;$('signatureStatus').textContent='✓ Unterschrift übernommen'+($('signer').value.trim()?' · '+$('signer').value.trim():'');$('signatureStatus').classList.add('signed');$('openSignature').classList.add('signatureDone');$('openSignature').textContent='✓ Unterschrift erledigt';closeSignature();};
+$('confirmSignature').onclick=()=>{if(!ink)return alert('Bitte zuerst unterschreiben.');signatureSaved=true;updateSummarySignatureState();closeSignature();};
 function collect(){return {id:currentDraftId||Date.now(),date:$('date').value,customer:$('customer').value,address:$('address').value,project:$('project').value||'',materials:enteredMaterials.map(m=>({...m})),services:[...$('serviceRows').querySelectorAll('.entry')].map(d=>({job:d.querySelector('.servicePickButton')?.dataset.value||'',description:d.querySelector('.descriptionv').value,hours:d.querySelector('.hoursv').value,start:d.querySelector('.startv').value,end:d.querySelector('.endv').value,pause:d.querySelector('.pausev').value})).filter(x=>Object.values(x).some(Boolean)),signature:signatureSaved&&ink?canvas.toDataURL('image/png'):null,signer:signatureSaved?$('signer').value:''}}
 
 function persistDraft(){
@@ -844,7 +834,6 @@ $('savePdf').onclick=async()=>{
   const i=db.reports.findIndex(x=>String(x.id)===String(r.id));
   if(i>=0)db.reports[i]=r;else db.reports.push(r);
   save();currentDraftId=r.id;renderArchive();
-
 
 // Automatische Entwurfssicherung: Änderungen im Formular werden nach kurzer Pause lokal gespeichert.
 $('form').addEventListener('input',scheduleAutoSave,true);

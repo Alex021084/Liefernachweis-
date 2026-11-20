@@ -146,8 +146,8 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Schriftfarbe ist schwarz/dunkel, fett und bleibt als Überschrift erhalten.
 
 
-## Version 131 – Zusammenfassung und Abschluss zusammengeführt
-- Zusammenfassung zeigt jetzt Karten „Ausgeführte Arbeiten“ und „Material / sonstige Leistungen“ mit Bearbeiten-Stift.
-- Unterschrift, Unterschriftsstatus, „PDF erstellen“ und „Dokument speichern“ stehen direkt darunter.
-- Am unteren Rand befinden sich „Startseite“ und „Zurück“.
-- Der separate Abschluss-Schritt entfällt im Ablauf; PDF-Erstellung öffnet nicht den Dialog zum Fortsetzen eines Entwurfs.
+## Version 132 – Abschlussbereich unter ursprünglicher Zusammenfassung
+- Die ursprüngliche Zusammenfassung aus Version 130 bleibt vollständig erhalten: Material geliefert, Material ab Grube/Lager, Material abgefahren und Zusatzleistungen.
+- Nur darunter wurde der Abschlussbereich ergänzt: Unterschrift Auftraggeber, Statusmeldung, Unterschreiben/Unterschrift erledigt, PDF erstellen, Dokument speichern.
+- Startseite und Zurück stehen unten nebeneinander.
+- Der separate Abschluss-Schritt wurde in den Zusammenfassungsschritt integriert.
