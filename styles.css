@@ -1319,3 +1319,6 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   gap:10px!important;
 }
+
+/* Cache-/Fallback-Schutz: Hinweis unter 'Erfasste Materialien' dauerhaft ausblenden. */
+#materialRows .swipeHint{display:none!important}
