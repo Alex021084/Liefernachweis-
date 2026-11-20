@@ -1479,3 +1479,25 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   text-align:center!important;
   box-shadow:none!important;
 }
+
+
+/* Version 120: Autospeicher-Hinweis zweizeilig, Startseite darunter. */
+#form .formTopBar{
+  display:flex!important;
+  justify-content:flex-end!important;
+  align-items:flex-start!important;
+  min-height:0!important;
+  margin:4px 0 12px!important;
+}
+#form #autoSaveStatus{
+  width:245px!important;
+  max-width:70%!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  line-height:1.35!important;
+  text-align:right!important;
+}
+#form .formHomeTile{
+  margin-top:0!important;
+  margin-bottom:14px!important;
+}

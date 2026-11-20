@@ -83,3 +83,8 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Oben im Formular eine kompakte gelbe „Startseite“-Kachel mit schwarzer Schrift ergänzt.
 - Beim Wechsel zur Startseite wird ein laufender Entwurf zuvor automatisch gespeichert.
 - JavaScript-Syntax geprüft; Cache-Version auf 119 erhöht.
+
+
+## Version 120 – zweizeiliger Speicherhinweis
+- Der Autospeicher-Hinweis steht jetzt oberhalb des Startseiten-Buttons und wird durch eine begrenzte Breite auf zwei Zeilen umbrochen.
+- Die Startseiten-Kachel sitzt darunter; die übrige Formularnavigation bleibt unverändert.
