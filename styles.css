@@ -1297,3 +1297,25 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
 .materialTypeTiles{grid-template-columns:1fr!important;gap:10px!important;margin:12px 0 18px!important}
 .materialTypeTile{min-height:62px!important;padding:12px 14px!important}
 .materialTypeTile.stock{background:#eef3fb;border:2px solid #b8c9e2;color:#294d78}
+
+
+/* Anpassung: Selbstabholer blau und hervorgehoben; Liefer-/Abfuhrbuttons nebeneinander. */
+#chooseStock.scanWeighNoteButton{
+  background:#eaf2ff!important;
+  border:2px solid #3b82d6!important;
+  color:#1554a0!important;
+  font-family:inherit!important;
+  font-size:20px!important;
+  font-weight:850!important;
+  line-height:1.2!important;
+  min-height:64px!important;
+}
+#chooseStock.scanWeighNoteButton span{
+  font-size:20px!important;
+  font-weight:850!important;
+}
+.materialTypeTiles{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+}
