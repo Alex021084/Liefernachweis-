@@ -1573,3 +1573,32 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
 #form .formTopBar .formHomeTile::after{
   flex:0 0 auto!important;
 }
+
+
+/* Version 124: Selbstabholer wieder als große blaue Kachel. */
+#chooseStock{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-height:86px!important;
+  margin:12px 0 18px!important;
+  padding:18px 14px!important;
+  box-sizing:border-box!important;
+  border:2px solid #4f83d8!important;
+  border-radius:20px!important;
+  background:#eaf1ff!important;
+  color:#28559b!important;
+  font-family:inherit!important;
+  font-size:24px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  text-align:center!important;
+  box-shadow:0 3px 9px rgba(40,85,155,.10)!important;
+}
+#chooseStock span{
+  display:block!important;
+  font:inherit!important;
+  color:inherit!important;
+  text-align:center!important;
+}

@@ -103,3 +103,9 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 ## Version 123 – Startseite-Kachel zentriert
 - Beschriftung und Haussymbol der gelben Startseite-Kachel werden horizontal und vertikal mittig ausgerichtet.
 - Größe, Farbe und Position der Kachel bleiben unverändert.
+
+
+## Version 124 – Selbstabholer-Kachel vergrößert
+- Selbstabholer ist wieder eine große, volle Kachel statt einer kleinen grauen Markierung.
+- Schriftgröße und Fettdruck entsprechen den beiden Material-Kacheln.
+- Die blaue Gestaltung bleibt erhalten.
