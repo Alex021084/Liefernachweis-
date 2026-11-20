@@ -93,3 +93,8 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 ## Version 121 – Speicherstatus auf zwei Zeilen
 - Der rechte Autospeicher-/Entwurfshinweis ist auf eine feste schmalere Breite gesetzt, damit auch kurze Statusmeldungen zweizeilig umbrechen.
 - Der Startseiten-Button bleibt links darunter und wird durch die zusätzliche Zeilenhöhe nach unten versetzt.
+
+
+## Version 122 – gleiche Höhe für Startseite und Speicherhinweis
+- Startseiten-Kachel und Autospeicherstatus befinden sich jetzt nebeneinander in einer gemeinsamen Zeile.
+- Die Kachel ist links, der zweizeilige Hinweis rechts; beide sind vertikal mittig auf gleicher Höhe ausgerichtet.
