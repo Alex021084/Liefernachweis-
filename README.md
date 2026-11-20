@@ -33,3 +33,14 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 ## Version 111 – Wiegenoten-Scanner entfernt
 - Scan-Button, Kamera-/Mediathek-Auswahl, OCR-Prüfdialog und zugehörige OCR-Verarbeitung entfernt.
 - Materialerfassung, Selbstabholer sowie Material geliefert/abgefahren bleiben bestehen.
+
+
+## Version 112 – Navigation aufgeräumt
+- Den unteren Button „Stammdaten“ auf der Liefernachweis-Übersicht entfernt.
+- „Startseite“ bleibt allein und ist als größerer, gelber Button hervorgehoben.
+
+
+## Version 113 – einheitlicher Startseite-Button
+- Ein gemeinsamer Startseite-Button sitzt jetzt direkt oben unter dem Logo und bleibt beim Scrollen sichtbar.
+- Auf allen Ansichten gleiche Größe, Schrift, gelbe Farbe und Position.
+- Doppelte Startseite-Buttons am unteren Rand und im Formular wurden entfernt.

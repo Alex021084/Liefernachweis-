@@ -1319,3 +1319,58 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
 
 
 /* Version 111: Wiegenoten-Scanner entfernt. */
+
+
+/* Version 112: Unten nur Startseite anzeigen und klar hervorheben. */
+#home .toolbar{
+  margin-top:24px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+}
+#home #homeWelcome{
+  width:100%!important;
+  min-height:76px!important;
+  border-radius:18px!important;
+  background:#fff0bd!important;
+  border:2px solid #edcf75!important;
+  color:#624b1d!important;
+  font-size:20px!important;
+  font-weight:800!important;
+  box-shadow:0 3px 9px rgba(100,75,20,.10)!important;
+}
+
+
+/* Version 113: einheitlicher Startseite-Button am oberen Rand jeder Ansicht. */
+.globalHomeBar{
+  position:sticky;
+  top:0;
+  z-index:500;
+  display:flex;
+  justify-content:flex-start;
+  padding:8px 0 12px;
+  margin:0 0 8px;
+  background:rgba(243,245,247,.96);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+.globalHomeButton{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  width:auto!important;
+  min-width:170px!important;
+  min-height:52px!important;
+  padding:10px 20px!important;
+  box-sizing:border-box!important;
+  border:2px solid #edcf75!important;
+  border-radius:14px!important;
+  background:#fff0bd!important;
+  color:#624b1d!important;
+  font-family:inherit!important;
+  font-size:18px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  box-shadow:0 3px 9px rgba(100,75,20,.10)!important;
+}
+.globalHomeButton:active{background:#fbe7a2!important}
