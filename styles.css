@@ -1695,3 +1695,34 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   font-size:24px!important;
   font-weight:800!important;
 }
+
+
+/* Version 131 – Zusammenfassung im Stil der gewünschten Abschlussansicht */
+.summaryPagePanel{padding:16px!important}
+#reportSummary{display:grid;gap:12px}
+#reportSummary .summaryMeta{background:#f7f9fb;border:1px solid #dce3e9;border-radius:14px;padding:14px;line-height:1.55;color:#59636f}
+#reportSummary .summaryMeta b{display:block;color:#202833;font-size:17px;margin-bottom:3px}
+.summaryReviewCard{position:relative;background:#fff;border:1px solid #dce1e5;border-radius:15px;padding:16px 48px 16px 16px;min-height:105px}
+.summaryReviewCard h3{margin:0 0 12px;font-size:17px;color:#202833}
+.summaryEditButton{position:absolute;right:12px;top:12px;width:40px;height:40px;border:1px solid #d3e0e8;border-radius:12px;background:#f4f8fb;color:#355a78;font-size:20px;line-height:1}
+.summaryWorkList{margin:0;padding-left:20px;line-height:1.55;color:#303946}
+.summaryWorkList li{padding:1px 0 4px}
+.summaryWorkList small{display:block;color:#68727e;margin-top:2px}
+.summaryReviewCard .summaryLine{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid #e3e8ec;color:#202833}
+.summaryReviewCard .summaryLine:first-of-type{border-top:0}
+.summaryReviewCard .summaryLine b{font-weight:600}
+.summaryReviewCard .summaryLine span{white-space:nowrap}
+.summaryEmpty{margin:0;color:#68727e}
+.summarySignatureSection{margin-top:16px;padding:16px;border:1px solid #dce1e5;border-radius:14px;background:#fff}
+.summarySignatureSection h3{font-size:17px;margin:0 0 10px;color:#202833}
+.summarySignatureSection p{margin:0;color:#68727e;line-height:1.5}
+.signatureStatusNotice{margin-top:14px;padding:14px 12px;text-align:center;border:1px solid #e5bcbc;border-radius:13px;background:#fff7f7;color:#9b3030;font-weight:750}
+.signatureStatusNotice.signed{background:#eef8f0;border-color:#b9dcc2;color:#287143}
+.signatureActionButton{width:100%;min-height:58px;margin-top:12px;border:1px solid #dce1e5;border-radius:14px;background:#f0f2f4;color:#0872cf;font-size:17px;font-weight:800}
+.signatureActionButton.signatureDone{background:#e8f5ec!important;color:#23633d!important;border:2px solid #78bd8c!important}
+.summaryFinishActions{display:grid;gap:11px;margin-top:14px}
+.summaryFinishActions button{width:100%;min-height:58px;border-radius:14px;font-size:17px;font-weight:800}
+.summaryPdfButton{background:#f2a900!important;color:#202833!important;border:1px solid #e39c00!important}
+.summarySaveButton{background:#edf7f0!important;color:#326b45!important;border:1px solid #bddcc6!important}
+.summaryBottomNav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 8px}
+.summaryBottomNav button{min-height:54px;border:1px solid #bddcc6;border-radius:14px;background:#edf7f0;color:#326b45;font-size:16px;font-weight:750}
