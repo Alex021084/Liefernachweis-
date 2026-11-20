@@ -1374,3 +1374,42 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   box-shadow:0 3px 9px rgba(100,75,20,.10)!important;
 }
 .globalHomeButton:active{background:#fbe7a2!important}
+
+
+/* Version 114: Startseiten-Kachel nur in der Übersicht der gespeicherten Nachweise. */
+.archiveHomeTile{
+  display:block!important;
+  width:100%!important;
+  min-height:76px!important;
+  margin:0 0 28px!important;
+  padding:18px 22px!important;
+  box-sizing:border-box!important;
+  border:2px solid #edcf75!important;
+  border-radius:22px!important;
+  background:linear-gradient(110deg,#e8b34f,#f3d06d)!important;
+  color:#171717!important;
+  font-family:inherit!important;
+  font-size:24px!important;
+  font-weight:750!important;
+  line-height:1.2!important;
+  text-align:center!important;
+  box-shadow:0 4px 12px rgba(100,75,20,.10)!important;
+}
+.archiveHomeTile:active{filter:brightness(.97)}
+
+
+/* Version 115: kompakte Startseiten-Kachel links neben dem Inhaltsbereich. */
+.archiveHomeTile{
+  width:25%!important;
+  min-width:150px!important;
+  min-height:44px!important;
+  margin:0 0 22px!important;
+  padding:10px 14px!important;
+  border-radius:12px!important;
+  font-size:16px!important;
+  font-weight:700!important;
+  text-align:center!important;
+  background:#f1c65e!important;
+  border-width:1px!important;
+  box-shadow:none!important;
+}

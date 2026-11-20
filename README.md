@@ -44,3 +44,14 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Ein gemeinsamer Startseite-Button sitzt jetzt direkt oben unter dem Logo und bleibt beim Scrollen sichtbar.
 - Auf allen Ansichten gleiche Größe, Schrift, gelbe Farbe und Position.
 - Doppelte Startseite-Buttons am unteren Rand und im Formular wurden entfernt.
+
+
+## Version 114 – Startseite und gespeicherte Liefernachweise
+- Auf der eigentlichen Startseite gibt es keinen zusätzlichen Startseite-Button mehr.
+- In der Übersicht „Gespeicherte Liefernachweise“ wurde „Neuer Liefernachweis“ oben entfernt.
+- An dessen Stelle steht eine große gelbe Startseiten-Kachel mit schwarzer Schrift.
+
+
+## Version 115 – kompakte Startseiten-Kachel
+- Startseiten-Kachel in der Übersicht auf etwa ein Viertel der verfügbaren Breite verkleinert.
+- Links ausgerichtet, mit kompakter Höhe und weiterhin gelbem Hintergrund sowie schwarzer Schrift.
