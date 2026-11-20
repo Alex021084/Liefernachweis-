@@ -115,3 +115,15 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Selbstabholer-Kachel auf 72 % der verfügbaren Breite reduziert und mittig platziert.
 - Hintergrund dunkelblau, Schrift weiß und fett.
 - Höhe und Funktion der Kachel bleiben erhalten.
+
+
+## Version 126 – schmalere Selbstabholer-Kachel
+- Breite von 72 % auf 36 % reduziert (also nochmals halbiert) und mittig belassen.
+- Schriftgröße 17 px und Schriftstärke 800 passend zu den Material-Kacheln.
+- Dunkelblauer Hintergrund und weiße Schrift bleiben erhalten.
+
+
+## Version 127 – Höhe statt Breite angepasst
+- Breite wieder auf 72 % zurückgesetzt.
+- Nur die Höhe der Selbstabholer-Kachel auf 38 px (etwa die Hälfte) reduziert.
+- Schriftgröße und Fettdruck bleiben wie bei „Material geliefert“; dunkelblau/weiß bleibt erhalten.

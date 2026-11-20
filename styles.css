@@ -1624,3 +1624,36 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   font:inherit!important;
   text-align:center!important;
 }
+
+
+/* Version 126: Selbstabholer auf die halbe bisherige Breite reduzieren. */
+#chooseStock{
+  width:36%!important;
+  max-width:260px!important;
+  min-width:0!important;
+  font-size:17px!important;
+  font-weight:800!important;
+  padding:14px 8px!important;
+}
+#chooseStock span{
+  font-size:17px!important;
+  font-weight:800!important;
+}
+
+
+/* Version 127: Breite wie zuvor, nur die Höhe halbiert. */
+#chooseStock{
+  width:72%!important;
+  max-width:520px!important;
+  min-width:0!important;
+  min-height:38px!important;
+  height:38px!important;
+  padding:6px 8px!important;
+  margin:12px auto 18px!important;
+  font-size:17px!important;
+  font-weight:800!important;
+}
+#chooseStock span{
+  font-size:17px!important;
+  font-weight:800!important;
+}
