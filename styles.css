@@ -1869,3 +1869,19 @@ canvas, .signaturePad, .signatureCanvas{
   user-select:none!important;
   touch-action:manipulation;
 }
+
+
+/* Version 144: Kunden und Bauvorhaben ebenfalls mit Griff und Wischaktion */
+.swipeContent>div:not(.dragGrip){
+  flex:1 1 auto;
+  min-width:0;
+  align-self:center;
+}
+.swipeContent>div:not(.dragGrip)>b{
+  display:block;
+  margin:0;
+}
+.swipeContent>div:not(.dragGrip)>small{
+  display:block;
+  margin-top:4px;
+}

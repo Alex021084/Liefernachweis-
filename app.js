@@ -21,25 +21,29 @@ $('masterBackButton').onclick=()=>show('welcome');
 $('goNew').onclick=fresh;$('goDeliveries').onclick=()=>show('home');$('goMaster').onclick=()=>show('master');$('archiveHomeButton').addEventListener('click',()=>show('welcome'));document.querySelectorAll('.back').forEach(b=>b.onclick=()=>show(b.closest('#master')?'welcome':'master'));
 function fillSelect(el,items,placeholder){el.innerHTML=`<option value="">${placeholder}</option>`+items.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}
 function renderCustomers(){
-  $('customerList').innerHTML=db.customers.map((c,i)=>`<div class="archiveCard"><div><b>${esc(c.name)}</b><small>${esc(c.address)}</small></div><button class="remove" data-del-c="${i}" aria-label="Kunde löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Kunden angelegt.</p>';
+  $('customerList').innerHTML=db.customers.map((c,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-index="${i}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><div><b>${esc(c.name)}</b><small>${esc(c.address)}</small></div></div><button class="remove swipeDelete" data-del-c="${i}" aria-label="Kunde löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Kunden angelegt.</p>';
   document.querySelectorAll('[data-del-c]').forEach(b=>b.onclick=()=>{
     const index=+b.dataset.delC, customer=db.customers[index];
     if(!customer)return;
     askAppConfirm(`Möchtest du den Kunden „${customer.name}“ wirklich löschen?`,()=>{db.customers.splice(index,1);save();renderCustomers();},'Kunden löschen?');
   });
+  enableLongPressSorting('customerList','customers',renderCustomers);
+  enableSwipeToDelete('customerList');
 }
 function renderProjects(){
   fillSelect($('projectOwner'),db.customers.map(c=>c.name),'Auftraggeber wählen');
-  $('projectList').innerHTML=db.projects.map((p,i)=>`<div class="archiveCard"><div><b>${esc(p.name)}</b><small>${esc(p.owner)}</small></div><button class="remove" data-del-p="${i}" aria-label="Bauvorhaben löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Bauvorhaben angelegt.</p>';
+  $('projectList').innerHTML=db.projects.map((p,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-index="${i}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><div><b>${esc(p.name)}</b><small>${esc(p.owner)}</small></div></div><button class="remove swipeDelete" data-del-p="${i}" aria-label="Bauvorhaben löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Bauvorhaben angelegt.</p>';
   document.querySelectorAll('[data-del-p]').forEach(b=>b.onclick=()=>{
     const index=+b.dataset.delP, project=db.projects[index];
     if(!project)return;
     askAppConfirm(`Möchtest du das Bauvorhaben „${project.name}“ wirklich löschen?`,()=>{db.projects.splice(index,1);save();renderProjects();},'Bauvorhaben löschen?');
   });
+  enableLongPressSorting('projectList','projects',renderProjects);
+  enableSwipeToDelete('projectList');
 }
 function renderDeliveryMaterials(){
   db.deliveryMaterials=db.deliveryMaterials||[];
-  $('deliveryMaterialsList').innerHTML=db.deliveryMaterials.map((m,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-value="${esc(m)}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><b>${esc(m)}</b></div><button class="remove swipeDelete" data-del-dm="${i}" aria-label="Liefermaterial löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Liefermaterialien angelegt.</p>';
+  $('deliveryMaterialsList').innerHTML=db.deliveryMaterials.map((m,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-index="${i}" data-sort-value="${esc(m)}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><b>${esc(m)}</b></div><button class="remove swipeDelete" data-del-dm="${i}" aria-label="Liefermaterial löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Liefermaterialien angelegt.</p>';
   document.querySelectorAll('[data-del-dm]').forEach(b=>b.onclick=()=>{
     const index=+b.dataset.delDm, material=db.deliveryMaterials[index];
     if(material===undefined)return;
@@ -50,7 +54,7 @@ function renderDeliveryMaterials(){
 }
 function renderHaulMaterials(){
   db.haulMaterials=db.haulMaterials||[];
-  $('haulMaterialsList').innerHTML=db.haulMaterials.map((m,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-value="${esc(m)}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><b>${esc(m)}</b></div><button class="remove swipeDelete" data-del-hm="${i}" aria-label="Abfuhrmaterial löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Abfuhrmaterialien angelegt.</p>';
+  $('haulMaterialsList').innerHTML=db.haulMaterials.map((m,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-index="${i}" data-sort-value="${esc(m)}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><b>${esc(m)}</b></div><button class="remove swipeDelete" data-del-hm="${i}" aria-label="Abfuhrmaterial löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Abfuhrmaterialien angelegt.</p>';
   document.querySelectorAll('[data-del-hm]').forEach(b=>b.onclick=()=>{
     const index=+b.dataset.delHm, material=db.haulMaterials[index];
     if(material===undefined)return;
@@ -61,7 +65,7 @@ function renderHaulMaterials(){
 }
 function renderServices(){
   db.services=db.services||[];
-  $('servicesList').innerHTML=db.services.map((v,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-value="${esc(v)}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><b>${esc(v)}</b></div><button class="remove swipeDelete" data-del-s="${i}" aria-label="Leistung löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Leistungen angelegt.</p>';
+  $('servicesList').innerHTML=db.services.map((v,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-index="${i}" data-sort-value="${esc(v)}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><b>${esc(v)}</b></div><button class="remove swipeDelete" data-del-s="${i}" aria-label="Leistung löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Leistungen angelegt.</p>';
   document.querySelectorAll('[data-del-s]').forEach(b=>b.onclick=()=>{
     const index=+b.dataset.delS, service=db.services[index];
     if(service===undefined)return;
@@ -149,10 +153,14 @@ function finishLongPressSort(event){
   activeLongPressSort=null;
   if(!state.started)return;
   state.card.classList.remove('is-dragging');
-  const ordered=[...state.host.querySelectorAll('.sortableCard')].map(card=>card.dataset.sortValue);
-  db[state.dbKey]=ordered;
-  save();
-  state.renderFn();
+  const cards=[...state.host.querySelectorAll('.sortableCard')];
+  const original=db[state.dbKey]||[];
+  const ordered=cards.map(card=>card.dataset.sortIndex!==undefined?Number(card.dataset.sortIndex):original.findIndex(value=>String(value)===card.dataset.sortValue));
+  if(ordered.every(index=>Number.isInteger(index)&&index>=0&&index<original.length)){
+    db[state.dbKey]=ordered.map(index=>original[index]);
+    save();
+    state.renderFn();
+  }
 }
 document.addEventListener('pointerup',finishLongPressSort);
 document.addEventListener('pointercancel',finishLongPressSort);
