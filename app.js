@@ -885,39 +885,79 @@ window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSa
     ocrScriptPromise.then(resolve,reject);
   });
   const setField=(id,value)=>{const el=$(id);if(el)el.value=value||'';};
+  // Handschriftliche Baustellenangaben werden bewusst nicht ausgelesen.
+  // Die gedruckten Felder werden gezielt anhand ihrer Beschriftung erkannt.
   const parseTicket=text=>{
-    const lines=String(text||'').split(/\r?\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);
-    const all=lines.join('\n');
-    const valueAfter=(label)=>{
-      const re=new RegExp(label,'i');
-      for(const line of lines){
-        const match=re.exec(line);
-        if(!match)continue;
-        const after=line.slice(match.index+match[0].length).replace(/^\\s*[:\\-]?\\s*/,'').trim();
-        const before=line.slice(0,match.index).replace(/[|:;\\-]+\\s*$/,'').trim();
-        // Thermodrucker setzen den Wert oft links und die Feldbezeichnung rechts.
-        return after||before;
+    const lines=String(text||'').split(/\r?\n/).map(x=>x.replace(/[|]/g,'I').replace(/\s+/g,' ').trim()).filter(Boolean);
+    const clean=s=>String(s||'').replace(/^[\s:;|.,-]+|[\s:;|.,-]+$/g,'').replace(/\s+/g,' ').trim();
+    const labelIndex=label=>lines.findIndex(l=>new RegExp(label,'i').test(l));
+    const around=(label,pattern)=>{
+      const i=labelIndex(label);
+      const candidates=[];
+      if(i>=0){
+        const line=lines[i], re=new RegExp(label,'i'), m=re.exec(line);
+        if(m){
+          candidates.push(clean(line.slice(m.index+m[0].length)));
+          candidates.push(clean(line.slice(0,m.index)));
+        }
+        for(let d=1;d<=2;d++){
+          if(lines[i-d])candidates.push(clean(lines[i-d]));
+          if(lines[i+d])candidates.push(clean(lines[i+d]));
+        }
       }
+      for(const c of candidates){const hit=c.match(pattern);if(hit)return hit[0];}
       return '';
     };
-    let bon=valueAfter('Bon\\s*[-.]?\\s*Nr\\.?').replace(/\s*Bon.*/i,'').trim();
-    let weight=valueAfter('Gewicht').match(/\d+[.,]?\d*/)?.[0]||'';
-    let customer=valueAfter('Kunde').replace(/Kunde.*/i,'').trim();
-    let material=valueAfter('Material').replace(/Material.*/i,'').trim();
-    let site=valueAfter('Baustelle').replace(/Baustelle.*/i,'').trim();
-    let vehicle=valueAfter('Fahrzeug').replace(/Fahrzeug.*/i,'').trim().replace(/\s+/g,' ').toUpperCase();
-    let date=valueAfter('Datum').match(/\d{1,2}[./-]\d{1,2}[./-]\d{2,4}/)?.[0]||'';
-    let time=valueAfter('Uhrzeit').match(/\d{1,2}[:.]\d{2}/)?.[0]||'';
+    const all=lines.join('\n');
+    const bon=around('Bon\\s*[-.]?\\s*Nr\\.?',/\b\d{3,7}\b/) ||
+      (all.match(/\bBon\s*[-.]?\s*Nr\.?\s*[:#]?\s*(\d{3,7})\b/i)||[])[1]||'';
+    const weightRaw=around('Gewicht',/\b\d{1,3}\s*[,.]\s*\d{1,3}\s*t?\b/i) ||
+      (all.match(/\b(\d{1,3}\s*[,.]\s*\d{1,3})\s*t?\s*(?:Gewicht)?\b/i)||[])[1]||'';
+    const weight=(weightRaw.match(/\d{1,3}\s*[,.]\s*\d{1,3}/)||[])[0]?.replace(/\s/g,'').replace(',', '.')||'';
+    let customer=around('Kunde',/[A-ZÄÖÜ][A-Za-zÄÖÜäöüß.& -]{4,}/);
+    if(!customer && /Dählmann\s+Erdbau\s+GmbH/i.test(all)) customer=(all.match(/Dählmann\s+Erdbau\s+GmbH/i)||[])[0];
+    let material='';
+    const mi=labelIndex('Material');
+    if(mi>=0){
+      const before=[lines[mi-2],lines[mi-1]].filter(Boolean).map(clean).filter(s=>s&&!/^(?:Material|Baustelle|Fahrzeug|Datum|Uhrzeit|Kunde|Gewicht|Bon)/i.test(s));
+      const same=clean(lines[mi].replace(/Material/i,''));
+      material=[...before,same].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+    }
+    if(!material){
+      const m=all.match(/(Schottertragschicht[\s\S]{0,45}?)(?=Baustelle|Fahrzeug|Datum|Uhrzeit|$)/i);
+      if(m)material=clean(m[1]);
+    }
+    // Nur gedruckte Kennzeichen übernehmen; Baustellenfeld (oft handschriftlich) bleibt leer.
+    const vehicle=(all.match(/\bROW[\s-]*[A-Z]{1,3}[\s-]*\d{1,4}\b/i)||[])[0]?.replace(/\s+/g,' ').toUpperCase()||'';
+    let date=around('Datum',/\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b/) ||
+      (all.match(/\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b/)||[])[0]||'';
+    let time=around('Uhrzeit',/\b\d{1,2}[:.]\d{2}\b/) ||
+      (all.match(/\b\d{1,2}[:.]\d{2}\b/)||[])[0]||'';
     const dm=date.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})$/);
-    if(dm){let year=dm[3].length===2?'20'+dm[3]:dm[3];date=year+'-'+dm[2].padStart(2,'0')+'-'+dm[1].padStart(2,'0');}
+    if(dm){const year=dm[3].length===2?'20'+dm[3]:dm[3];date=year+'-'+dm[2].padStart(2,'0')+'-'+dm[1].padStart(2,'0');}
     time=time.replace('.',':');if(time&&!/^\d{2}:\d{2}$/.test(time))time='0'+time;
-    // Fallback for thermal printer layouts where OCR puts value and label on separate lines.
-    const afterLabel=(label)=>{const i=lines.findIndex(l=>new RegExp(label,'i').test(l));if(i<0)return '';const same=lines[i].replace(new RegExp('.*?'+label+'\\s*','i'),'').trim();return same||lines[i+1]||'';};
-    bon=bon||afterLabel('Bon\\s*[-.]?\\s*Nr');weight=weight||afterLabel('Gewicht').match(/\d+[.,]?\d*/)?.[0]||'';
-    customer=customer||afterLabel('Kunde');material=material||afterLabel('Material');site=site||afterLabel('Baustelle');vehicle=vehicle||afterLabel('Fahrzeug');
-    return {bon,weight,customer,material,site,vehicle,date,time};
+    return {bon,weight,customer,material,site:'',vehicle,date,time};
   };
-  const close=()=>{modal.hidden=true;modal.setAttribute('aria-hidden','true');};
+  const prepareOcrImage=async(file)=>{
+    const bitmap=await createImageBitmap(file);
+    // Größer rechnen, damit der helle Thermodruck auch auf Handyfotos lesbar wird.
+    const scale=Math.min(3.2,Math.max(2.0,2800/Math.max(bitmap.width,bitmap.height)));
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);
+    const ctx=canvas.getContext('2d',{willReadFrequently:true});
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+    const image=ctx.getImageData(0,0,canvas.width,canvas.height),d=image.data;
+    for(let i=0;i<d.length;i+=4){
+      const gray=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+      // Heller Thermodruck: Kontrast verstärken, ohne feine Striche hart abzuschneiden.
+      const value=Math.max(0,Math.min(255,(gray-142)*2.0+142));
+      d[i]=d[i+1]=d[i+2]=value;
+    }
+    ctx.putImageData(image,0,0);bitmap.close?.();return canvas;
+  };
+  const parsedScore=data=>Object.values(data).filter(v=>String(v||'').trim()).length;
+    const close=()=>{modal.hidden=true;modal.setAttribute('aria-hidden','true');};
   document.querySelectorAll('[data-close-weigh]').forEach(el=>el.addEventListener('click',close));
   scanButton.addEventListener('click',()=>{fileInput.value='';fileInput.click();});
   fileInput.addEventListener('change',async()=>{
@@ -926,16 +966,26 @@ window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSa
     modal.hidden=false;modal.setAttribute('aria-hidden','false');
     try{
       const T=await loadTesseract();
-      const result=await T.recognize(file,'deu+eng',{logger:m=>{if(m.status==='recognizing text')$('weighScanStatus').textContent='Texterkennung: '+Math.round((m.progress||0)*100)+' %';}});
-      const data=parseTicket(result.data.text);
-      setField('weighBon',data.bon);setField('weighCustomer',data.customer);setField('weighSite',data.site);
+      const logger=m=>{if(m.status==='recognizing text')$('weighScanStatus').textContent='Texterkennung: '+Math.round((m.progress||0)*100)+' %';};
+      const enhanced=await prepareOcrImage(file);
+      const attempts=[];
+      const enhancedResult=await T.recognize(enhanced,'deu+eng',{logger});
+      attempts.push({result:enhancedResult,data:parseTicket(enhancedResult.data.text)});
+      $('weighScanStatus').textContent='Vergleiche Erkennung mit dem Originalfoto …';
+      const originalResult=await T.recognize(file,'deu+eng',{logger});
+      attempts.push({result:originalResult,data:parseTicket(originalResult.data.text)});
+      attempts.sort((a,b)=>parsedScore(b.data)-parsedScore(a.data));
+      let result=attempts[0].result,data=attempts[0].data;
+      setField('weighBon',data.bon);setField('weighCustomer',data.customer);setField('weighSite','');
       setField('weighMaterial',data.material);setField('weighWeight',data.weight);setField('weighVehicle',data.vehicle);
       setField('weighDate',data.date);setField('weighTime',data.time);
-      $('weighScanStatus').textContent='Erkennung abgeschlossen. Bitte Angaben prüfen und korrigieren.';
+      $('weighScanStatus').textContent=parsedScore(data)>=4
+        ? 'Erkennung abgeschlossen. Bitte Angaben prüfen und korrigieren.'
+        : 'Nur ein Teil wurde erkannt. Bitte Wiegenote näher, gerade und gut beleuchtet fotografieren und die Angaben prüfen.';
     }catch(error){
       console.error('Wiegenoten-Erkennung:',error);
       $('weighScanStatus').textContent='Die automatische Erkennung ist fehlgeschlagen. Du kannst die Angaben unten manuell eintragen.';
-      ['weighBon','weighCustomer','weighSite','weighMaterial','weighWeight','weighVehicle','weighDate','weighTime'].forEach(id=>setField(id,''));
+      ['weighBon','weighCustomer','weighMaterial','weighWeight','weighVehicle','weighDate','weighTime'].forEach(id=>setField(id,''));setField('weighSite','');
     }
   });
   $('addWeighScan').addEventListener('click',()=>{
