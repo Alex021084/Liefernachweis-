@@ -69,9 +69,10 @@ function autoSaveDraft(){
     const r=collect();
     r.id=currentDraftId||Date.now();
     const existing=db.reports.find(x=>String(x.id)===String(r.id));
+    if(isFinalized(existing))return;
     r.createdAt=existing?.createdAt||r.id;r.updatedAt=Date.now();
-    r.wizardStep=wizardStep;r.draft=true;r.pdf=false;r.autoSaved=true;
-    if(existing){const i=db.reports.findIndex(x=>String(x.id)===String(r.id));db.reports[i]=r;}else db.reports.push(r);
+    r.wizardStep=wizardStep;r.draft=existing?!!existing.draft:true;r.finalized=false;r.pdf=false;r.autoSaved=true;
+    if(existing){const i=db.reports.findIndex(x=>String(x.id)===String(r.id));db.reports[i]={...existing,...r};}else db.reports.push(r);
     currentDraftId=r.id;save();
     setAutoSaveStatus('✓ Automatisch gespeichert · '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr');
   }catch(error){console.error('Automatisches Speichern fehlgeschlagen:',error);setAutoSaveStatus('Speichern fehlgeschlagen','error');}
@@ -414,23 +415,34 @@ function persistDraft(){
   save();renderArchive();alert('Zwischenstand wurde gespeichert. Du kannst den Liefernachweis später unter „Liefernachweise“ öffnen und weiterbearbeiten.');return true;
 }
 function persistDocument(){
+  if(autoSaveTimer)clearTimeout(autoSaveTimer);
   const r=collect();
   if(!r.customer){alert('Bitte zuerst einen Auftraggeber auswählen.');return false;}
   const existingIndex=currentDraftId?db.reports.findIndex(x=>String(x.id)===String(currentDraftId)):-1;
   const existing=existingIndex>=0?db.reports[existingIndex]:null;
+  if(isFinalized(existing)){
+    alert('Dieser Liefernachweis ist bereits unterschrieben und gesperrt. Es kann nur noch eine PDF erstellt werden.');
+    return false;
+  }
   r.draft=false;
+  r.finalized=!!r.signature;
   r.pdf=false;
   r.createdAt=existing?.createdAt||r.id;
   r.updatedAt=Date.now();
+  r.wizardStep=wizardStep;
   if(existingIndex>=0)db.reports[existingIndex]={...existing,...r};
   else db.reports.push(r);
   currentDraftId=r.id;
   archiveMode='customers';archiveCustomer='';archiveProject='';
   save();renderArchive();
-  alert('Der Liefernachweis wurde unter „Nachweise“ gespeichert.');
+  alert(r.finalized
+    ? 'Der unterschriebene Liefernachweis wurde unter „Nachweise“ abgeschlossen und ist jetzt gesperrt.'
+    : 'Der Liefernachweis wurde unter „Nachweise“ gespeichert und kann weiter bearbeitet werden.');
   return true;
 }
+function isFinalized(r){return !!(r&&(r.finalized===true||(!r.draft&&r.signature)));}
 function openDraft(r){
+  if(isFinalized(r)){alert('Dieser Liefernachweis ist bereits unterschrieben und gesperrt. Es kann nur noch eine PDF erstellt werden.');return;}
   if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=r.id;
   fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');
   $('customer').value=r.customer||'';
@@ -532,10 +544,13 @@ function archiveCard(r,buttonLabel){
   const stamp=v=>{const n=Number(v);return Number.isFinite(n)&&n>100000000000?new Date(n).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})+' Uhr':''};
   const created=stamp(r.createdAt||r.id),updated=stamp(r.updatedAt);
   const history=r.draft?[created?'Angelegt: '+created:'',updated?'Zuletzt bearbeitet: '+updated:''].filter(Boolean).join(' · '):'';
-  return `<div class="archiveSwipeItem" data-archive-id="${r.id}"><button type="button" class="archiveDelete" aria-label="Liefernachweis löschen">×</button><div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${r.draft?'Entwurf – weiterbearbeiten':(r.pdf?'PDF erstellt':'Gespeichert')}${history?' · '+esc(history):''}</small></div><button class="soft" data-open-r="${r.id}">${buttonLabel|| (r.draft?'Weiterbearbeiten':'PDF öffnen')}</button></div></div>`;
+  const locked=isFinalized(r);
+  const status=locked?'Unterschrieben · gesperrt':(r.draft?'Entwurf · weiterbearbeiten':'Gespeichert · bearbeitbar');
+  const action=buttonLabel||(locked?'PDF erstellen':'Bearbeiten');
+  return `<div class="archiveSwipeItem" data-archive-id="${r.id}"><button type="button" class="archiveDelete" aria-label="Liefernachweis löschen">×</button><div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${status}${history?' · '+esc(history):''}</small></div><button class="soft" data-open-r="${r.id}">${action}</button></div></div>`;
 }
 function bindArchiveCards(){
-  document.querySelectorAll('[data-open-r]').forEach(b=>b.onclick=(event)=>{event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();let r=db.reports.find(x=>String(x.id)===b.dataset.openR);if(!r)return;if(r.draft){openDraft(r);setWizardStep(2);show('form');}else downloadPdf(r)});
+  document.querySelectorAll('[data-open-r]').forEach(b=>b.onclick=(event)=>{event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();let r=db.reports.find(x=>String(x.id)===b.dataset.openR);if(!r)return;if(isFinalized(r)){openPdfPreview(r);}else{openDraft(r);setWizardStep(Number(r.wizardStep)||2);show('form');}});
   document.querySelectorAll('.archiveSwipeItem').forEach(item=>{
     const card=item.querySelector('.archiveCard'),del=item.querySelector('.archiveDelete');let sx=0,sy=0,tracking=false,lastX=0;
     card.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;lastX=e.clientX;tracking=true;});
@@ -582,7 +597,7 @@ function renderArchive(){
     body=`<button type="button" class="archiveBack" data-archive-back="customers">‹ Alle Kunden</button><div class="archiveCrumb"><b>${esc(archiveCustomer)}</b><span>Bauvorhaben auswählen</span></div>`+(projects.map(project=>{const count=completed.filter(r=>(r.customer||'Ohne Auftraggeber')===archiveCustomer&&(r.project||'Ohne Bauvorhaben')===project).length;return `<button type="button" class="archiveNavCard" data-project="${esc(project)}"><span><b>${esc(project)}</b><small>${count} abgeschlossene Nachweis${count===1?'':'e'}</small></span><strong>›</strong></button>`}).join('')||'<div class="panel hint">Für diesen Kunden sind keine Bauvorhaben mit Nachweisen vorhanden.</div>');
   }else{
     const records=completed.filter(r=>(r.customer||'Ohne Auftraggeber')===archiveCustomer&&(r.project||'Ohne Bauvorhaben')===archiveProject);
-    body=`<button type="button" class="archiveBack" data-archive-back="projects">‹ Zurück zu den Bauvorhaben</button><div class="archiveCrumb"><b>${esc(archiveProject)}</b><span>${esc(archiveCustomer)}</span></div>`+records.map(r=>archiveCard(r,'PDF öffnen')).join('');
+    body=`<button type="button" class="archiveBack" data-archive-back="projects">‹ Zurück zu den Bauvorhaben</button><div class="archiveCrumb"><b>${esc(archiveProject)}</b><span>${esc(archiveCustomer)}</span></div>`+records.map(r=>archiveCard(r)).join('');
   }
   host.innerHTML=archiveTabs()+body;
   host.querySelectorAll('[data-archive-tab]').forEach(b=>b.onclick=()=>{archiveMode=b.dataset.archiveTab;archiveCustomer='';archiveProject='';renderArchive()});
@@ -813,6 +828,7 @@ async function openPdfPreview(r){
     pdfPreviewUrl=URL.createObjectURL(pdfPreviewBlob);
     $('pdfPreviewFrame').src=pdfPreviewUrl;
     $('pdfPreviewTitle').textContent=pdfFileName(r);
+    $('closePdfPreview').textContent=isFinalized(r)?'Zurück zu Nachweisen':'Zurück zur Bearbeitung';
     $('pdfPreviewModal').hidden=false;
     $('pdfPreviewModal').setAttribute('aria-hidden','false');
     $('pdfPreviewModal').classList.add('open');
@@ -829,22 +845,15 @@ function closePdfPreview(){
 }
 $('closePdfPreview').onclick=closePdfPreview;
 $('savePdf').onclick=async()=>{
-  if(autoSaveTimer)clearTimeout(autoSaveTimer);
-  let r=collect();if(!validateDocument(r))return;
-  r.id=currentDraftId||r.id;r.pdf=true;r.draft=false;
-  const i=db.reports.findIndex(x=>String(x.id)===String(r.id));
-  if(i>=0)db.reports[i]=r;else db.reports.push(r);
-  save();currentDraftId=r.id;renderArchive();
-
-// Automatische Entwurfssicherung: Änderungen im Formular werden nach kurzer Pause lokal gespeichert.
-$('form').addEventListener('input',scheduleAutoSave,true);
-$('form').addEventListener('change',scheduleAutoSave,true);
-$('form').addEventListener('click',event=>{if(event.target.closest('button'))scheduleAutoSave()},true);
-canvas.addEventListener('pointerup',scheduleAutoSave);
-window.addEventListener('pagehide',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
-window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
-
-  await openPdfPreview(r);
+  const r=collect();
+  if(!validateDocument(r))return;
+  if(!r.signature){
+    alert('Bitte zuerst die Unterschrift übernehmen und anschließend „Dokument speichern“ drücken. Erst danach kann die PDF erstellt werden.');
+    return;
+  }
+  if(!persistDocument())return;
+  const saved=db.reports.find(x=>String(x.id)===String(r.id));
+  if(saved&&isFinalized(saved))await openPdfPreview(saved);
 };
 $('saveDocument').onclick=()=>{if(persistDocument())show('home')};
 renderArchive();
@@ -856,7 +865,6 @@ $('form').addEventListener('click',event=>{if(event.target.closest('button'))sch
 canvas.addEventListener('pointerup',scheduleAutoSave);
 window.addEventListener('pagehide',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
 window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSaveTimer);autoSaveDraft();});
-
 
 
 // Explicitly wire the main create button. This also protects the primary action from stale handlers.

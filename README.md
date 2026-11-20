@@ -160,3 +160,11 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Ein bereits vorhandener Entwurf wird beim Speichern in einen Nachweis umgewandelt, statt einen zweiten Eintrag anzulegen.
 - Die Archiv-Schaltfläche heißt jetzt nur noch „Nachweise“.
 - Ein gespeicherter Nachweis ohne bereits erzeugtes PDF wird als „Gespeichert“ gekennzeichnet.
+
+
+## Version 133 – Bearbeitbar bis zur Unterschrift
+- „Dokument speichern“ legt einen noch nicht unterschriebenen Nachweis unter „Nachweise“ ab und lässt ihn bearbeitbar.
+- Wird eine bestätigte Unterschrift gespeichert, wird der Nachweis als abgeschlossen/gesperrt markiert.
+- Bearbeitbare Nachweise zeigen „Bearbeiten“; unterschriebene Nachweise zeigen nur „PDF erstellen“.
+- Die PDF-Erstellung aus dem Formular setzt eine übernommene Unterschrift und das Speichern des unterschriebenen Dokuments voraus.
+- Die automatische Zwischenspeicherung erhält den jeweiligen Bearbeitungsstatus und überschreibt keine gesperrten Nachweise.
