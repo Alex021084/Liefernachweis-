@@ -1681,3 +1681,17 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   font-weight:800!important;
   line-height:1!important;
 }
+
+
+/* Version 130: Überschrift Stammdaten verwalten ohne Kachel. */
+#master > .step{
+  background:transparent!important;
+  color:#202833!important;
+  border:0!important;
+  border-radius:0!important;
+  padding:0!important;
+  margin:8px 0 22px!important;
+  box-shadow:none!important;
+  font-size:24px!important;
+  font-weight:800!important;
+}

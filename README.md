@@ -139,3 +139,8 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Der automatische Dialog zum Fortsetzen offener Entwürfe wird nur auf der Startseite angeboten.
 - Er erscheint nicht im aktiven Liefernachweis und nicht während der PDF-Vorschau/-Erstellung.
 - Gespeicherte Entwürfe bleiben erhalten und können weiterhin über die Liefernachweise geöffnet werden.
+
+
+## Version 130 – Stammdaten-Überschrift ohne Kachel
+- „Stammdaten verwalten“ wird ohne Hintergrund, Rahmen oder Kachel dargestellt.
+- Schriftfarbe ist schwarz/dunkel, fett und bleibt als Überschrift erhalten.
