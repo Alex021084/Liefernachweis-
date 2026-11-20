@@ -196,7 +196,7 @@ function renderMaterialSummary(){
   const totals=materialTotals();
   if(!totals.length){el.innerHTML='<h3>Erfasste Materialien</h3><p class="hint">Noch keine Materialien erfasst.</p>';return;}
   const group=(type,title,cls)=>{const rows=totals.filter(t=>t.type===type);return rows.length?`<section class="materialGroup ${cls}"><h4>${title}</h4>${rows.map(t=>`<div class="swipeMaterial" data-swipe-type="${t.type}" data-swipe-name="${esc(t.name)}" data-swipe-unit="${t.unit}" data-swipe-stamp="${t.includeDateTime?esc([t.date||'',t.time||''].join('T')):''}" data-source-index="${t._sourceIndex===undefined?'':t._sourceIndex}"><button type="button" class="swipeDelete" aria-label="Material löschen">×</button><div class="summaryRow"><b>${esc(t.name)}${t.vehicle?`<small class="materialVehicle">Kennzeichen: ${esc(t.vehicle)}</small>`:''}${t.includeDateTime?`<small class="materialDateStamp">${esc(formatMaterialDateTime(t.date,t.time))}</small>`:''}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'m³'}</span></div></div>`).join('')}</section>`:''};
-  el.innerHTML='<h3>Erfasste Materialien</h3><p class="swipeHint">Nach links wischen und zum Löschen auf das rote X tippen.</p>'+group('delivery','Material geliefert','deliveryGroup')+group('stock','Material ab Grube/Lager','deliveryGroup')+group('haul','Material abgefahren','haulGroup');
+  el.innerHTML='<h3>Erfasste Materialien</h3>'+group('delivery','Material geliefert','deliveryGroup')+group('stock','Material ab Grube/Lager','deliveryGroup')+group('haul','Material abgefahren','haulGroup');
   el.querySelectorAll('.swipeMaterial').forEach(item=>{
     const row=item.querySelector('.summaryRow'),del=item.querySelector('.swipeDelete');
     let startX=0,startY=0,lastX=0,tracking=false;
