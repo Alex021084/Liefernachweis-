@@ -20,12 +20,101 @@ document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>show(b.dataset
 $('masterBackButton').onclick=()=>show('welcome');
 $('goNew').onclick=fresh;$('goDeliveries').onclick=()=>show('home');$('goMaster').onclick=()=>show('master');$('archiveHomeButton').addEventListener('click',()=>show('welcome'));document.querySelectorAll('.back').forEach(b=>b.onclick=()=>show(b.closest('#master')?'welcome':'master'));
 function fillSelect(el,items,placeholder){el.innerHTML=`<option value="">${placeholder}</option>`+items.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}
-function renderCustomers(){ $('customerList').innerHTML=db.customers.map((c,i)=>`<div class="archiveCard"><div><b>${esc(c.name)}</b><small>${esc(c.address)}</small></div><button class="remove" data-del-c="${i}">×</button></div>`).join('')||'<p class="hint">Noch keine Kunden angelegt.</p>';document.querySelectorAll('[data-del-c]').forEach(b=>b.onclick=()=>{db.customers.splice(+b.dataset.delC,1);save();renderCustomers()})}
-function renderProjects(){fillSelect($('projectOwner'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('projectList').innerHTML=db.projects.map((p,i)=>`<div class="archiveCard"><div><b>${esc(p.name)}</b><small>${esc(p.owner)}</small></div><button class="remove" data-del-p="${i}">×</button></div>`).join('')||'<p class="hint">Noch keine Bauvorhaben angelegt.</p>';document.querySelectorAll('[data-del-p]').forEach(b=>b.onclick=()=>{db.projects.splice(+b.dataset.delP,1);save();renderProjects()})}
-function renderDeliveryMaterials(){db.deliveryMaterials=db.deliveryMaterials||[];$('deliveryMaterialsList').innerHTML=db.deliveryMaterials.map((m,i)=>`<div class="archiveCard"><b>${esc(m)}</b><button class="remove" data-del-dm="${i}">×</button></div>`).join('')||'<p class="hint">Noch keine Liefermaterialien angelegt.</p>';document.querySelectorAll('[data-del-dm]').forEach(b=>b.onclick=()=>{db.deliveryMaterials.splice(+b.dataset.delDm,1);save();renderDeliveryMaterials()})}
-function renderHaulMaterials(){db.haulMaterials=db.haulMaterials||[];$('haulMaterialsList').innerHTML=db.haulMaterials.map((m,i)=>`<div class="archiveCard"><b>${esc(m)}</b><button class="remove" data-del-hm="${i}">×</button></div>`).join('')||'<p class="hint">Noch keine Abfuhrmaterialien angelegt.</p>';document.querySelectorAll('[data-del-hm]').forEach(b=>b.onclick=()=>{db.haulMaterials.splice(+b.dataset.delHm,1);save();renderHaulMaterials()})}
+function renderCustomers(){
+  $('customerList').innerHTML=db.customers.map((c,i)=>`<div class="archiveCard"><div><b>${esc(c.name)}</b><small>${esc(c.address)}</small></div><button class="remove" data-del-c="${i}" aria-label="Kunde löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Kunden angelegt.</p>';
+  document.querySelectorAll('[data-del-c]').forEach(b=>b.onclick=()=>{
+    const index=+b.dataset.delC, customer=db.customers[index];
+    if(!customer)return;
+    askAppConfirm(`Möchtest du den Kunden „${customer.name}“ wirklich löschen?`,()=>{db.customers.splice(index,1);save();renderCustomers();},'Kunden löschen?');
+  });
+}
+function renderProjects(){
+  fillSelect($('projectOwner'),db.customers.map(c=>c.name),'Auftraggeber wählen');
+  $('projectList').innerHTML=db.projects.map((p,i)=>`<div class="archiveCard"><div><b>${esc(p.name)}</b><small>${esc(p.owner)}</small></div><button class="remove" data-del-p="${i}" aria-label="Bauvorhaben löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Bauvorhaben angelegt.</p>';
+  document.querySelectorAll('[data-del-p]').forEach(b=>b.onclick=()=>{
+    const index=+b.dataset.delP, project=db.projects[index];
+    if(!project)return;
+    askAppConfirm(`Möchtest du das Bauvorhaben „${project.name}“ wirklich löschen?`,()=>{db.projects.splice(index,1);save();renderProjects();},'Bauvorhaben löschen?');
+  });
+}
+function renderDeliveryMaterials(){
+  db.deliveryMaterials=db.deliveryMaterials||[];
+  $('deliveryMaterialsList').innerHTML=db.deliveryMaterials.map((m,i)=>`<div class="archiveCard sortableCard" data-sort-value="${esc(m)}"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben">⠿</span><b>${esc(m)}</b><button class="remove" data-del-dm="${i}" aria-label="Liefermaterial löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Liefermaterialien angelegt.</p>';
+  document.querySelectorAll('[data-del-dm]').forEach(b=>b.onclick=()=>{
+    const index=+b.dataset.delDm, material=db.deliveryMaterials[index];
+    if(material===undefined)return;
+    askAppConfirm(`Möchtest du „${material}“ wirklich löschen?`,()=>{db.deliveryMaterials.splice(index,1);save();renderDeliveryMaterials();},'Liefermaterial löschen?');
+  });
+  enableLongPressSorting('deliveryMaterialsList','deliveryMaterials',renderDeliveryMaterials);
+}
+function renderHaulMaterials(){
+  db.haulMaterials=db.haulMaterials||[];
+  $('haulMaterialsList').innerHTML=db.haulMaterials.map((m,i)=>`<div class="archiveCard sortableCard" data-sort-value="${esc(m)}"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben">⠿</span><b>${esc(m)}</b><button class="remove" data-del-hm="${i}" aria-label="Abfuhrmaterial löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Abfuhrmaterialien angelegt.</p>';
+  document.querySelectorAll('[data-del-hm]').forEach(b=>b.onclick=()=>{
+    const index=+b.dataset.delHm, material=db.haulMaterials[index];
+    if(material===undefined)return;
+    askAppConfirm(`Möchtest du „${material}“ wirklich löschen?`,()=>{db.haulMaterials.splice(index,1);save();renderHaulMaterials();},'Abfuhrmaterial löschen?');
+  });
+  enableLongPressSorting('haulMaterialsList','haulMaterials',renderHaulMaterials);
+}
+function renderServices(){
+  db.services=db.services||[];
+  $('servicesList').innerHTML=db.services.map((v,i)=>`<div class="archiveCard sortableCard" data-sort-value="${esc(v)}"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben">⠿</span><b>${esc(v)}</b><button class="remove" data-del-s="${i}" aria-label="Leistung löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Leistungen angelegt.</p>';
+  document.querySelectorAll('[data-del-s]').forEach(b=>b.onclick=()=>{
+    const index=+b.dataset.delS, service=db.services[index];
+    if(service===undefined)return;
+    askAppConfirm(`Möchtest du „${service}“ wirklich löschen?`,()=>{db.services.splice(index,1);save();renderServices();},'Leistung löschen?');
+  });
+  enableLongPressSorting('servicesList','services',renderServices);
+}
 
-function renderServices(){db.services=db.services||[];$('servicesList').innerHTML=db.services.map((v,i)=>`<div class="archiveCard"><b>${esc(v)}</b><button class="remove" data-del-s="${i}">×</button></div>`).join('')||'<p class="hint">Noch keine Leistungen angelegt.</p>';document.querySelectorAll('[data-del-s]').forEach(b=>b.onclick=()=>{db.services.splice(+b.dataset.delS,1);save();renderServices()})}
+// Sortierung per Gedrückthalten am Griff. Die Reihenfolge wird nach dem Loslassen lokal gespeichert.
+let activeLongPressSort=null;
+function enableLongPressSorting(hostId,dbKey,renderFn){
+  const host=$(hostId);
+  if(!host||host.dataset.sortBound==='1')return;
+  host.dataset.sortBound='1';
+  host.addEventListener('pointerdown',event=>{
+    const grip=event.target.closest('.dragGrip');
+    if(!grip||event.button!==0)return;
+    const card=grip.closest('.sortableCard');
+    if(!card)return;
+    if(activeLongPressSort)clearTimeout(activeLongPressSort.timer);
+    const state={host,dbKey,renderFn,card,pointerId:event.pointerId,started:false,timer:null};
+    activeLongPressSort=state;
+    state.timer=setTimeout(()=>{
+      if(activeLongPressSort!==state)return;
+      state.started=true;
+      card.classList.add('is-dragging');
+      if(navigator.vibrate)navigator.vibrate(35);
+    },380);
+  });
+}
+document.addEventListener('pointermove',event=>{
+  const state=activeLongPressSort;
+  if(!state||event.pointerId!==state.pointerId||!state.started)return;
+  event.preventDefault();
+  const target=document.elementFromPoint(event.clientX,event.clientY);
+  const over=target&&target.closest?target.closest('.sortableCard'):null;
+  if(!over||over===state.card||over.parentElement!==state.host)return;
+  const rect=over.getBoundingClientRect();
+  const after=event.clientY>rect.top+rect.height/2;
+  state.host.insertBefore(state.card,after?over.nextSibling:over);
+},{passive:false});
+function finishLongPressSort(event){
+  const state=activeLongPressSort;
+  if(!state||event.pointerId!==state.pointerId)return;
+  clearTimeout(state.timer);
+  activeLongPressSort=null;
+  if(!state.started)return;
+  state.card.classList.remove('is-dragging');
+  const ordered=[...state.host.querySelectorAll('.sortableCard')].map(card=>card.dataset.sortValue);
+  db[state.dbKey]=ordered;
+  save();
+  state.renderFn();
+}
+document.addEventListener('pointerup',finishLongPressSort);
+document.addEventListener('pointercancel',finishLongPressSort);
 
 $('saveCustomer').onclick=()=>{let name=$('newCustomer').value.trim();if(!name)return alert('Bitte einen Kundennamen eingeben.');db.customers.push({name,address:$('newAddress').value.trim()});$('newCustomer').value='';$('newAddress').value='';save();renderCustomers()};
 $('saveProject').onclick=()=>{let name=$('newProject').value.trim(),owner=$('projectOwner').value;if(!name||!owner)return alert('Bitte Auftraggeber und Bauvorhaben angeben.');db.projects.push({name,owner});$('newProject').value='';save();renderProjects()};

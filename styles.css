@@ -1737,3 +1737,11 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   box-shadow:0 2px 6px rgba(100,75,20,.10)!important;
 }
 #master .masterBackButton:active{filter:brightness(.97)}
+
+
+/* Version 139: Löschbestätigung und Drag-and-drop-Sortierung */
+.sortableCard{position:relative;gap:10px;transition:transform .12s ease,box-shadow .12s ease}
+.sortableCard>b{flex:1;min-width:0}
+.dragGrip{flex:0 0 30px;display:grid;place-items:center;min-height:38px;border-radius:9px;color:#718078;background:#eef5ef;font-size:24px;font-weight:800;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.sortableCard.is-dragging{position:relative;z-index:5;opacity:.82;transform:scale(1.015);box-shadow:0 8px 22px rgba(20,35,25,.18);border-color:#83b994}
+.sortableCard.is-dragging .dragGrip{background:#dcefe1;color:#276b42;cursor:grabbing}
