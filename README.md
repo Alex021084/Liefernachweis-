@@ -144,3 +144,12 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 ## Version 130 – Stammdaten-Überschrift ohne Kachel
 - „Stammdaten verwalten“ wird ohne Hintergrund, Rahmen oder Kachel dargestellt.
 - Schriftfarbe ist schwarz/dunkel, fett und bleibt als Überschrift erhalten.
+
+
+## Version 131 – Unterschrift und Dokumentaktionen unter der Zusammenfassung
+- Ausgangspunkt ist unverändert Version 130.
+- Die Material- und Leistungszusammenfassung bleibt an derselben Stelle und wird nicht umgebaut.
+- Direkt unter der Zusammenfassung befinden sich nun Unterschrift Auftraggeber, Bestätigungsstatus, Unterschreiben/Unterschrift erledigt, PDF erstellen und Dokument speichern.
+- Startseite und Zurück stehen darunter nebeneinander.
+- Der separate fünfte Abschluss-Schritt wurde entfernt; die Zusammenfassung ist nun der letzte Schritt.
+- Den zusätzlichen Entwurfs-Auswahldialog nach PDF-Erstellung entfernt.
