@@ -869,8 +869,8 @@ window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSa
 
 // Version 103: Wiegenote fotografieren, OCR prüfen und als einzelne Lieferung übernehmen.
 (function setupWeighNoteScanner(){
-  const scanButton=$('scanWeighNote'),fileInput=$('weighNoteFile'),modal=$('weighScanModal');
-  if(!scanButton||!fileInput||!modal)return;
+  const scanButton=$('scanWeighNote'),cameraInput=$('weighNoteCamera'),galleryInput=$('weighNoteGallery'),modal=$('weighScanModal'),sourceModal=$('weighSourceModal');
+  if(!scanButton||!cameraInput||!galleryInput||!modal||!sourceModal)return;
   let ocrScriptPromise=null;
   const loadTesseract=()=>new Promise((resolve,reject)=>{
     if(window.Tesseract)return resolve(window.Tesseract);
@@ -958,10 +958,14 @@ window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSa
   };
   const parsedScore=data=>Object.values(data).filter(v=>String(v||'').trim()).length;
     const close=()=>{modal.hidden=true;modal.setAttribute('aria-hidden','true');};
+  const closeSource=()=>{sourceModal.hidden=true;sourceModal.setAttribute('aria-hidden','true');};
   document.querySelectorAll('[data-close-weigh]').forEach(el=>el.addEventListener('click',close));
-  scanButton.addEventListener('click',()=>{fileInput.value='';fileInput.click();});
-  fileInput.addEventListener('change',async()=>{
-    const file=fileInput.files&&fileInput.files[0];if(!file)return;
+  document.querySelectorAll('[data-close-source]').forEach(el=>el.addEventListener('click',closeSource));
+  scanButton.addEventListener('click',()=>{sourceModal.hidden=false;sourceModal.setAttribute('aria-hidden','false');});
+  $('chooseWeighCamera').addEventListener('click',()=>{closeSource();cameraInput.value='';cameraInput.click();});
+  $('chooseWeighGallery').addEventListener('click',()=>{closeSource();galleryInput.value='';galleryInput.click();});
+  const handleFileChange=async(event)=>{
+    const file=event.target.files&&event.target.files[0];if(!file)return;
     $('weighScanStatus').textContent='Wiegenote wird gelesen … Bitte einen Moment warten.';
     modal.hidden=false;modal.setAttribute('aria-hidden','false');
     try{
@@ -987,7 +991,9 @@ window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSa
       $('weighScanStatus').textContent='Die automatische Erkennung ist fehlgeschlagen. Du kannst die Angaben unten manuell eintragen.';
       ['weighBon','weighCustomer','weighMaterial','weighWeight','weighVehicle','weighDate','weighTime'].forEach(id=>setField(id,''));setField('weighSite','');
     }
-  });
+  };
+  cameraInput.addEventListener('change',handleFileChange);
+  galleryInput.addEventListener('change',handleFileChange);
   $('addWeighScan').addEventListener('click',()=>{
     const name=$('weighMaterial').value.trim(),qty=$('weighWeight').value.trim(),date=$('weighDate').value,time=$('weighTime').value;
     if(!name)return alert('Bitte das Material kontrollieren oder eintragen.');

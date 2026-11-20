@@ -14,3 +14,10 @@ Alle fünf Dateien gemeinsam in denselben Webserver-Ordner hochladen und `index.
 
 Die App lädt `pdf-lib` und bei Bedarf `tesseract.js` weiterhin extern über CDN.
 Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket entfernt.
+
+
+## Version 109 – Quelle für Wiegenoten-Fotos
+- Beim Tippen auf „Wiegenote scannen“ erscheint eine Auswahl: „Kamera“ oder „Foto auswählen“.
+- Kamera öffnet die rückseitige Kamera auf unterstützten Mobilgeräten.
+- Foto auswählen öffnet die Fotomediathek bzw. Dateiauswahl.
+- Beide Wege verwenden dieselbe OCR-Erkennung.

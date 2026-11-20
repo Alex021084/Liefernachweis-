@@ -1322,3 +1322,7 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
 
 /* Cache-/Fallback-Schutz: Hinweis unter 'Erfasste Materialien' dauerhaft ausblenden. */
 #materialRows .swipeHint{display:none!important}
+
+/* Version 109: Auswahl zwischen Kamera und vorhandenem Foto. */
+.weighSourceActions button{min-height:54px;font-size:16px;font-weight:750}
+#weighNoteCamera[hidden],#weighNoteGallery[hidden]{display:none!important}
