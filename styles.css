@@ -1413,3 +1413,27 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   border-width:1px!important;
   box-shadow:none!important;
 }
+
+
+/* Version 116: compact archive-only home tile; cache-busted for mobile Safari. */
+#home .archiveHomeTile{
+  display:block!important;
+  width:25%!important;
+  min-width:132px!important;
+  max-width:190px!important;
+  min-height:44px!important;
+  margin:0 0 22px 0!important;
+  padding:9px 12px!important;
+  box-sizing:border-box!important;
+  border:1px solid #e5bd55!important;
+  border-radius:12px!important;
+  background:#f1c65e!important;
+  color:#171717!important;
+  font-family:inherit!important;
+  font-size:16px!important;
+  font-weight:700!important;
+  line-height:1.2!important;
+  text-align:center!important;
+  box-shadow:none!important;
+}
+#home .archiveHomeTile:active{background:#e9b94d!important}

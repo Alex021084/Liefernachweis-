@@ -55,3 +55,11 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 ## Version 115 – kompakte Startseiten-Kachel
 - Startseiten-Kachel in der Übersicht auf etwa ein Viertel der verfügbaren Breite verkleinert.
 - Links ausgerichtet, mit kompakter Höhe und weiterhin gelbem Hintergrund sowie schwarzer Schrift.
+
+
+## Version 116 – Reparatur der Navigation
+- App-JavaScript auf den letzten bekannten funktionierenden Stand zurückgesetzt; die bestehenden Daten- und Archivfunktionen bleiben erhalten.
+- „Liefernachweis erstellen“ ist wieder mit der ursprünglichen Erstellfunktion verbunden.
+- Die gespeicherten Liefernachweise werden wieder regulär über die Archivansicht gerendert.
+- Die Startseiten-Kachel erscheint ausschließlich in der Archivansicht, kompakt linksbündig, gelb mit schwarzer Schrift.
+- CSS- und JavaScript-Cache-Version auf 116 angehoben, damit Safari die aktualisierten Dateien lädt.
