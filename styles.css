@@ -278,3 +278,1022 @@ input,select,textarea,
   flex:0 0 auto!important;
   white-space:nowrap!important;
 }
+
+/* V30: bewusst mit höchster Priorität, damit frühere Regeln die Darstellung nicht überschreiben */
+html body #materialRows .materialGroup .summaryRow b,
+html body #materialRows .materialGroup .summaryRow span {
+  color:#111111 !important;
+  font-size:12px !important;
+  line-height:1.15 !important;
+}
+html body #materialRows .materialGroup .summaryRow {
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+}
+html body .draftSaveFull button.draftSaveButton {
+  background:#27834b !important;
+  background-image:none !important;
+  color:#ffffff !important;
+  font-size:21px !important;
+  font-weight:700 !important;
+  min-height:72px !important;
+  border:2px solid #1e713e !important;
+  border-radius:18px !important;
+}
+
+/* Zusatzleistungen: Auswahl als übersichtliche Kacheln im Popup */
+.serviceModal{display:none;position:fixed;inset:0;z-index:1100;align-items:center;justify-content:center;padding:16px}
+.serviceModal.open{display:flex}
+.serviceModal[hidden]{display:none!important}
+.serviceModalBackdrop{position:absolute;inset:0;background:rgba(15,24,34,.58)}
+.serviceModalCard{position:relative;z-index:1;width:min(100%,560px);max-height:90vh;overflow:auto;padding:22px;border-radius:20px;background:#fff;box-shadow:0 18px 60px rgba(0,0,0,.28);display:grid;gap:14px}
+.serviceModalCard h2{margin:0}
+.serviceTiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.serviceTile{min-height:68px;padding:12px;border:2px solid #c9dfd0;border-radius:14px;background:#eef7f0;color:#245c36;font:700 15px/1.25 inherit;cursor:pointer}
+.serviceTile.selected{background:#287f49;border-color:#1e6c3c;color:#fff;box-shadow:0 3px 10px #287f4930}
+.serviceDetails{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.serviceDetails label{display:grid;gap:6px;font-weight:650;font-size:14px}
+.serviceDetails input{width:100%;min-height:50px;padding:10px;border:1px solid #cbd4dd;border-radius:10px;font:inherit;font-size:16px}
+.serviceModalCard .actions{display:flex;gap:10px}
+.serviceModalCard .actions button{flex:1;min-height:52px}
+@media(max-width:420px){.serviceTiles{grid-template-columns:1fr}.serviceModalCard{padding:16px}.serviceDetails{gap:8px}}
+
+/* Leistung wird erst nach Antippen des Feldes in einem eigenen Auswahl-Popup gewählt */
+.servicePickerCard{max-height:82vh;overflow-y:auto}
+.servicePickerCard .serviceTiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.servicePickerCard .serviceTile{min-height:66px;border-radius:14px;font-size:15px;font-weight:700}
+.servicePickButton{
+  width:100%;min-height:48px;padding:10px 12px;
+  border:1px solid #cbd4dd;border-radius:10px;
+  background:#f8fafc;color:#202a35;text-align:left;
+  font:inherit;font-size:15px;cursor:pointer;
+}
+.servicePickButton:not([data-value]){color:#7b8490}
+.entry.service .job{min-width:190px}
+@media(max-width:520px){.servicePickerCard .serviceTiles{grid-template-columns:1fr}}
+
+/* Zusatzleistungs-Einträge: sauberes, mobilfreundliches 2-Spalten-Layout */
+.entry.service{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-areas:
+    "job job"
+    "hours pause"
+    "start end"
+    "remove remove"!important;
+  gap:12px!important;
+  align-items:end!important;
+  padding:14px!important;
+  margin:12px 0!important;
+  border:1px solid #d7dee5!important;
+  border-radius:16px!important;
+  background:#fbfcfd!important;
+}
+.entry.service .job{grid-area:job!important;min-width:0!important;width:100%!important}
+.entry.service .hours{grid-area:hours!important;min-width:0!important}
+.entry.service .pause{grid-area:pause!important;min-width:0!important}
+.entry.service .start{grid-area:start!important;min-width:0!important}
+.entry.service .end{grid-area:end!important;min-width:0!important}
+.entry.service label{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:6px!important;
+  min-width:0!important;
+  color:#46515d!important;
+  font-size:13px!important;
+  font-weight:700!important;
+}
+.entry.service input{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:52px!important;
+  padding:10px 12px!important;
+  border:1px solid #cbd4dd!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  color:#202a35!important;
+  font-size:16px!important;
+}
+.entry.service .servicePickButton{
+  box-sizing:border-box!important;
+  display:block!important;
+  width:100%!important;
+  min-height:54px!important;
+  padding:11px 14px!important;
+  border:1px solid #cbd4dd!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  color:#202a35!important;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  font-family:inherit!important;
+  font-size:16px!important;
+  font-weight:600!important;
+  line-height:1.25!important;
+}
+.entry.service .servicePickButton:not([data-value]){
+  background:#f5f7f9!important;
+  color:#727d89!important;
+}
+.entry.service .removeService{
+  grid-area:remove!important;
+  justify-self:end!important;
+  width:54px!important;
+  min-width:54px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:0!important;
+  border:1px solid #f0cccc!important;
+  border-radius:11px!important;
+  background:#fff1f1!important;
+  color:#b42318!important;
+  font-size:22px!important;
+}
+@media(min-width:700px){
+  .entry.service{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-areas:"job job job job" "hours start end pause" "remove remove remove remove"!important}
+}
+
+/* iOS-ähnliches Wischen: erst rotes X zeigen, Löschen erst nach Antippen */
+.swipeMaterial{
+  position:relative!important;
+  overflow:hidden!important;
+  border-radius:12px!important;
+  margin:8px 0!important;
+  background:#e3342f!important;
+  touch-action:pan-y!important;
+}
+.swipeMaterial .summaryRow{
+  position:relative!important;
+  z-index:2!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  min-height:54px!important;
+  margin:0!important;
+  transition:transform .18s ease!important;
+  will-change:transform;
+  touch-action:pan-y!important;
+  cursor:grab;
+}
+.swipeMaterial .swipeDelete{
+  position:absolute!important;
+  z-index:1!important;
+  top:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:68px!important;
+  height:100%!important;
+  min-height:54px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#e3342f!important;
+  color:#fff!important;
+  font-size:30px!important;
+  font-weight:400!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+}
+.swipeMaterial.swipe-open .summaryRow{transform:translateX(-68px)}
+
+/* Gespeicherte Liefernachweise: iOS-Wischgeste mit rotem X */
+.archiveSwipeItem{position:relative;overflow:hidden;border-radius:18px;margin:12px 0;background:#e3342f;touch-action:pan-y}
+.archiveSwipeItem .archiveCard{position:relative;z-index:2;transition:transform .18s ease;will-change:transform;touch-action:pan-y;margin:0}
+.archiveSwipeItem .archiveDelete{position:absolute;z-index:1;top:0;right:0;bottom:0;width:72px;height:100%;min-height:64px;border:0;border-radius:0;background:#e3342f;color:#fff;font-size:32px;display:flex;align-items:center;justify-content:center;padding:0}
+.archiveSwipeItem.archive-open .archiveCard{transform:translateX(-72px)}
+/* Zwischenspeichern etwas kompakter und weniger dominant */
+.draftSaveFull .draftSaveButton,
+.draftSaveFull button#saveDraftCustomer,
+.draftSaveFull button#saveDraftMaterials,
+.draftSaveFull button#saveDraftServices{
+  min-height:58px!important;
+  font-size:18px!important;
+  border-radius:14px!important;
+  font-weight:650!important;
+}
+
+/* V37: Zusatzleistungs-Zeitfelder kompakt in einer einzigen Reihe */
+.entry.service{
+  display:grid!important;
+  grid-template-columns:minmax(0,.82fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.82fr) 38px!important;
+  grid-template-areas:
+    "job job job job job"
+    "hours start end pause remove"!important;
+  gap:8px!important;
+  align-items:end!important;
+  padding:12px!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+}
+.entry.service .job{grid-area:job!important;min-width:0!important;width:100%!important}
+.entry.service .hours{grid-area:hours!important;min-width:0!important}
+.entry.service .start{grid-area:start!important;min-width:0!important}
+.entry.service .end{grid-area:end!important;min-width:0!important}
+.entry.service .pause{grid-area:pause!important;min-width:0!important}
+.entry.service .removeService{grid-area:remove!important;align-self:end!important;width:38px!important;min-width:38px!important;height:48px!important}
+.entry.service label{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  gap:5px!important;min-width:0!important;width:100%!important;
+  font-size:12px!important;line-height:1.2!important;
+}
+.entry.service input{
+  display:block!important;box-sizing:border-box!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  height:48px!important;min-height:48px!important;
+  padding:7px 5px!important;font-size:14px!important;
+  text-align:center!important;border-radius:10px!important;
+}
+.entry.service .servicePickButton{
+  width:100%!important;min-width:0!important;box-sizing:border-box!important;
+  min-height:48px!important;font-size:15px!important;
+}
+@media(max-width:700px){
+  .entry.service{
+    grid-template-columns:minmax(0,.82fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.82fr) 34px!important;
+    gap:6px!important;padding:9px!important;
+  }
+  .entry.service input{font-size:13px!important;padding:6px 3px!important;height:46px!important;min-height:46px!important}
+  .entry.service label{font-size:11px!important}
+  .entry.service .removeService{width:34px!important;min-width:34px!important;height:46px!important}
+}
+
+/* V38: kompakte Zusatzleistungs-Kacheln, Zeitwahl in 15-Minuten-Schritten */
+.serviceSwipeItem{position:relative;overflow:hidden;border-radius:14px;margin:10px 0;background:#d93636;touch-action:pan-y}
+.serviceSwipeItem .entry.service{
+  position:relative;z-index:2;
+  display:grid!important;
+  grid-template-columns:minmax(0,.72fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.72fr)!important;
+  grid-template-areas:"job job job job" "description description description description" "hours start end pause"!important;
+  gap:7px!important;padding:10px!important;margin:0!important;
+  width:100%!important;box-sizing:border-box!important;
+  transition:transform .18s ease!important;touch-action:pan-y!important;
+}
+.serviceSwipeItem .job{grid-area:job!important}
+.serviceSwipeItem .description{grid-area:description!important}
+.serviceSwipeItem .hours{grid-area:hours!important}
+.serviceSwipeItem .start{grid-area:start!important}
+.serviceSwipeItem .end{grid-area:end!important}
+.serviceSwipeItem .pause{grid-area:pause!important}
+.serviceSwipeItem .entry.service label{min-width:0!important;width:100%!important;font-size:11px!important;gap:4px!important}
+.serviceSwipeItem .entry.service input,
+.serviceSwipeItem .entry.service select,
+.serviceSwipeItem .entry.service .servicePickButton{
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  box-sizing:border-box!important;height:40px!important;min-height:40px!important;
+  padding:5px 4px!important;border-radius:9px!important;font-size:12px!important;
+  text-align:center!important;
+}
+.serviceSwipeItem .entry.service .servicePickButton{
+  text-align:left!important;padding:8px 10px!important;font-size:14px!important;
+  height:auto!important;min-height:44px!important;
+}
+.serviceSwipeDelete{
+  position:absolute!important;z-index:1!important;top:0;right:0;bottom:0;
+  width:68px!important;height:100%!important;min-height:100%!important;
+  border:0!important;border-radius:0!important;background:#d93636!important;
+  color:#fff!important;font-size:30px!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;padding:0!important;
+}
+.serviceSwipeItem.swipe-open .entry.service{transform:translateX(-68px)}
+@media(max-width:480px){
+ .serviceSwipeItem .entry.service{gap:5px!important;padding:8px!important}
+ .serviceSwipeItem .entry.service label{font-size:10px!important}
+ .serviceSwipeItem .entry.service input,.serviceSwipeItem .entry.service select{font-size:11px!important;height:38px!important;min-height:38px!important}
+}
+
+/* PDF wird unabhängig von der Bildschirmdarstellung als neues DIN-A4-Dokument erzeugt. */
+
+/* V41: Startseite etwas tiefer setzen */
+#welcome{padding-top:34px!important}
+#welcome .welcomeActions{margin-top:42px!important}
+/* Zusammenfassung vor dem Abschluss */
+#reportSummary{display:grid;gap:14px}
+#reportSummary .summaryMeta{padding:14px 16px;background:#f5f7f8;border:1px solid #dce1e5;border-radius:14px;line-height:1.65}
+#reportSummary .summaryBlock{padding:14px;border:1px solid #dce1e5;border-radius:14px;background:#fff}
+#reportSummary .summaryBlock h3{margin:0 0 10px;font-size:17px;color:#202833}
+#reportSummary .summaryBlock.deliveryGroup{background:#edf7f0;border-color:#c5e1ce}
+#reportSummary .summaryBlock.haulGroup{background:#fff0f0;border-color:#f0caca}
+#reportSummary .summaryLine{display:flex;justify-content:space-between;gap:12px;padding:9px 4px;border-top:1px solid #d8e2dc;color:#202833}
+#reportSummary .summaryService{padding:10px 4px;border-top:1px solid #e0e4e8;line-height:1.5}
+#reportSummary .summaryService small{display:block;color:#68727e;margin-top:4px}
+
+/* V42: numerische Eingaben, Unterschriftsstatus und klare Beschriftung */
+.entry .descriptionv{text-align:left!important;direction:ltr}
+.entry .descriptionv::placeholder{text-align:left}
+.entry .description{ text-align:left!important }
+#openSignature.signatureDone{background:#e8f5ec!important;color:#23633d!important;border:2px solid #78bd8c!important;box-shadow:none!important}
+#openSignature.signatureDone::first-letter{font-weight:900}
+#saveDraftServices{min-height:48px!important;padding:10px 16px!important;font-size:15px!important;max-width:420px!important;margin:0 auto!important;display:block!important}
+
+/* V43: Startseite mit mehr Luft nach oben und tiefer platzierten Kacheln */
+header{padding-top:58px!important}
+#welcome{padding-top:48px!important}
+#welcome .welcomeActions{margin-top:56px!important}
+
+/* V45: Liefernachweise nach Kunden und Bauvorhaben, Entwürfe separat */
+.archiveTabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 20px}
+.archiveTabs button{border:1px solid #c8dfcf;background:#edf6ef;color:#356b49;border-radius:15px;padding:14px 10px;font-family:inherit;font-size:15px;font-weight:600}
+.archiveTabs button.active{background:#347f4e;color:#fff;border-color:#286b40;box-shadow:0 2px 5px #00000012}
+.archiveCrumb{display:flex;flex-direction:column;gap:5px;margin:10px 0 14px;padding:5px 2px 12px;border-bottom:1px solid #dce1e5;color:#252d38}
+.archiveCrumb b{font-size:19px}.archiveCrumb span{font-size:14px;color:#7b8490}
+.archiveNavCard{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;background:#fff;border:1px solid #dce1e5;border-radius:17px;padding:18px;margin:0 0 12px;color:#252d38;box-shadow:0 2px 8px #00000005}
+.archiveNavCard span{display:flex;flex-direction:column;gap:5px;min-width:0}.archiveNavCard b{font-size:17px}.archiveNavCard small{font-size:14px;color:#7b8490}.archiveNavCard strong{font-size:27px;color:#46805a;font-weight:500}
+.archiveBack{border:0;background:transparent;color:#34764b;padding:8px 2px 14px;font-size:15px;font-weight:600}
+
+
+/* V47: Leistungsbeschreibung konsequent linksbündig; Stunden werden aus Zeit und Pause berechnet. */
+.serviceSwipeItem .entry.service .descriptionv,
+.serviceSwipeItem .entry.service .descriptionv::placeholder{
+  text-align:left!important;
+}
+.serviceSwipeItem .entry.service .hoursv{
+  text-align:center!important;
+  background:#f1f4f6!important;
+  color:#4b5563!important;
+  font-weight:600!important;
+}
+
+
+/* V49: Stundenfeld ist jederzeit manuell bearbeitbar. */
+.serviceSwipeItem .entry.service .hoursv{
+  background:#fff!important;
+  color:#202833!important;
+  font-weight:500!important;
+  text-align:center!important;
+  cursor:text!important;
+  -webkit-appearance:none;
+  appearance:none;
+}
+
+/* Optionale Datums- und Zeitangabe je Materialposition */
+.modalDateTimeToggle{display:flex!important;align-items:center;gap:10px;font-size:14px!important;font-weight:600}
+.modalDateTimeToggle input{width:20px!important;height:20px!important;flex:0 0 20px;accent-color:#34764b}
+.modalDateTimeFields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modalDateTimeFields[hidden]{display:none!important}
+.materialDateStamp{display:block;margin-top:3px;font-size:11px;font-weight:400;color:#7b8490}
+.summaryLine .materialDateStamp{font-size:11px}
+
+/* Version 54: Materialauswahl zuerst, Mengenfelder erst nach Auswahl */
+#materialQuantityFields[hidden]{display:none!important}
+#selectedMaterialHeading{margin:14px 0 8px;font-weight:700;color:#59636f}
+.materialDateStamp{display:block!important;margin-top:4px;font-size:11px!important;line-height:1.3;font-weight:400!important;color:#7b8490!important}
+
+/* Version 55: zweistufige Materialeingabe mit klarer Einheitenwahl */
+.materialStepIndicator{margin:0;color:#8a672e;background:#fff5dc;border:1px solid #f0d48a;border-radius:12px;padding:9px 12px;font-size:13px;font-weight:750}
+#materialStepSelect[hidden],#materialStepDetails[hidden]{display:none!important}
+.materialUnitPicker{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.materialUnitPicker button{min-height:58px;border:2px solid #d5dbe2;border-radius:13px;background:#f8fafc;color:#27313d;font-weight:750;font-size:16px;padding:10px}
+.materialUnitPicker button.selected{background:#e8f5eb;border-color:#438653;color:#28663a;box-shadow:inset 0 0 0 1px #438653}
+.materialModalCard .visuallyHidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.materialModalCard{max-height:90vh;overflow-y:auto}
+
+
+/* Version 56: großes Touch-Zahlenfeld für die Materialmenge */
+.materialUnitPicker{gap:12px}
+.materialUnitPicker button{min-height:64px;font-size:17px;border-radius:14px}
+.quantityDisplayLabel{display:grid;gap:7px;font-weight:700}
+.materialModalCard .quantityDisplay{min-height:66px!important;text-align:center;font-size:30px!important;font-weight:800;letter-spacing:.5px;background:#f3f5f8;border:2px solid #dce2e9;border-radius:14px;color:#182235;padding:10px}
+.materialNumericKeypad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.materialNumericKeypad button{min-height:58px;border:2px solid #d7dee7;border-radius:13px;background:#edf1f6;color:#182235;font-size:25px;font-weight:800;touch-action:manipulation}
+.materialNumericKeypad button:active{background:#dce5ef;transform:scale(.98)}
+.materialKeypadSpacer{min-height:1px}
+.materialModalCard .modalDateTimeToggle{display:flex!important;align-items:center;gap:11px;font-size:16px!important;font-weight:700}
+.materialModalCard .modalDateTimeToggle input{width:25px!important;height:25px!important;flex:0 0 25px;accent-color:#398650}
+@media(max-height:760px){.materialModalCard{max-height:94vh;gap:12px;padding:18px}.materialNumericKeypad button{min-height:48px}}
+
+/* Version 57: großzügiges, kontrastreiches Zahlenfeld für iPhone */
+.materialModalCard .materialNumericKeypad{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:12px!important;
+  width:100%!important;
+  margin:2px 0 8px!important;
+}
+.materialModalCard .materialNumericKeypad button{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:76px!important;
+  padding:10px!important;
+  border:2px solid #d8e0e9!important;
+  border-radius:16px!important;
+  background:linear-gradient(180deg,#f8fafc 0%,#e9eef4 100%)!important;
+  color:#1c2738!important;
+  box-shadow:0 3px 0 #d2dae4!important;
+  font-family:inherit!important;
+  font-size:32px!important;
+  line-height:1!important;
+  font-weight:800!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  touch-action:manipulation;
+}
+.materialModalCard .materialNumericKeypad button:active{
+  transform:translateY(2px)!important;
+  box-shadow:0 1px 0 #cbd5e1!important;
+  background:#dce8f5!important;
+}
+.materialModalCard .materialNumericKeypad [data-quantity-key="clear"],
+.materialModalCard .materialNumericKeypad [data-quantity-key="backspace"]{
+  color:#475569!important;
+  background:#e3e9f0!important;
+}
+.materialModalCard .materialNumericKeypad [data-quantity-key=","]{
+  background:#fff4d6!important;
+  border-color:#f0d48a!important;
+  color:#805b19!important;
+}
+.materialModalCard .materialKeypadSpacer{display:block!important;min-height:76px}
+.materialModalCard .materialUnitPicker{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px!important;
+  width:100%!important;
+}
+.materialModalCard .materialUnitPicker button{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:68px!important;
+  padding:12px 8px!important;
+  border:2px solid #cfd8e3!important;
+  border-radius:16px!important;
+  background:#f1f4f8!important;
+  color:#27313d!important;
+  font-size:17px!important;
+  font-weight:800!important;
+  box-shadow:0 2px 0 #dce2e9!important;
+}
+.materialModalCard .materialUnitPicker button.selected{
+  background:#e2f3e7!important;
+  border-color:#3c9154!important;
+  color:#216b38!important;
+  box-shadow:inset 0 0 0 1px #3c9154,0 2px 0 #c5dfcc!important;
+}
+.materialModalCard .quantityDisplay{
+  min-height:76px!important;
+  font-size:34px!important;
+  border-radius:16px!important;
+}
+@media(max-height:850px){
+  .materialModalCard .materialNumericKeypad button{min-height:64px!important;font-size:29px!important}
+  .materialModalCard .materialKeypadSpacer{min-height:64px}
+}
+
+
+/* Version 58: Schrittanzeige ausblenden und Zeitstempel-Felder sauber anordnen */
+.materialModalCard .materialStepIndicator{display:none!important}
+.materialModalCard .modalDateTimeFields{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:12px!important;
+  width:100%!important;
+  min-width:0!important;
+  padding:14px!important;
+  border:1px solid #dce4eb!important;
+  border-radius:15px!important;
+  background:#f7f9fb!important;
+  box-sizing:border-box!important;
+}
+.materialModalCard .modalDateTimeFields[hidden]{display:none!important}
+.materialModalCard .modalDateTimeFields label{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:7px!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  color:#566170!important;
+  font-size:15px!important;
+  font-weight:700!important;
+}
+.materialModalCard .modalDateTimeFields input{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:58px!important;
+  box-sizing:border-box!important;
+  padding:10px 12px!important;
+  border:2px solid #d8e0e9!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  color:#202833!important;
+  font-size:17px!important;
+}
+.materialModalCard .modalDateTimeToggle{
+  display:flex!important;
+  align-items:center!important;
+  width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  padding:12px 14px!important;
+  border:1px solid #dce4eb!important;
+  border-radius:14px!important;
+  background:#f7f9fb!important;
+  line-height:1.3!important;
+}
+.materialModalCard .modalDateTimeToggle input{margin:0!important}
+
+
+/* Version 59: Zeitstempel kompakt nebeneinander, Zahlenfeld mit Komma statt C */
+.materialModalCard .modalDateTimeFields{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  padding:12px!important;
+  align-items:end!important;
+}
+.materialModalCard .modalDateTimeFields label{
+  min-width:0!important;
+  font-size:14px!important;
+  gap:6px!important;
+}
+.materialModalCard .modalDateTimeFields input{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:50px!important;
+  padding:8px 7px!important;
+  font-size:15px!important;
+  text-align:center!important;
+}
+.materialModalCard .materialNumericKeypad button{
+  min-height:66px!important;
+}
+@media(max-width:380px){
+  .materialModalCard .modalDateTimeFields{gap:7px!important;padding:9px!important}
+  .materialModalCard .modalDateTimeFields input{font-size:13px!important;padding:6px 3px!important}
+}
+
+
+/* Version 60: Datum/Uhrzeit-Eingaben auf schmalen iPhone-Bildschirmen sicher begrenzen */
+.materialModalCard .modalDateTimeFields{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:14px!important;
+  padding:10px!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+.materialModalCard .modalDateTimeFields label{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+.materialModalCard .modalDateTimeFields input,
+.materialModalCard .modalDateTimeFields input[type="date"],
+.materialModalCard .modalDateTimeFields input[type="time"]{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:48px!important;
+  min-height:48px!important;
+  margin:0!important;
+  padding:6px 3px!important;
+  border:2px solid #d8e0e9!important;
+  border-radius:11px!important;
+  box-sizing:border-box!important;
+  font-size:14px!important;
+  line-height:1.2!important;
+  text-align:center!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+}
+.materialModalCard .modalDateTimeFields input::-webkit-date-and-time-value{
+  text-align:center!important;
+  margin:0!important;
+  padding:0!important;
+}
+@media(max-width:390px){
+  .materialModalCard .modalDateTimeFields{gap:8px!important;padding:8px!important}
+  .materialModalCard .modalDateTimeFields input{font-size:13px!important;padding:5px 1px!important}
+}
+
+
+/* Version 61: Materialauswahl als eigene, gut bedienbare Button-Liste */
+.materialChoiceWrap{position:relative;display:grid;gap:10px;width:100%;min-width:0}
+.materialChoiceCaption{display:block;color:#59636f;font-size:17px;font-weight:700}
+.materialChoiceTrigger{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  width:100%!important;min-height:68px!important;padding:14px 18px!important;
+  border:2px solid #d4dce5!important;border-radius:16px!important;
+  background:#f8fafc!important;color:#26313d!important;
+  font:600 18px inherit!important;text-align:left!important;
+  box-shadow:0 2px 0 #e5eaf0!important;
+}
+.materialChoiceChevron{font-size:25px;line-height:1;color:#566170;margin-left:12px}
+.materialChoicePopup{
+  position:absolute!important;z-index:10020!important;left:0!important;right:0!important;
+  top:100%!important;margin-top:9px!important;padding:14px!important;
+  max-height:min(56vh,440px)!important;overflow-y:auto!important;
+  border:1px solid #d8e0e8!important;border-radius:19px!important;
+  background:#fff!important;box-shadow:0 18px 48px #14203335!important;
+}
+.materialChoicePopup[hidden]{display:none!important}
+.materialChoicePopupHeader{font-size:18px;font-weight:800;color:#252e3a;padding:3px 4px 12px}
+.materialChoiceList{display:grid;grid-template-columns:1fr;gap:9px}
+.materialChoiceOption{
+  display:block!important;width:100%!important;min-height:56px!important;
+  padding:13px 15px!important;border:1.5px solid #d9e2e9!important;
+  border-radius:13px!important;background:#f4f7fa!important;color:#26313d!important;
+  text-align:left!important;font-size:16px!important;font-weight:650!important;
+  line-height:1.3!important;white-space:normal!important;
+}
+.materialChoiceOption:active{background:#e6f3e9!important;border-color:#4a925e!important}
+.materialChoiceEmpty{margin:0;padding:14px;color:#66717e;font-size:14px}
+
+
+/* Version 62: großzügige Material-Kachel und separates Auswahlfenster */
+.materialChoiceWrap{gap:8px!important}
+.materialChoiceCaption{font-size:17px!important;font-weight:700!important}
+.materialChoiceTrigger{
+  min-height:82px!important;
+  justify-content:center!important;
+  padding:18px 22px!important;
+  border:2px solid #d5dde6!important;
+  border-radius:18px!important;
+  background:linear-gradient(180deg,#fbfcfe 0%,#f0f4f8 100%)!important;
+  color:#26313d!important;
+  font-size:22px!important;
+  font-weight:800!important;
+  text-align:center!important;
+  box-shadow:0 3px 0 #e0e6ed!important;
+}
+.materialChoiceTrigger:active{background:#e8f3eb!important;border-color:#4c9560!important}
+.materialChoiceModal{
+  position:fixed!important;inset:0!important;z-index:12000!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:22px!important;box-sizing:border-box!important;
+}
+.materialChoiceModal[hidden]{display:none!important}
+.materialChoiceModalBackdrop{position:absolute;inset:0;background:rgba(25,32,42,.58);backdrop-filter:blur(3px)}
+.materialChoiceModalCard{
+  position:relative;z-index:1;width:min(100%,560px);max-height: min(78vh,720px);
+  display:flex;flex-direction:column;gap:12px;overflow:hidden;
+  padding:24px 20px 18px;border:1px solid #e0e5eb;border-radius:24px;
+  background:#fff;box-shadow:0 22px 65px #0003;box-sizing:border-box;
+}
+.materialChoiceModalCard h2{margin:0;color:#242d39;font-size:25px;line-height:1.2}
+.materialChoiceModalHint{margin:0;color:#687382;font-size:14px;line-height:1.4}
+.materialChoiceModal .materialChoiceList{
+  display:grid;grid-template-columns:1fr;gap:10px;
+  overflow-y:auto;overscroll-behavior:contain;padding:2px 3px 6px;
+}
+.materialChoiceModal .materialChoiceOption{
+  min-height:64px!important;padding:16px 17px!important;
+  border:2px solid #dce4eb!important;border-radius:15px!important;
+  background:#f4f7fa!important;color:#26313d!important;
+  font-size:18px!important;font-weight:750!important;text-align:left!important;
+  box-shadow:0 2px 0 #e4e9ef!important;
+}
+.materialChoiceModal .materialChoiceOption:active{
+  background:#e5f3e9!important;border-color:#438653!important;color:#28663a!important;
+}
+.materialChoiceCancel{flex:0 0 auto;min-height:54px}
+
+
+/* Version 64: Kunden und Bauvorhaben direkt im Auftraggeber-Schritt hinzufügen */
+.inlineAddButton{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;min-height:48px!important;margin:-7px 0 14px!important;
+  padding:10px 14px!important;border:1.5px dashed #8eb99a!important;
+  border-radius:13px!important;background:#f0f7f1!important;color:#347448!important;
+  font-size:15px!important;font-weight:750!important;
+}
+.inlineAddButton:active{background:#e2f1e5!important;border-color:#4d9360!important}
+.quickAddModal{
+  position:fixed!important;inset:0!important;z-index:14000!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:20px!important;box-sizing:border-box!important;
+}
+.quickAddModal[hidden]{display:none!important}
+.quickAddBackdrop{position:absolute;inset:0;background:rgba(24,31,40,.62);backdrop-filter:blur(4px)}
+.quickAddCard{
+  position:relative;z-index:1;width:min(100%,520px);max-height:82vh;overflow:auto;
+  display:flex;flex-direction:column;gap:16px;padding:25px 21px 20px;
+  border:1px solid #e1e6ec;border-radius:23px;background:#fff;
+  box-shadow:0 22px 65px #0003;box-sizing:border-box;
+}
+.quickAddCard h2{margin:0;color:#242d39;font-size:25px;line-height:1.2}
+.quickAddCard label{display:flex;flex-direction:column;gap:8px;color:#59636f;font-size:16px;font-weight:700}
+.quickAddCard input,.quickAddCard textarea{
+  display:block;width:100%;min-width:0;box-sizing:border-box;
+  min-height:55px;padding:13px 14px;border:2px solid #d8e0e9;border-radius:13px;
+  background:#f8fafc;color:#252e3a;font:500 17px inherit;
+}
+.quickAddCard textarea{min-height:90px;resize:vertical}
+.quickAddHint{margin:-6px 0 0;color:#687382;font-size:15px}
+.quickAddActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:3px}
+.quickAddActions button{min-height:56px;border-radius:13px;font-weight:700}
+@media(max-width:380px){
+  .quickAddCard{padding:21px 16px 17px}
+  .quickAddActions{gap:8px}
+  .quickAddActions button{font-size:14px}
+}
+
+
+/* Version 65: hochwertigere Schnell-hinzufügen-Kacheln */
+.inlineAddButton{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:11px!important;
+  width:100%!important;
+  min-height:58px!important;
+  margin:-5px 0 18px!important;
+  padding:11px 16px!important;
+  border:1.5px solid #b9d9c1!important;
+  border-radius:16px!important;
+  background:linear-gradient(135deg,#f4faf5 0%,#e8f4eb 100%)!important;
+  color:#286b3d!important;
+  font-size:16px!important;
+  font-weight:750!important;
+  letter-spacing:.1px!important;
+  line-height:1.2!important;
+  box-shadow:0 3px 0 #d6e9da, 0 5px 14px rgba(38,105,59,.07)!important;
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease!important;
+  -webkit-tap-highlight-color:transparent;
+}
+.inlineAddButton::before{
+  content:"+"!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 27px!important;
+  width:27px!important;
+  height:27px!important;
+  border-radius:50%!important;
+  background:#d5eadb!important;
+  color:#28703f!important;
+  font-size:21px!important;
+  font-weight:600!important;
+  line-height:1!important;
+  box-shadow:inset 0 0 0 1px rgba(51,125,72,.12)!important;
+}
+.inlineAddButton:active{
+  transform:translateY(2px)!important;
+  background:linear-gradient(135deg,#e4f3e7 0%,#d9eddf 100%)!important;
+  border-color:#8fbd9b!important;
+  box-shadow:0 1px 0 #c9e1cf, 0 2px 7px rgba(38,105,59,.06)!important;
+}
+@media(max-width:390px){
+  .inlineAddButton{min-height:54px!important;font-size:15px!important;border-radius:14px!important}
+  .inlineAddButton::before{flex-basis:25px!important;width:25px!important;height:25px!important}
+}
+
+
+/* Version 66: Schnell-hinzufügen-Kacheln dezenter und mit Luft nach oben */
+.inlineAddButton{
+  min-height:48px!important;
+  margin:8px 0 16px!important;
+  padding:9px 14px!important;
+  gap:9px!important;
+  border:1px solid #c9dfce!important;
+  border-radius:12px!important;
+  background:#f3f8f4!important;
+  color:#3b7049!important;
+  font-size:14px!important;
+  font-weight:650!important;
+  letter-spacing:0!important;
+  box-shadow:0 1px 2px rgba(38,105,59,.05)!important;
+}
+.inlineAddButton::before{
+  flex:0 0 22px!important;
+  width:22px!important;
+  height:22px!important;
+  background:#e1eee4!important;
+  color:#477d54!important;
+  font-size:18px!important;
+  font-weight:500!important;
+  box-shadow:none!important;
+}
+.inlineAddButton:active{
+  transform:translateY(1px)!important;
+  background:#eaf3ec!important;
+  border-color:#a9cdb1!important;
+  box-shadow:0 1px 2px rgba(38,105,59,.04)!important;
+}
+@media(max-width:390px){
+  .inlineAddButton{min-height:46px!important;margin:8px 0 15px!important;font-size:14px!important;border-radius:11px!important}
+  .inlineAddButton::before{flex-basis:21px!important;width:21px!important;height:21px!important;font-size:17px!important}
+}
+
+
+/* Version 67: dezente Schnellanlage für Liefer- und Abfuhrmaterial */
+.quickMaterialActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:-5px 0 16px;
+}
+.quickMaterialAdd{
+  min-width:0;
+  min-height:39px;
+  padding:8px 9px;
+  border:1px solid #d3e3d7;
+  border-radius:11px;
+  background:#f7faf7;
+  color:#52765a;
+  font:600 12px/1.25 inherit;
+  cursor:pointer;
+  box-shadow:0 1px 2px rgba(35,80,45,.04);
+  -webkit-tap-highlight-color:transparent;
+}
+.quickMaterialAdd:active{background:#edf5ef;transform:translateY(1px)}
+@media(max-width:390px){
+  .quickMaterialActions{gap:7px}
+  .quickMaterialAdd{font-size:11px;padding:7px 5px;min-height:37px}
+}
+
+/* Klar erkennbarer Unterschriftsbereich im Abschluss */
+.signatureCapturePanel{margin-top:16px;padding:16px;border:1px solid #d8e0e7;border-radius:14px;background:#f8fafc}
+.signatureCaptureHeading{font-size:16px;font-weight:750;color:#303946;margin-bottom:10px}
+.signatureCapturePanel #openSignature{width:100%;min-height:56px;font-size:17px}
+.signatureCapturePanel #signatureStatus{margin:10px 0 0}
+#signature{display:block;width:100%;height:auto;min-height:150px;touch-action:none;background:#fff;border:2px solid #d6dde5;border-radius:12px}
+
+/* PDF bleibt als Vorschau in der App geöffnet; Bearbeitungsformular bleibt erhalten */
+.pdfPreviewModal{position:fixed;inset:0;z-index:3000;background:#202630dd;display:flex;align-items:center;justify-content:center;padding:12px}
+.pdfPreviewModal[hidden]{display:none!important}
+.pdfPreviewCard{width:min(1100px,100%);height:min(94vh,100%);background:#f4f6f8;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 60px #0005}
+.pdfPreviewHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:#fff;border-bottom:1px solid #dce2e8}
+.pdfPreviewHeader h2{margin:0;font-size:18px}.pdfPreviewHeader .hint{margin:3px 0 0;font-size:12px;overflow-wrap:anywhere}
+.pdfPreviewClose{min-height:42px;white-space:nowrap;font-size:14px}
+#pdfPreviewFrame{border:0;display:block;flex:1;width:100%;min-height:0;background:#e9edf1}
+.pdfPreviewFooter{display:flex;align-items:center;justify-content:center;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #dce2e8}
+.pdfPreviewFooter button{flex:0 1 420px;width:min(420px,100%);min-height:48px}
+@media(max-width:600px){.pdfPreviewModal{padding:0}.pdfPreviewCard{height:100%;height:100dvh;border-radius:0}.pdfPreviewHeader{align-items:flex-start}.pdfPreviewClose{font-size:12px;padding:8px}.pdfPreviewFooter{padding-left:16px;padding-right:16px}.pdfPreviewFooter button{flex-basis:420px}}
+
+/* Dezenter Status für die automatische Entwurfssicherung */
+.autoSaveStatus{margin:8px 0 14px;padding:7px 11px;border-radius:10px;font-size:12px;font-weight:600;color:#64748b;background:#f1f5f9;text-align:right;}
+.autoSaveStatus[data-state="saved"]{color:#34764a;background:transparent;padding:0;border-radius:0;}
+.autoSaveStatus[data-state="pending"]{color:#8a6728;background:#fff7df;}
+.autoSaveStatus[data-state="error"]{color:#a33d38;background:#fff0ef;}
+
+
+/* Version 79: Speicherstatus ohne farbige Fläche in allen Zuständen */
+#autoSaveStatus,
+#autoSaveStatus[data-state],
+#autoSaveStatus[data-state="saved"],
+#autoSaveStatus[data-state="pending"],
+#autoSaveStatus[data-state="error"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#autoSaveStatus[data-state="saved"] { color: #34764a !important; }
+
+
+/* Version 80: kompakte Kopfzeile im Liefernachweis, ohne gelben Schrittbalken */
+#form #wizardProgress { display: none !important; }
+#form .formTopBar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 2px 0 5px;
+}
+#form .formHomeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 11px;
+  border: 1px solid #d9dfe5;
+  border-radius: 10px;
+  background: transparent;
+  color: #65707d;
+  font-size: 13px;
+  font-weight: 650;
+  box-shadow: none;
+}
+#form .formHomeButton:active { background: #edf0f3; }
+
+
+/* Version 81: definitive wizard-bar removal and visible home control */
+#form > #wizardProgress { display: none !important; visibility: hidden !important; height: 0 !important; margin: 0 !important; padding: 0 !important; }
+#form > .formTopBar { display: flex !important; }
+#form > .formTopBar > #formHomeButton { display: inline-flex !important; visibility: visible !important; opacity: 1 !important; }
+
+
+/* Version 82: progress strip removed from markup; keep a quiet right-aligned home link */
+#form .formTopBar { display:flex !important; justify-content:flex-end !important; text-align:right !important; }
+#form .formHomeButton { margin-left:auto !important; }
+
+
+/* Version 83: in-app Entwurfsauswahl statt nativer Betriebssystem-Abfrage */
+.resumeDraftModal[hidden] { display:none !important; }
+.resumeDraftModal {
+  position:fixed; inset:0; z-index:10050; display:flex;
+  align-items:center; justify-content:center; padding:22px;
+}
+.resumeDraftBackdrop {
+  position:absolute; inset:0; background:rgba(25,31,40,.58);
+  backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+}
+.resumeDraftCard {
+  position:relative; z-index:1; width:min(100%,540px); max-height:min(82vh,760px);
+  overflow:auto; background:#fff; border:1px solid #e0e5eb; border-radius:25px;
+  padding:27px 22px 21px; box-shadow:0 24px 75px rgba(0,0,0,.24);
+}
+.resumeDraftIcon {
+  width:46px; height:46px; border-radius:15px; display:flex; align-items:center;
+  justify-content:center; background:#edf5ef; color:#39764d; font-size:27px;
+  font-weight:700; margin-bottom:15px;
+}
+.resumeDraftCard h2 { margin:0 42px 9px 0; color:#242b36; font-size:25px; line-height:1.2; }
+.resumeDraftIntro { margin:0 0 19px; color:#687381; font-size:15px; line-height:1.5; }
+.resumeDraftList { display:flex; flex-direction:column; gap:10px; }
+.resumeDraftItem {
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  text-align:left; padding:15px 16px; border:1px solid #dce3e9; border-radius:15px;
+  background:#f7f9fb; color:#28313d; box-shadow:0 2px 0 #e5eaf0; cursor:pointer;
+}
+.resumeDraftItem:active { background:#edf5ef; transform:translateY(1px); }
+.resumeDraftItemMain { min-width:0; display:flex; flex-direction:column; gap:5px; }
+.resumeDraftItemMain strong { font-size:16px; line-height:1.3; overflow-wrap:anywhere; }
+.resumeDraftItemMain small { color:#74808d; font-size:12px; line-height:1.35; }
+.resumeDraftArrow { flex:none; color:#39764d; font-weight:700; font-size:14px; }
+.resumeDraftCancel {
+  width:100%; margin-top:17px; min-height:47px; border:1px solid #cfe0d2;
+  border-radius:13px; background:#f0f7f1; color:#477653; font-weight:650;
+}
+.resumeDraftClose {
+  position:absolute; right:16px; top:13px; width:36px; height:36px; border:0;
+  border-radius:50%; background:#f1f3f5; color:#66717d; font-size:25px; line-height:1;
+}
+
+
+/* Version 85: reliable in-app draft chooser and primary create action */
+.resumeDraftModal[hidden]{display:none!important}
+.resumeDraftModal:not([hidden]){display:flex!important}
+.resumeDraftModal{z-index:20000!important}
+.resumeDraftCard{z-index:20001!important}
+
+
+/* Version 86: Dählmann confirmation dialog */
+.appConfirmModal[hidden]{display:none!important}
+.appConfirmModal{position:fixed;inset:0;z-index:22000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(25,31,40,.58);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.appConfirmCard{width:min(100%,460px);background:#fff;border:1px solid #e0e5eb;border-radius:24px;padding:25px 22px 20px;box-shadow:0 24px 75px rgba(0,0,0,.24)}
+.appConfirmIcon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#fff4dc;color:#946b25;font-size:24px;font-weight:800;margin-bottom:13px}
+.appConfirmCard h2{margin:0 0 9px;color:#242b36;font-size:23px}
+.appConfirmCard p{margin:0 0 22px;color:#657080;font-size:16px;line-height:1.45}
+.appConfirmActions{display:flex;gap:10px}
+.appConfirmActions button{flex:1;min-height:48px;border-radius:14px;font-size:16px;font-weight:650}
+.appConfirmCancel{background:#eef5ef;border:1px solid #c8dfce;color:#39734c}
+.appConfirmAccept{background:#c83b35;border:1px solid #b8312c;color:#fff}
+
+.resumeDraftIcon{display:none!important}.resumeDraftModal[hidden],.appConfirmModal[hidden]{display:none!important}
+
+/* Version 102: Wiegenoten-Scan */
+.scanWeighNoteButton{display:block;width:100%;min-height:54px;margin:0 0 14px;padding:12px 16px;border:2px solid #c9d9cf;border-radius:13px;background:#f0f7f2;color:#28643c;font:750 16px/1.2 inherit;cursor:pointer;box-shadow:0 2px 5px rgba(30,80,45,.06)}
+.scanWeighNoteButton:active{background:#e3f0e7}
+.weighScanModal[hidden]{display:none!important}
+.weighScanModal{position:fixed;inset:0;z-index:10050;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(20,27,35,.58)}
+.weighScanBackdrop{position:absolute;inset:0}
+.weighScanCard{position:relative;z-index:1;width:min(100%,560px);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:22px;box-shadow:0 15px 50px rgba(0,0,0,.25)}
+.weighScanCard h2{margin:0 0 8px}
+.weighScanCard label{display:block;margin:12px 0 0;font-size:13px;font-weight:700;color:#526071}
+.weighScanCard input{display:block;width:100%;min-height:43px;margin-top:5px;padding:9px 11px;border:1px solid #ccd5de;border-radius:9px;background:#fff;color:#202833;font:16px inherit}
+.weighScanDateRow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.weighScanActions{display:flex;gap:10px;margin-top:20px}
+.weighScanActions button{flex:1;min-height:46px}
+.swipeMaterial .summaryRow .materialVehicle{display:block;margin-top:3px;color:#687482;font-size:12px;font-weight:500}
+@media(max-width:420px){.weighScanCard{padding:17px}.weighScanActions{flex-direction:column}}
+
+/* Das Kamera-Dateifeld bleibt unsichtbar; geöffnet wird es nur über „Wiegenote scannen“. */
+#weighNoteFile[hidden]{display:none!important;visibility:hidden!important;width:0!important;height:0!important;padding:0!important;margin:0!important;border:0!important;}
+
+/* Version 104: Datei-Input auf allen Browsern sicher ausblenden und Scan-Icon formatieren. */
+input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; visibility:hidden !important; position:absolute !important; width:1px !important; height:1px !important; overflow:hidden !important; clip:rect(0,0,0,0) !important; white-space:nowrap !important; }
+.scanWeighNoteButton{display:flex;align-items:center;justify-content:center;gap:10px}
+.scanButtonIcon{width:24px;height:24px;flex:0 0 24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* Version 105: kompakter Scan-Button; harte Begrenzung gegen globale Button-/SVG-Regeln. */
+#scanWeighNote.scanWeighNoteButton{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:9px!important;width:100%!important;height:auto!important;min-height:54px!important;max-height:60px!important;padding:10px 14px!important;box-sizing:border-box!important;}
+#scanWeighNote .scanButtonIcon{display:block!important;width:24px!important;height:24px!important;min-width:24px!important;max-width:24px!important;min-height:24px!important;max-height:24px!important;flex:0 0 24px!important;}
+
+/* Drei Materialarten untereinander – die Reihenfolge entspricht dem Erfassungsablauf. */
+.materialTypeTiles{grid-template-columns:1fr!important;gap:10px!important;margin:12px 0 18px!important}
+.materialTypeTile{min-height:62px!important;padding:12px 14px!important}
+.materialTypeTile.stock{background:#eef3fb;border:2px solid #b8c9e2;color:#294d78}

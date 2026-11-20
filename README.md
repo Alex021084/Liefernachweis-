@@ -1,8 +1,16 @@
-# Dählmann Liefernachweis – Version 106
+# Dählmann – Liefernachweis
 
-Kleine Darstellungs-Korrektur:
-- Das interne Kamera-/Datei-Eingabefeld `weighNoteFile` wird mit einer CSS-Regel ausdrücklich verborgen.
-- Sichtbar bleibt ausschließlich der Button „Wiegenote scannen“.
-- Die Scan-Funktion und alle bisherigen Funktionen aus Version 102 bleiben erhalten.
+Aufgeräumte Projektfassung auf Basis der bisherigen Version 106.
 
-`index.html` lädt `app-v103.js`. Bitte alle Dateien gemeinsam hochladen.
+## Dateien
+- `index.html` – Einstiegspunkt der Web-App
+- `app.js` – JavaScript der App
+- `styles.css` – Gestaltung und Layout
+- `logo.png` – Logo für Oberfläche und PDF
+- `manifest.json` – Web-App-Manifest
+
+## Start / Bereitstellung
+Alle fünf Dateien gemeinsam in denselben Webserver-Ordner hochladen und `index.html` öffnen.
+
+Die App lädt `pdf-lib` und bei Bedarf `tesseract.js` weiterhin extern über CDN.
+Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket entfernt.
