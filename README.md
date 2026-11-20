@@ -109,3 +109,9 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Selbstabholer ist wieder eine große, volle Kachel statt einer kleinen grauen Markierung.
 - Schriftgröße und Fettdruck entsprechen den beiden Material-Kacheln.
 - Die blaue Gestaltung bleibt erhalten.
+
+
+## Version 125 – Selbstabholer-Farbe und Breite
+- Selbstabholer-Kachel auf 72 % der verfügbaren Breite reduziert und mittig platziert.
+- Hintergrund dunkelblau, Schrift weiß und fett.
+- Höhe und Funktion der Kachel bleiben erhalten.

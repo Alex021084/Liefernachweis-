@@ -1602,3 +1602,25 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   color:inherit!important;
   text-align:center!important;
 }
+
+
+/* Version 125: Selbstabholer schmaler, dunkelblau mit weißer Schrift. */
+#chooseStock{
+  width:72%!important;
+  max-width:520px!important;
+  min-height:76px!important;
+  margin:12px auto 18px!important;
+  padding:16px 14px!important;
+  background:#244b87!important;
+  border:2px solid #193b70!important;
+  color:#ffffff!important;
+  font-size:24px!important;
+  font-weight:800!important;
+  border-radius:18px!important;
+  box-shadow:0 3px 9px rgba(25,59,112,.16)!important;
+}
+#chooseStock span{
+  color:#ffffff!important;
+  font:inherit!important;
+  text-align:center!important;
+}
