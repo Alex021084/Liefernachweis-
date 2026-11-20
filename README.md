@@ -76,3 +76,10 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Der Handler ruft die bestehende Formular-Startfunktion direkt auf und verhindert, dass ein veralteter Button-Handler den Klick verschluckt.
 - Falls die Formularinitialisierung weiterhin fehlschlägt, wird die konkrete Fehlermeldung angezeigt statt dass scheinbar nichts passiert.
 - JavaScript-Syntax mit Node geprüft.
+
+
+## Version 119 – Formularnavigation
+- Den unteren Button „Abbrechen“ im ersten Formularschritt entfernt.
+- Oben im Formular eine kompakte gelbe „Startseite“-Kachel mit schwarzer Schrift ergänzt.
+- Beim Wechsel zur Startseite wird ein laufender Entwurf zuvor automatisch gespeichert.
+- JavaScript-Syntax geprüft; Cache-Version auf 119 erhöht.
