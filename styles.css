@@ -1745,3 +1745,78 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
 .dragGrip{flex:0 0 30px;display:grid;place-items:center;min-height:38px;border-radius:9px;color:#718078;background:#eef5ef;font-size:24px;font-weight:800;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
 .sortableCard.is-dragging{position:relative;z-index:5;opacity:.82;transform:scale(1.015);box-shadow:0 8px 22px rgba(20,35,25,.18);border-color:#83b994}
 .sortableCard.is-dragging .dragGrip{background:#dcefe1;color:#276b42;cursor:grabbing}
+
+
+/* Version 140: Drag-Griff mit optisch exakt zentrierten sechs Punkten */
+.dragGrip{
+  display:grid!important;
+  grid-template-columns:repeat(2,5px);
+  grid-template-rows:repeat(3,5px);
+  gap:4px;
+  place-content:center!important;
+  place-items:center;
+  align-content:center;
+  justify-content:center;
+  box-sizing:border-box;
+  padding:0!important;
+  line-height:0;
+  font-size:0!important;
+  text-align:center;
+}
+.dragGrip i{
+  display:block;
+  width:5px;
+  height:5px;
+  margin:0;
+  padding:0;
+  border-radius:50%;
+  background:currentColor;
+}
+
+
+/* Version 141: Löschaktion durch Wischen nach links einblenden */
+.swipeRow{
+  position:relative;
+  overflow:hidden;
+  padding:0!important;
+  display:block!important;
+  touch-action:pan-y;
+}
+.swipeContent{
+  position:relative;
+  z-index:1;
+  min-height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:15px;
+  background:#fff;
+  border-radius:15px;
+  transform:translateX(0);
+  transition:transform .2s ease;
+  touch-action:pan-y;
+}
+.swipeContent>b{flex:1;min-width:0}
+.swipeDelete{
+  position:absolute;
+  z-index:0;
+  top:0;
+  right:0;
+  bottom:0;
+  width:100px;
+  height:100%;
+  border:0;
+  border-radius:0 14px 14px 0;
+  background:#c83b36;
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+}
+.swipeRow.swipe-open .swipeContent{transform:translateX(-100px)}
+.swipeRow .dragGrip{position:relative;z-index:2;flex:0 0 44px}
+.swipeRow .swipeContent .dragGrip{min-height:48px;width:44px}
+.swipeRow.is-dragging .swipeContent{transform:none!important}
+@media(prefers-reduced-motion:reduce){
+  .swipeContent{transition:none}
+}

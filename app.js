@@ -39,33 +39,74 @@ function renderProjects(){
 }
 function renderDeliveryMaterials(){
   db.deliveryMaterials=db.deliveryMaterials||[];
-  $('deliveryMaterialsList').innerHTML=db.deliveryMaterials.map((m,i)=>`<div class="archiveCard sortableCard" data-sort-value="${esc(m)}"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben">⠿</span><b>${esc(m)}</b><button class="remove" data-del-dm="${i}" aria-label="Liefermaterial löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Liefermaterialien angelegt.</p>';
+  $('deliveryMaterialsList').innerHTML=db.deliveryMaterials.map((m,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-value="${esc(m)}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><b>${esc(m)}</b></div><button class="remove swipeDelete" data-del-dm="${i}" aria-label="Liefermaterial löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Liefermaterialien angelegt.</p>';
   document.querySelectorAll('[data-del-dm]').forEach(b=>b.onclick=()=>{
     const index=+b.dataset.delDm, material=db.deliveryMaterials[index];
     if(material===undefined)return;
     askAppConfirm(`Möchtest du „${material}“ wirklich löschen?`,()=>{db.deliveryMaterials.splice(index,1);save();renderDeliveryMaterials();},'Liefermaterial löschen?');
   });
   enableLongPressSorting('deliveryMaterialsList','deliveryMaterials',renderDeliveryMaterials);
+  enableSwipeToDelete('deliveryMaterialsList');
 }
 function renderHaulMaterials(){
   db.haulMaterials=db.haulMaterials||[];
-  $('haulMaterialsList').innerHTML=db.haulMaterials.map((m,i)=>`<div class="archiveCard sortableCard" data-sort-value="${esc(m)}"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben">⠿</span><b>${esc(m)}</b><button class="remove" data-del-hm="${i}" aria-label="Abfuhrmaterial löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Abfuhrmaterialien angelegt.</p>';
+  $('haulMaterialsList').innerHTML=db.haulMaterials.map((m,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-value="${esc(m)}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><b>${esc(m)}</b></div><button class="remove swipeDelete" data-del-hm="${i}" aria-label="Abfuhrmaterial löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Abfuhrmaterialien angelegt.</p>';
   document.querySelectorAll('[data-del-hm]').forEach(b=>b.onclick=()=>{
     const index=+b.dataset.delHm, material=db.haulMaterials[index];
     if(material===undefined)return;
     askAppConfirm(`Möchtest du „${material}“ wirklich löschen?`,()=>{db.haulMaterials.splice(index,1);save();renderHaulMaterials();},'Abfuhrmaterial löschen?');
   });
   enableLongPressSorting('haulMaterialsList','haulMaterials',renderHaulMaterials);
+  enableSwipeToDelete('haulMaterialsList');
 }
 function renderServices(){
   db.services=db.services||[];
-  $('servicesList').innerHTML=db.services.map((v,i)=>`<div class="archiveCard sortableCard" data-sort-value="${esc(v)}"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben">⠿</span><b>${esc(v)}</b><button class="remove" data-del-s="${i}" aria-label="Leistung löschen">×</button></div>`).join('')||'<p class="hint">Noch keine Leistungen angelegt.</p>';
+  $('servicesList').innerHTML=db.services.map((v,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-value="${esc(v)}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><b>${esc(v)}</b></div><button class="remove swipeDelete" data-del-s="${i}" aria-label="Leistung löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Leistungen angelegt.</p>';
   document.querySelectorAll('[data-del-s]').forEach(b=>b.onclick=()=>{
     const index=+b.dataset.delS, service=db.services[index];
     if(service===undefined)return;
     askAppConfirm(`Möchtest du „${service}“ wirklich löschen?`,()=>{db.services.splice(index,1);save();renderServices();},'Leistung löschen?');
   });
   enableLongPressSorting('servicesList','services',renderServices);
+  enableSwipeToDelete('servicesList');
+}
+
+// Nach links wischen zeigt die Löschen-Aktion. Gelöscht wird erst nach Tippen
+// auf „Löschen“ und anschließender Bestätigung im Popup.
+function enableSwipeToDelete(hostId){
+  const host=$(hostId);
+  if(!host||host.dataset.swipeBound==='1')return;
+  host.dataset.swipeBound='1';
+  let gesture=null;
+  host.addEventListener('pointerdown',event=>{
+    if(event.target.closest('.dragGrip,.swipeDelete'))return;
+    const row=event.target.closest('.swipeRow');
+    if(!row)return;
+    gesture={row,id:event.pointerId,x:event.clientX,y:event.clientY,axis:null};
+  });
+  host.addEventListener('pointermove',event=>{
+    if(!gesture||event.pointerId!==gesture.id)return;
+    const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
+    if(!gesture.axis&&Math.max(Math.abs(dx),Math.abs(dy))>9){
+      gesture.axis=Math.abs(dx)>Math.abs(dy)?'x':'y';
+    }
+    if(gesture.axis!=='x')return;
+    if(dx<0)event.preventDefault();
+    gesture.row.classList.toggle('swipe-open',dx<-14);
+  },{passive:false});
+  const finish=event=>{
+    if(!gesture||event.pointerId!==gesture.id)return;
+    const dx=event.clientX-gesture.x;
+    if(gesture.axis==='x'){
+      if(dx<-55)gesture.row.classList.add('swipe-open');
+      else if(dx>35)gesture.row.classList.remove('swipe-open');
+      else if(Math.abs(dx)<8&&gesture.row.classList.contains('swipe-open')){}
+      else gesture.row.classList.remove('swipe-open');
+    }
+    gesture=null;
+  };
+  host.addEventListener('pointerup',finish);
+  host.addEventListener('pointercancel',()=>{gesture=null;});
 }
 
 // Sortierung per Gedrückthalten am Griff. Die Reihenfolge wird nach dem Loslassen lokal gespeichert.
