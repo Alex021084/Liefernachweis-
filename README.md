@@ -98,3 +98,8 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 ## Version 122 – gleiche Höhe für Startseite und Speicherhinweis
 - Startseiten-Kachel und Autospeicherstatus befinden sich jetzt nebeneinander in einer gemeinsamen Zeile.
 - Die Kachel ist links, der zweizeilige Hinweis rechts; beide sind vertikal mittig auf gleicher Höhe ausgerichtet.
+
+
+## Version 123 – Startseite-Kachel zentriert
+- Beschriftung und Haussymbol der gelben Startseite-Kachel werden horizontal und vertikal mittig ausgerichtet.
+- Größe, Farbe und Position der Kachel bleiben unverändert.

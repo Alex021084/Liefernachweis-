@@ -1557,3 +1557,19 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   line-height:1.35!important;
   text-align:right!important;
 }
+
+
+/* Version 123: Startseite-Beschriftung exakt mittig in der gelben Kachel. */
+#form .formTopBar .formHomeTile{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  box-sizing:border-box!important;
+  padding:10px 14px!important;
+  line-height:1.2!important;
+}
+#form .formTopBar .formHomeTile::before,
+#form .formTopBar .formHomeTile::after{
+  flex:0 0 auto!important;
+}
