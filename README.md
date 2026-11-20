@@ -127,3 +127,9 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Breite wieder auf 72 % zurückgesetzt.
 - Nur die Höhe der Selbstabholer-Kachel auf 38 px (etwa die Hälfte) reduziert.
 - Schriftgröße und Fettdruck bleiben wie bei „Material geliefert“; dunkelblau/weiß bleibt erhalten.
+
+
+## Version 128 – Selbstabholer volle Breite
+- Selbstabholer-Kachel auf volle verfügbare Breite gesetzt.
+- Exakte Höhe 40 px.
+- Dunkelblau/weiß und Schriftgröße/Fettdruck bleiben erhalten.

@@ -1657,3 +1657,27 @@ input#weighNoteFile[hidden], #weighNoteFile[hidden] { display:none !important; v
   font-size:17px!important;
   font-weight:800!important;
 }
+
+
+/* Version 128: Selbstabholer über volle Breite, 40 px hoch. */
+#chooseStock{
+  display:flex!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  min-height:40px!important;
+  height:40px!important;
+  margin:12px 0 18px!important;
+  padding:4px 12px!important;
+  box-sizing:border-box!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:17px!important;
+  font-weight:800!important;
+  line-height:1!important;
+}
+#chooseStock span{
+  font-size:17px!important;
+  font-weight:800!important;
+  line-height:1!important;
+}
