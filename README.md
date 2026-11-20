@@ -153,3 +153,10 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Startseite und Zurück stehen darunter nebeneinander.
 - Der separate fünfte Abschluss-Schritt wurde entfernt; die Zusammenfassung ist nun der letzte Schritt.
 - Den zusätzlichen Entwurfs-Auswahldialog nach PDF-Erstellung entfernt.
+
+
+## Version 132 – Dokument speichern und Nachweise
+- „Dokument speichern“ speichert den aktuellen Liefernachweis als abgeschlossenen Eintrag im Bereich „Nachweise“, nicht mehr als Zwischenentwurf.
+- Ein bereits vorhandener Entwurf wird beim Speichern in einen Nachweis umgewandelt, statt einen zweiten Eintrag anzulegen.
+- Die Archiv-Schaltfläche heißt jetzt nur noch „Nachweise“.
+- Ein gespeicherter Nachweis ohne bereits erzeugtes PDF wird als „Gespeichert“ gekennzeichnet.

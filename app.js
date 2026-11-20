@@ -413,6 +413,23 @@ function persistDraft(){
   else {db.reports.push(r);currentDraftId=r.id;}
   save();renderArchive();alert('Zwischenstand wurde gespeichert. Du kannst den Liefernachweis später unter „Liefernachweise“ öffnen und weiterbearbeiten.');return true;
 }
+function persistDocument(){
+  const r=collect();
+  if(!r.customer){alert('Bitte zuerst einen Auftraggeber auswählen.');return false;}
+  const existingIndex=currentDraftId?db.reports.findIndex(x=>String(x.id)===String(currentDraftId)):-1;
+  const existing=existingIndex>=0?db.reports[existingIndex]:null;
+  r.draft=false;
+  r.pdf=false;
+  r.createdAt=existing?.createdAt||r.id;
+  r.updatedAt=Date.now();
+  if(existingIndex>=0)db.reports[existingIndex]={...existing,...r};
+  else db.reports.push(r);
+  currentDraftId=r.id;
+  archiveMode='customers';archiveCustomer='';archiveProject='';
+  save();renderArchive();
+  alert('Der Liefernachweis wurde unter „Nachweise“ gespeichert.');
+  return true;
+}
 function openDraft(r){
   if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=r.id;
   fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');
@@ -510,12 +527,12 @@ document.addEventListener('click',function(event){
 
 const resumeSkipButton=$('skipResumeDrafts');
 if(resumeSkipButton)resumeSkipButton.onclick=closeResumeDraftModal;
-function archiveTabs(){return `<div class="archiveTabs"><button type="button" data-archive-tab="customers" class="${archiveMode==='customers'?'active':''}">Kunden / Nachweise</button><button type="button" data-archive-tab="drafts" class="${archiveMode==='drafts'?'active':''}">Zwischengespeichert</button></div>`}
+function archiveTabs(){return `<div class="archiveTabs"><button type="button" data-archive-tab="customers" class="${archiveMode==='customers'?'active':''}">Nachweise</button><button type="button" data-archive-tab="drafts" class="${archiveMode==='drafts'?'active':''}">Zwischengespeichert</button></div>`}
 function archiveCard(r,buttonLabel){
   const stamp=v=>{const n=Number(v);return Number.isFinite(n)&&n>100000000000?new Date(n).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})+' Uhr':''};
   const created=stamp(r.createdAt||r.id),updated=stamp(r.updatedAt);
   const history=r.draft?[created?'Angelegt: '+created:'',updated?'Zuletzt bearbeitet: '+updated:''].filter(Boolean).join(' · '):'';
-  return `<div class="archiveSwipeItem" data-archive-id="${r.id}"><button type="button" class="archiveDelete" aria-label="Liefernachweis löschen">×</button><div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${r.draft?'Entwurf – weiterbearbeiten':'PDF erstellt'}${history?' · '+esc(history):''}</small></div><button class="soft" data-open-r="${r.id}">${buttonLabel|| (r.draft?'Weiterbearbeiten':'PDF öffnen')}</button></div></div>`;
+  return `<div class="archiveSwipeItem" data-archive-id="${r.id}"><button type="button" class="archiveDelete" aria-label="Liefernachweis löschen">×</button><div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${r.draft?'Entwurf – weiterbearbeiten':(r.pdf?'PDF erstellt':'Gespeichert')}${history?' · '+esc(history):''}</small></div><button class="soft" data-open-r="${r.id}">${buttonLabel|| (r.draft?'Weiterbearbeiten':'PDF öffnen')}</button></div></div>`;
 }
 function bindArchiveCards(){
   document.querySelectorAll('[data-open-r]').forEach(b=>b.onclick=(event)=>{event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();let r=db.reports.find(x=>String(x.id)===b.dataset.openR);if(!r)return;if(r.draft){openDraft(r);setWizardStep(2);show('form');}else downloadPdf(r)});
@@ -829,7 +846,7 @@ window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSa
 
   await openPdfPreview(r);
 };
-$('saveDocument').onclick=()=>{if(persistDraft())show('home')};
+$('saveDocument').onclick=()=>{if(persistDocument())show('home')};
 renderArchive();
 
 // Automatische Entwurfssicherung: Änderungen im Formular werden nach kurzer Pause lokal gespeichert.
