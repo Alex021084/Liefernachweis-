@@ -871,6 +871,13 @@ window.addEventListener('beforeunload',()=>{if(autoSaveTimer)clearTimeout(autoSa
 // Version 87: reliably show the Dählmann draft chooser after app initialization and on Safari return.
 function openStartupDraftChooser(){
   try{
+    // Die Entwurfsauswahl nur auf der Startseite anbieten – niemals im
+    // laufenden Liefernachweis oder während der PDF-Erstellung/ -Vorschau.
+    const form=$('form');
+    const pdfModal=$('pdfPreviewModal');
+    if((form && form.classList.contains('active')) || (pdfModal && !pdfModal.hidden))return;
+    const welcome=$('welcome');
+    if(welcome && !welcome.classList.contains('active'))return;
     const drafts=(db && Array.isArray(db.reports)) ? db.reports.filter(r=>r && r.draft) : [];
     if(!drafts.length)return;
     const modal=$('resumeDraftModal');

@@ -133,3 +133,9 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Selbstabholer-Kachel auf volle verfügbare Breite gesetzt.
 - Exakte Höhe 40 px.
 - Dunkelblau/weiß und Schriftgröße/Fettdruck bleiben erhalten.
+
+
+## Version 129 – Entwurfsdialog nicht bei PDF-Erstellung anzeigen
+- Der automatische Dialog zum Fortsetzen offener Entwürfe wird nur auf der Startseite angeboten.
+- Er erscheint nicht im aktiven Liefernachweis und nicht während der PDF-Vorschau/-Erstellung.
+- Gespeicherte Entwürfe bleiben erhalten und können weiterhin über die Liefernachweise geöffnet werden.
