@@ -28,3 +28,8 @@ Die alten nummerierten Zwischenstände wurden aus diesem aufgeräumten Paket ent
 - Material wird nur bei plausiblen Texttreffern übernommen; OCR-Zeichenmüll bleibt leer.
 - Gedruckter Firmenname Dählmann Erdbau GmbH wird gezielt erkannt.
 - Baustellenfeld bleibt leer, da handschriftliche Angaben ignoriert werden.
+
+
+## Version 111 – Wiegenoten-Scanner entfernt
+- Scan-Button, Kamera-/Mediathek-Auswahl, OCR-Prüfdialog und zugehörige OCR-Verarbeitung entfernt.
+- Materialerfassung, Selbstabholer sowie Material geliefert/abgefahren bleiben bestehen.
