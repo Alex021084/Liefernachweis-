@@ -240,8 +240,8 @@ function setMaterialUnit(unit){
 function openMaterialModal(type){
   activeMaterialType=type;
   const list=type==='haul'?(db.haulMaterials||[]):(db.deliveryMaterials||[]);
-  $('materialModalTitle').textContent=type==='haul'?'Material abgefahren':type==='stock'?'Material ab Grube/Lager':'Material geliefert';
-  $('materialChoiceCaption').textContent=type==='haul'?'Abfuhrmaterial':'Liefermaterial';
+  $('materialModalTitle').textContent=type==='haul'?'Material abgefahren':type==='stock'?'Material ab Grube/Lager':'';
+  $('materialChoiceCaption').textContent=type==='haul'?'Abfuhrmaterial':'';
   fillSelect($('modalMaterial'),list,'Material wählen');
   renderMaterialChoiceButtons();
   $('materialChoiceText').textContent='Material auswählen';
