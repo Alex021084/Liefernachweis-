@@ -1901,3 +1901,19 @@ canvas, .signaturePad, .signatureCanvas{
   background:transparent!important;
   box-shadow:none!important;
 }
+
+
+/* Version 153: Checkbox ohne Kachel-Hintergrund und Rahmen */
+.materialModalCard label.deliveryLocationToggle,
+.materialModalCard .deliveryLocationToggle,
+#materialModal label.deliveryLocationToggle {
+  display:flex!important;
+  align-items:center!important;
+  padding:0!important;
+  margin:12px 0 0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:0!important;
+}
