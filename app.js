@@ -249,7 +249,8 @@ function openMaterialModal(type){
   $('modalQuantity').value='';
   setMaterialUnit('to');
   $('modalIncludeDateTime').checked=false;
-  $('materialIsDelivered').checked=!!(deliveryLocation||temporaryDeliveryLocation);
+  $('materialIsDeliveredLabel').textContent=type==='haul'?'Material abgefahren':'Material geliefert';
+  $('materialIsDelivered').checked=type==='delivery'&&!!(deliveryLocation||temporaryDeliveryLocation);
   $('modalMaterialDate').value=localDateValue();
   $('modalMaterialTime').value=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',hour12:false});
   $('modalDateTimeFields').hidden=true;
@@ -263,6 +264,7 @@ function closeMaterialModal(){$('materialModal').classList.remove('open');$('mat
 $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
 $('materialIsDelivered').onchange=()=>{
+  if(activeMaterialType!=='delivery')return;
   if($('materialIsDelivered').checked){
     $('deliveryLocationInput').value=deliveryLocation||temporaryDeliveryLocation||'';
     $('saveDeliveryLocationForReport').checked=saveDeliveryLocation;
@@ -345,7 +347,9 @@ $('confirmMaterial').onclick=()=>{
   const date=$('modalMaterialDate').value,time=$('modalMaterialTime').value;
   if(includeDateTime&&(!date||!time))return alert('Bitte Datum und Uhrzeit vollständig eingeben.');
   if($('materialIsDelivered').checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
-  enteredMaterials.push({name,type:activeMaterialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&$('materialIsDelivered').checked&&saveDeliveryLocation?(temporaryDeliveryLocation||deliveryLocation):''});
+  const checked=$('materialIsDelivered').checked;
+  const materialType=activeMaterialType==='delivery'?(checked?'delivery':'stock'):(checked?'haul_disposed':'disposed');
+  enteredMaterials.push({name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked&&saveDeliveryLocation?(temporaryDeliveryLocation||deliveryLocation):''});
   renderMaterialSummary();closeMaterialModal();
 };
 function parseQuantity(value){let s=String(value||'').trim().replace(/\s/g,'');if(!s)return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>0?n:0}
@@ -357,7 +361,7 @@ function renderMaterialSummary(){
   const totals=materialTotals();
   if(!totals.length){el.innerHTML='<h3>Erfasste Materialien</h3><p class="hint">Noch keine Materialien erfasst.</p>';return;}
   const group=(type,title,cls)=>{const rows=totals.filter(t=>t.type===type);return rows.length?`<section class="materialGroup ${cls}"><h4>${title}</h4>${rows.map(t=>`<div class="swipeMaterial" data-swipe-type="${t.type}" data-swipe-name="${esc(t.name)}" data-swipe-unit="${t.unit}" data-swipe-stamp="${t.includeDateTime?esc([t.date||'',t.time||''].join('T')):''}" data-source-index="${t._sourceIndex===undefined?'':t._sourceIndex}"><button type="button" class="swipeDelete" aria-label="Material löschen">×</button><div class="summaryRow"><b>${esc(t.name)}${t.vehicle?`<small class="materialVehicle">Kennzeichen: ${esc(t.vehicle)}</small>`:''}${t.includeDateTime?`<small class="materialDateStamp">${esc(formatMaterialDateTime(t.date,t.time))}</small>`:''}</b><span>${formatQuantity(t.qty)} ${t.unit==='to'?'to':'m³'}</span></div></div>`).join('')}</section>`:''};
-  el.innerHTML='<h3>Erfasste Materialien</h3>'+group('delivery','Material geliefert','deliveryGroup')+group('stock','Material ab Grube/Lager','deliveryGroup')+group('haul','Material abgefahren','haulGroup');
+  el.innerHTML='<h3>Erfasste Materialien</h3>'+group('delivery','Material geliefert','deliveryGroup')+group('stock','Material ab Grube/Lager','deliveryGroup')+group('haul_disposed','Material abgefahren und entsorgt','haulGroup')+group('disposed','Material entsorgt','haulGroup')+group('haul','Material abgefahren','haulGroup');
   el.querySelectorAll('.swipeMaterial').forEach(item=>{
     const row=item.querySelector('.summaryRow'),del=item.querySelector('.swipeDelete');
     let startX=0,startY=0,lastX=0,tracking=false;
@@ -494,10 +498,10 @@ $('toServices').onclick=()=>setWizardStep(3);
 $('backToMaterials').onclick=()=>setWizardStep(2);
 function renderReportSummary(){
   const r=collect(),el=$('reportSummary');if(!el)return;
-  const mats=materialTotals(),delivered=mats.filter(m=>m.type==='delivery'),stock=mats.filter(m=>m.type==='stock'),hauled=mats.filter(m=>m.type==='haul');
+  const mats=materialTotals(),delivered=mats.filter(m=>m.type==='delivery'),stock=mats.filter(m=>m.type==='stock'),haulDisposed=mats.filter(m=>m.type==='haul_disposed'),disposed=mats.filter(m=>m.type==='disposed'),hauled=mats.filter(m=>m.type==='haul');
   const block=(title,list,cls)=>list.length?`<section class="summaryBlock ${cls}"><h3>${title}</h3>${list.map(m=>`<div class="summaryLine"><b>${esc(m.name)}${m.includeDateTime?`<small class="materialDateStamp">${esc(formatMaterialDateTime(m.date,m.time))}</small>`:''}</b><span>${formatQuantity(m.qty)} ${m.unit==='to'?'to':'m³'}</span></div>`).join('')}</section>`:'';
   const services=r.services.map(s=>`<div class="summaryService"><b>${esc(s.job||'Leistung')}</b>${s.description?`<div>${esc(s.description)}</div>`:''}<small>${esc(s.hours||'—')} Std. · ${esc(s.start||'—')} bis ${esc(s.end||'—')} · Pause ${esc(s.pause||'0')} Min.</small></div>`).join('');
-  el.innerHTML=`<div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div><div>Bauvorhaben: ${esc(r.project||'Kein Bauvorhaben')}</div>${r.deliveryLocation?`<div>Lieferort: ${esc(r.deliveryLocation)}</div>`:''}</div>${block('Material geliefert',delivered,'deliveryGroup')}${block('Material ab Grube/Lager',stock,'deliveryGroup')}${block('Material abgefahren',hauled,'haulGroup')}${services?`<section class="summaryBlock"><h3>Zusatzleistungen</h3>${services}</section>`:'<p class="hint">Keine Zusatzleistungen erfasst.</p>'}`;
+  el.innerHTML=`<div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div><div>Bauvorhaben: ${esc(r.project||'Kein Bauvorhaben')}</div>${r.deliveryLocation?`<div>Lieferort: ${esc(r.deliveryLocation)}</div>`:''}</div>${block('Material geliefert',delivered,'deliveryGroup')}${block('Material ab Grube/Lager',stock,'deliveryGroup')}${block('Material abgefahren und entsorgt',haulDisposed,'haulGroup')}${block('Material entsorgt',disposed,'haulGroup')}${block('Material abgefahren',hauled,'haulGroup')}${services?`<section class="summaryBlock"><h3>Zusatzleistungen</h3>${services}</section>`:'<p class="hint">Keine Zusatzleistungen erfasst.</p>'}`;
 }
 $('toSummary').onclick=()=>{renderReportSummary();setWizardStep(4)};
 $('backToServices').onclick=()=>setWizardStep(3);
@@ -909,6 +913,8 @@ async function makePdf(r){
   const materials=aggregateReportMaterials(r.materials||[]);
   const delivered=materials.filter(m=>m.type==='delivery');
   const stock=materials.filter(m=>m.type==='stock');
+  const haulDisposed=materials.filter(m=>m.type==='haul_disposed');
+  const disposed=materials.filter(m=>m.type==='disposed');
   const hauled=materials.filter(m=>m.type==='haul');
   const drawMaterialTable=list=>{
     const hasTimestamps=list.some(m=>m.includeDateTime&&m.date);
@@ -929,8 +935,10 @@ async function makePdf(r){
   };
   if(delivered.length){materialSectionTitle('Material geliefert');drawMaterialTable(delivered);}
   if(stock.length){materialSectionTitle('Material ab Grube/Lager');drawMaterialTable(stock);}
+  if(haulDisposed.length){materialSectionTitle('Material abgefahren und entsorgt');drawMaterialTable(haulDisposed);}
+  if(disposed.length){materialSectionTitle('Material entsorgt');drawMaterialTable(disposed);}
   if(hauled.length){materialSectionTitle('Material abgefahren');drawMaterialTable(hauled);}
-  if(!delivered.length&&!stock.length&&!hauled.length){materialSectionTitle('Material');draw('Keine Materialien erfasst.',M+10,y,9,false,C.muted);y-=22;}
+  if(!delivered.length&&!stock.length&&!haulDisposed.length&&!disposed.length&&!hauled.length){materialSectionTitle('Material');draw('Keine Materialien erfasst.',M+10,y,9,false,C.muted);y-=22;}
 
   if((r.services||[]).length){
     // Überschrift, Tabellenkopf und mindestens die erste Leistungszeile
