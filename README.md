@@ -13,3 +13,6 @@ Alle Dateien aus diesem Ordner gemeinsam in denselben Webserver-Ordner hochladen
 Die App lädt benötigte Bibliotheken weiterhin extern über die in `index.html` bzw. `app.js` hinterlegten CDNs.
 
 Historische, nummerierte Zwischenstände und nicht verwendete Vorlagenbilder sind in diesem Paket nicht enthalten. Die aktiven Dateien wurden nicht inhaltlich geändert.
+
+
+Version 147: PDF-Beschriftung für die Lieferadresse lautet ausschließlich „Lieferort“.

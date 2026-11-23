@@ -899,7 +899,7 @@ async function makePdf(r){
   draw(dateText,W-M-150,y,9,true,C.ink,150);
   y-=17;
   (r.address||'').split(/\n/).filter(Boolean).slice(0,3).forEach(s=>{draw(s,M,y,9,false,C.ink,290);y-=13});
-  if(r.deliveryLocation){draw('LIEFERORT',M,y,8,true,C.ink);y-=14;draw(r.deliveryLocation,M,y,9,false,C.ink, W-2*M);y-=18;}
+  if(r.deliveryLocation){draw('Lieferort',M,y,8,true,C.ink);y-=14;draw(r.deliveryLocation,M,y,9,false,C.ink, W-2*M);y-=18;}
   y-=12;
   rect(M,y-42,W-2*M,42,C.pale);
   draw('BAUVORHABEN',M+12,y-15,8,true,C.ink);
