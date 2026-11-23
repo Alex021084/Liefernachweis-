@@ -257,7 +257,6 @@ function openMaterialModal(type){
 }
 function closeMaterialModal(){$('materialModal').classList.remove('open');$('materialModal').setAttribute('aria-hidden','true')}
 $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
-$('chooseStock').onclick=()=>openMaterialModal('stock');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
 $('cancelMaterial').onclick=closeMaterialModal;
 document.querySelectorAll('[data-close-material]').forEach(el=>el.onclick=closeMaterialModal);
