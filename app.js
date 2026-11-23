@@ -219,6 +219,9 @@ function autoSaveDraft(){
 function scheduleAutoSave(){if(autoSaveTimer)clearTimeout(autoSaveTimer);setAutoSaveStatus('Änderung wird gespeichert …','pending');autoSaveTimer=setTimeout(autoSaveDraft,450);}
 
 let materialWizardStep=1;
+let deliveryLocation='';
+let temporaryDeliveryLocation='';
+let saveDeliveryLocation=true;
 function setMaterialWizardStep(step){
   materialWizardStep=step;
   $('materialStepSelect').hidden=step!==1;
@@ -246,6 +249,7 @@ function openMaterialModal(type){
   $('modalQuantity').value='';
   setMaterialUnit('to');
   $('modalIncludeDateTime').checked=false;
+  $('materialIsDelivered').checked=!!(deliveryLocation||temporaryDeliveryLocation);
   $('modalMaterialDate').value=localDateValue();
   $('modalMaterialTime').value=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',hour12:false});
   $('modalDateTimeFields').hidden=true;
@@ -258,6 +262,23 @@ function openMaterialModal(type){
 function closeMaterialModal(){$('materialModal').classList.remove('open');$('materialModal').setAttribute('aria-hidden','true')}
 $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
+$('materialIsDelivered').onchange=()=>{
+  if($('materialIsDelivered').checked){
+    $('deliveryLocationInput').value=deliveryLocation||temporaryDeliveryLocation||'';
+    $('saveDeliveryLocationForReport').checked=saveDeliveryLocation;
+    $('deliveryLocationModal').classList.add('open');$('deliveryLocationModal').setAttribute('aria-hidden','false');
+  }else{deliveryLocation='';temporaryDeliveryLocation='';saveDeliveryLocation=true;}
+};
+function closeDeliveryLocationModal(){ $('deliveryLocationModal').classList.remove('open');$('deliveryLocationModal').setAttribute('aria-hidden','true'); }
+$('cancelDeliveryLocation').onclick=()=>{ $('materialIsDelivered').checked=!!deliveryLocation;closeDeliveryLocationModal(); };
+document.querySelectorAll('[data-close-delivery-location]').forEach(el=>el.onclick=()=>{$('materialIsDelivered').checked=!!deliveryLocation;closeDeliveryLocationModal();});
+$('confirmDeliveryLocation').onclick=()=>{
+  const location=$('deliveryLocationInput').value.trim();
+  if(!location)return alert('Bitte den Lieferort eingeben.');
+  temporaryDeliveryLocation=location;saveDeliveryLocation=$('saveDeliveryLocationForReport').checked;
+  deliveryLocation=saveDeliveryLocation?location:'';
+  closeDeliveryLocationModal();
+};
 $('cancelMaterial').onclick=closeMaterialModal;
 document.querySelectorAll('[data-close-material]').forEach(el=>el.onclick=closeMaterialModal);
 function renderMaterialChoiceButtons(){
@@ -323,7 +344,8 @@ $('confirmMaterial').onclick=()=>{
   const includeDateTime=$('modalIncludeDateTime').checked;
   const date=$('modalMaterialDate').value,time=$('modalMaterialTime').value;
   if(includeDateTime&&(!date||!time))return alert('Bitte Datum und Uhrzeit vollständig eingeben.');
-  enteredMaterials.push({name,type:activeMaterialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:''});
+  if($('materialIsDelivered').checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
+  enteredMaterials.push({name,type:activeMaterialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&$('materialIsDelivered').checked&&saveDeliveryLocation?(temporaryDeliveryLocation||deliveryLocation):''});
   renderMaterialSummary();closeMaterialModal();
 };
 function parseQuantity(value){let s=String(value||'').trim().replace(/\s/g,'');if(!s)return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>0?n:0}
@@ -475,14 +497,14 @@ function renderReportSummary(){
   const mats=materialTotals(),delivered=mats.filter(m=>m.type==='delivery'),stock=mats.filter(m=>m.type==='stock'),hauled=mats.filter(m=>m.type==='haul');
   const block=(title,list,cls)=>list.length?`<section class="summaryBlock ${cls}"><h3>${title}</h3>${list.map(m=>`<div class="summaryLine"><b>${esc(m.name)}${m.includeDateTime?`<small class="materialDateStamp">${esc(formatMaterialDateTime(m.date,m.time))}</small>`:''}</b><span>${formatQuantity(m.qty)} ${m.unit==='to'?'to':'m³'}</span></div>`).join('')}</section>`:'';
   const services=r.services.map(s=>`<div class="summaryService"><b>${esc(s.job||'Leistung')}</b>${s.description?`<div>${esc(s.description)}</div>`:''}<small>${esc(s.hours||'—')} Std. · ${esc(s.start||'—')} bis ${esc(s.end||'—')} · Pause ${esc(s.pause||'0')} Min.</small></div>`).join('');
-  el.innerHTML=`<div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div><div>Bauvorhaben: ${esc(r.project||'Kein Bauvorhaben')}</div></div>${block('Material geliefert',delivered,'deliveryGroup')}${block('Material ab Grube/Lager',stock,'deliveryGroup')}${block('Material abgefahren',hauled,'haulGroup')}${services?`<section class="summaryBlock"><h3>Zusatzleistungen</h3>${services}</section>`:'<p class="hint">Keine Zusatzleistungen erfasst.</p>'}`;
+  el.innerHTML=`<div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div><div>Bauvorhaben: ${esc(r.project||'Kein Bauvorhaben')}</div>${r.deliveryLocation?`<div>Lieferort: ${esc(r.deliveryLocation)}</div>`:''}</div>${block('Material geliefert',delivered,'deliveryGroup')}${block('Material ab Grube/Lager',stock,'deliveryGroup')}${block('Material abgefahren',hauled,'haulGroup')}${services?`<section class="summaryBlock"><h3>Zusatzleistungen</h3>${services}</section>`:'<p class="hint">Keine Zusatzleistungen erfasst.</p>'}`;
 }
 $('toSummary').onclick=()=>{renderReportSummary();setWizardStep(4)};
 $('backToServices').onclick=()=>setWizardStep(3);
 $('summaryHomeButton').onclick=()=>{try{autoSaveDraft();}finally{show('welcome');}};
 
 $('formHomeButton').addEventListener('click',()=>{try{autoSaveDraft();}finally{show('welcome');}});
-function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';fillSelect($('project'),[],'Bauvorhaben wählen');enteredMaterials=[];$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
+function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';fillSelect($('project'),[],'Bauvorhaben wählen');enteredMaterials=[];deliveryLocation='';temporaryDeliveryLocation='';saveDeliveryLocation=true;$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
 $('customer').onchange=()=>{let c=db.customers.find(c=>c.name===$('customer').value);$('address').value=c?.address||'';fillSelect($('project'),db.projects.filter(p=>p.owner===c?.name).map(p=>p.name),'Bauvorhaben wählen');scheduleAutoSave()};
 function openQuickModal(id){
   const modal=$(id);modal.hidden=false;modal.setAttribute('aria-hidden','false');
@@ -542,7 +564,7 @@ function openSignature(){ const modal=$('signatureModal'); modal.hidden=false; m
 function closeSignature(){ const modal=$('signatureModal'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); modal.hidden=true; }
 $('openSignature').onclick=openSignature;$('cancelSignature').onclick=closeSignature;document.querySelectorAll('[data-close-signature]').forEach(el=>el.onclick=closeSignature);
 $('confirmSignature').onclick=()=>{if(!ink)return alert('Bitte zuerst unterschreiben.');signatureSaved=true;$('signatureStatus').textContent='✓ Unterschrift übernommen'+($('signer').value.trim()?' · '+$('signer').value.trim():'');$('signatureStatus').classList.add('signed');$('openSignature').classList.add('signatureDone');$('openSignature').textContent='✓ Unterschrift erledigt';closeSignature();};
-function collect(){return {id:currentDraftId||Date.now(),date:$('date').value,customer:$('customer').value,address:$('address').value,project:$('project').value||'',materials:enteredMaterials.map(m=>({...m})),services:[...$('serviceRows').querySelectorAll('.entry')].map(d=>({job:d.querySelector('.servicePickButton')?.dataset.value||'',description:d.querySelector('.descriptionv').value,hours:d.querySelector('.hoursv').value,start:d.querySelector('.startv').value,end:d.querySelector('.endv').value,pause:d.querySelector('.pausev').value})).filter(x=>Object.values(x).some(Boolean)),signature:signatureSaved&&ink?canvas.toDataURL('image/png'):null,signer:signatureSaved?$('signer').value:''}}
+function collect(){return {id:currentDraftId||Date.now(),date:$('date').value,customer:$('customer').value,address:$('address').value,project:$('project').value||'',deliveryLocation,materials:enteredMaterials.map(m=>({...m})),services:[...$('serviceRows').querySelectorAll('.entry')].map(d=>({job:d.querySelector('.servicePickButton')?.dataset.value||'',description:d.querySelector('.descriptionv').value,hours:d.querySelector('.hoursv').value,start:d.querySelector('.startv').value,end:d.querySelector('.endv').value,pause:d.querySelector('.pausev').value})).filter(x=>Object.values(x).some(Boolean)),signature:signatureSaved&&ink?canvas.toDataURL('image/png'):null,signer:signatureSaved?$('signer').value:''}}
 
 function persistDraft(){
   const r=collect();
@@ -589,6 +611,7 @@ function openDraft(r){
   const owner=db.customers.find(c=>c.name===r.customer);
   fillSelect($('project'),db.projects.filter(p=>p.owner===owner?.name).map(p=>p.name),'Bauvorhaben wählen');
   $('project').value=r.project||'';
+  deliveryLocation=r.deliveryLocation||'';temporaryDeliveryLocation=deliveryLocation;saveDeliveryLocation=!!deliveryLocation;
   enteredMaterials=(r.materials||[]).map(m=>({...m}));
   renderMaterialSummary();
   $('serviceRows').innerHTML='';
@@ -876,6 +899,7 @@ async function makePdf(r){
   draw(dateText,W-M-150,y,9,true,C.ink,150);
   y-=17;
   (r.address||'').split(/\n/).filter(Boolean).slice(0,3).forEach(s=>{draw(s,M,y,9,false,C.ink,290);y-=13});
+  if(r.deliveryLocation){draw('LIEFERORT',M,y,8,true,C.ink);y-=14;draw(r.deliveryLocation,M,y,9,false,C.ink, W-2*M);y-=18;}
   y-=12;
   rect(M,y-42,W-2*M,42,C.pale);
   draw('BAUVORHABEN',M+12,y-15,8,true,C.ink);

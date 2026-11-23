@@ -1885,3 +1885,9 @@ canvas, .signaturePad, .signatureCanvas{
   display:block;
   margin-top:4px;
 }
+
+/* Lieferort-Erfassung */
+.deliveryLocationToggle{margin-top:2px}
+.deliveryLocationCard textarea{width:100%;min-height:92px;padding:12px;border:1px solid #cfd6df;border-radius:12px;font:inherit;font-size:16px;resize:vertical}
+.deliveryLocationCard .modalDateTimeToggle{display:flex;align-items:center;gap:11px;font-size:15px;font-weight:650}
+.deliveryLocationCard .modalDateTimeToggle input{width:24px;height:24px;flex:0 0 24px;accent-color:#398650}

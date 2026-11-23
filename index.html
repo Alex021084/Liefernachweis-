@@ -72,6 +72,7 @@
           </button>
           <select id="modalMaterial" class="visuallyHidden" aria-hidden="true" tabindex="-1"><option value="">Material wählen</option></select>
         </div>
+        <label class="modalDateTimeToggle deliveryLocationToggle"><input id="materialIsDelivered" type="checkbox"> Material wird angeliefert</label>
         <div class="row actions">
           <button type="button" class="soft" id="cancelMaterial">Abbrechen</button>
           <button type="button" class="primary" id="nextMaterialDetails">Weiter</button>
@@ -102,6 +103,20 @@
           <button type="button" class="soft" id="backToMaterialSelect">Zurück</button>
           <button type="button" class="primary" id="confirmMaterial">Hinzufügen</button>
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="materialModal" id="deliveryLocationModal" aria-hidden="true">
+    <div class="materialModalBackdrop" data-close-delivery-location></div>
+    <div class="materialModalCard deliveryLocationCard" role="dialog" aria-modal="true" aria-labelledby="deliveryLocationTitle">
+      <h2 id="deliveryLocationTitle">Lieferort eingeben</h2>
+      <label>Lieferort / Lieferadresse
+        <textarea id="deliveryLocationInput" rows="3" placeholder="Straße, PLZ, Ort"></textarea>
+      </label>
+      <label class="modalDateTimeToggle"><input id="saveDeliveryLocationForReport" type="checkbox" checked> Lieferort für diesen Nachweis speichern</label>
+      <div class="row actions">
+        <button type="button" class="soft" id="cancelDeliveryLocation">Abbrechen</button>
+        <button type="button" class="primary" id="confirmDeliveryLocation">Übernehmen</button>
       </div>
     </div>
   </div>
