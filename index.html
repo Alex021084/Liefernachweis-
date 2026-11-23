@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#f3f5f7"><title>Dählmann – Liefernachweis</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css?v=147"></head><body>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#f3f5f7"><title>Dählmann – Liefernachweis</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css?v=148"></head><body>
 <header><div class="brand"><img src="logo.png" alt="Dählmann Sand · Kies · Baustoffe"></div></header>
 <main>
 <section id="welcome" class="screen active">
@@ -110,9 +110,7 @@
     <div class="materialModalBackdrop" data-close-delivery-location></div>
     <div class="materialModalCard deliveryLocationCard" role="dialog" aria-modal="true" aria-labelledby="deliveryLocationTitle">
       <h2 id="deliveryLocationTitle">Lieferort eingeben</h2>
-      <label>Lieferort / Lieferadresse
-        <textarea id="deliveryLocationInput" rows="3" placeholder="Straße, PLZ, Ort"></textarea>
-      </label>
+      <textarea id="deliveryLocationInput" rows="3" aria-label="Lieferort" placeholder="Straße, PLZ, Ort"></textarea>
       <label class="modalDateTimeToggle"><input id="saveDeliveryLocationForReport" type="checkbox" checked> Lieferort für diesen Nachweis speichern</label>
       <div class="row actions">
         <button type="button" class="soft" id="cancelDeliveryLocation">Abbrechen</button>
@@ -259,7 +257,7 @@
       </div>
     </div>
   </div>
-</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js?v=147"></script><script>
+</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js?v=148"></script><script>
 (function(){
   document.addEventListener('click', function(event){
     var button = event.target && event.target.closest ? event.target.closest('#goNew') : null;
