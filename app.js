@@ -349,7 +349,7 @@ $('confirmMaterial').onclick=()=>{
   if($('materialIsDelivered').checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
   const checked=$('materialIsDelivered').checked;
   const materialType=activeMaterialType==='delivery'?(checked?'delivery':'stock'):(checked?'haul_disposed':'disposed');
-  enteredMaterials.push({name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked&&saveDeliveryLocation?(temporaryDeliveryLocation||deliveryLocation):''});
+  enteredMaterials.push({name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked?(temporaryDeliveryLocation||deliveryLocation):''});
   renderMaterialSummary();closeMaterialModal();
 };
 function parseQuantity(value){let s=String(value||'').trim().replace(/\s/g,'');if(!s)return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>0?n:0}
@@ -864,7 +864,8 @@ async function makePdf(r){
     y-=12;line(M,y,W-M,y,C.line,.8);y-=14;
   };
   const materialSectionTitle=(title)=>{
-    if(y<205)newPage();
+    // Genug Platz für Überschrift, Lieferort, Tabellenkopf und erste Materialzeile reservieren.
+    if(y<310)newPage();
     // Nur mehr Weißraum und eine feine neutrale Trennlinie – keine Farbflächen.
     y-=16;
     draw(title,M,y,14,true,C.ink);
@@ -903,7 +904,6 @@ async function makePdf(r){
   draw(dateText,W-M-150,y,9,true,C.ink,150);
   y-=17;
   (r.address||'').split(/\n/).filter(Boolean).slice(0,3).forEach(s=>{draw(s,M,y,9,false,C.ink,290);y-=13});
-  if(r.deliveryLocation){draw('Lieferort',M,y,8,true,C.ink);y-=14;draw(r.deliveryLocation,M,y,9,false,C.ink, W-2*M);y-=18;}
   y-=12;
   rect(M,y-42,W-2*M,42,C.pale);
   draw('BAUVORHABEN',M+12,y-15,8,true,C.ink);
@@ -933,11 +933,23 @@ async function makePdf(r){
     });
     drawTable(headers,rows,widths);
   };
-  if(delivered.length){materialSectionTitle('Material geliefert');drawMaterialTable(delivered);}
-  if(stock.length){materialSectionTitle('Material ab Grube/Lager');drawMaterialTable(stock);}
-  if(haulDisposed.length){materialSectionTitle('Material abgefahren und entsorgt');drawMaterialTable(haulDisposed);}
-  if(disposed.length){materialSectionTitle('Material entsorgt');drawMaterialTable(disposed);}
-  if(hauled.length){materialSectionTitle('Material abgefahren');drawMaterialTable(hauled);}
+  const drawMaterialSection=(title,list,showDeliveryLocations=false)=>{
+    materialSectionTitle(title);
+    if(showDeliveryLocations){
+      const locations=[...new Set(list.map(m=>String(m.deliveryLocation||'').trim()).filter(Boolean))];
+      locations.forEach(location=>{
+        draw('Lieferort:',M,y,8,true,C.ink);
+        draw(location,M+58,y,9,false,C.ink,W-2*M-58);
+        y-=15;
+      });
+    }
+    drawMaterialTable(list);
+  };
+  if(delivered.length){drawMaterialSection('Material geliefert',delivered,true);}
+  if(stock.length){drawMaterialSection('Material ab Grube/Lager',stock);}
+  if(haulDisposed.length){drawMaterialSection('Material abgefahren und entsorgt',haulDisposed);}
+  if(disposed.length){drawMaterialSection('Material entsorgt',disposed);}
+  if(hauled.length){drawMaterialSection('Material abgefahren',hauled);}
   if(!delivered.length&&!stock.length&&!haulDisposed.length&&!disposed.length&&!hauled.length){materialSectionTitle('Material');draw('Keine Materialien erfasst.',M+10,y,9,false,C.muted);y-=22;}
 
   if((r.services||[]).length){
