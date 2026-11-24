@@ -1,4 +1,10 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#f3f5f7"><title>Dählmann – Liefernachweis</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css?v=148"></head><body>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#f3f5f7"><title>Dählmann – Liefernachweis</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css?v=159"><style>
+#appAlertModal[hidden]{display:none!important}
+#appAlertModal:not([hidden]){position:fixed!important;inset:0!important;z-index:99999!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:22px!important;background:rgba(24,31,40,.56)!important;-webkit-backdrop-filter:blur(7px)!important;backdrop-filter:blur(7px)!important}
+#appAlertModal .appAlertBackdrop{position:absolute!important;inset:0!important}
+#appAlertModal .appAlertCard{position:relative!important;width:min(100%,430px)!important;padding:28px 24px 22px!important;border:1px solid #e5e9ee!important;border-radius:26px!important;background:#fff!important;box-shadow:0 22px 70px rgba(20,28,38,.25)!important;text-align:center!important}
+#appAlertModal .appAlertButton{display:block!important;width:100%!important;min-height:54px!important;border:0!important;border-radius:16px!important;background:linear-gradient(135deg,#e4b64f,#f0cc70)!important;color:#252b34!important;font-size:17px!important;font-weight:750!important}
+</style></head><body>
 <header><div class="brand"><img src="logo.png" alt="Dählmann Sand · Kies · Baustoffe"></div></header>
 <main>
 <section id="welcome" class="screen active">
@@ -266,7 +272,7 @@
       </div>
     </div>
   </div>
-</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js?v=158"></script><script>
+</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js?v=159"></script><script>
 (function(){
   document.addEventListener('click', function(event){
     var button = event.target && event.target.closest ? event.target.closest('#goNew') : null;
