@@ -1029,13 +1029,10 @@ $('closePdfPreview').onclick=closePdfPreview;
 $('savePdf').onclick=async()=>{
   const r=collect();
   if(!validateDocument(r))return;
-  if(!r.signature){
-    alert('Bitte zuerst die Unterschrift übernehmen und anschließend „Dokument speichern“ drücken. Erst danach kann die PDF erstellt werden.');
-    return;
-  }
+  // PDF darf auch ohne Unterschrift erstellt werden.
   if(!persistDocument())return;
   const saved=db.reports.find(x=>String(x.id)===String(r.id));
-  if(saved&&isFinalized(saved))await openPdfPreview(saved);
+  if(saved)await openPdfPreview(saved);
 };
 $('saveDocument').onclick=()=>{if(persistDocument())show('home')};
 renderArchive();
