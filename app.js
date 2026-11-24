@@ -774,7 +774,26 @@ function renderArchive(){
 
 function txt(page,text,x,y,size=9,bold=false){if(!text)return;page.drawText(String(text).slice(0,110),{x,y,size,font:bold?fontBold:font,color:PDFLib.rgb(.12,.15,.18),maxWidth:500})}
 let font,fontBold;
-function aggregateReportMaterials(rows){const totals=new Map(),individual=[];(rows||[]).forEach(m=>{const name=String(m.name||'').trim(),type=m.type||'delivery',unit=m.unit||'to',qty=parseQuantity(m.qty),includeDateTime=!!m.includeDateTime,date=includeDateTime?(m.date||''):'',time=includeDateTime?(m.time||''):'';if(!name||!qty)return;if(includeDateTime){individual.push({name,type,unit,qty,includeDateTime,date,time});return;}const key=[type,name,unit].join('||');if(!totals.has(key))totals.set(key,{name,type,unit,qty:0,includeDateTime:false,date:'',time:''});totals.get(key).qty+=qty});return [...totals.values(),...individual].sort((a,b)=>a.type.localeCompare(b.type)||a.name.localeCompare(b.name,'de')||a.unit.localeCompare(b.unit)||String(a.date).localeCompare(String(b.date))||String(a.time).localeCompare(String(b.time)))}
+function aggregateReportMaterials(rows){
+  const totals=new Map(),individual=[];
+  (rows||[]).forEach(m=>{
+    const name=String(m.name||'').trim(),type=m.type||'delivery',unit=m.unit||'to',
+      qty=parseQuantity(m.qty),includeDateTime=!!m.includeDateTime,
+      date=includeDateTime?(m.date||''):'',time=includeDateTime?(m.time||''):'',
+      location=String(m.deliveryLocation||'').trim();
+    if(!name||!qty)return;
+    if(includeDateTime){
+      individual.push({name,type,unit,qty,includeDateTime,date,time,deliveryLocation:location});
+      return;
+    }
+    const key=[type,name,unit].join('||');
+    if(!totals.has(key))totals.set(key,{name,type,unit,qty:0,includeDateTime:false,date:'',time:'',deliveryLocations:[]});
+    const total=totals.get(key);
+    total.qty+=qty;
+    if(location&&!total.deliveryLocations.includes(location))total.deliveryLocations.push(location);
+  });
+  return [...totals.values(),...individual].sort((a,b)=>a.type.localeCompare(b.type)||a.name.localeCompare(b.name,'de')||a.unit.localeCompare(b.unit)||String(a.date).localeCompare(String(b.date))||String(a.time).localeCompare(String(b.time)));
+}
 async function makePdf(r){
   const {PDFDocument,StandardFonts,rgb}=PDFLib;
   const pdf=await PDFDocument.create();
@@ -936,7 +955,10 @@ async function makePdf(r){
   const drawMaterialSection=(title,list,showDeliveryLocations=false)=>{
     materialSectionTitle(title);
     if(showDeliveryLocations){
-      const locations=[...new Set(list.map(m=>String(m.deliveryLocation||'').trim()).filter(Boolean))];
+      const locations=[...new Set([
+        ...list.flatMap(m=>Array.isArray(m.deliveryLocations)?m.deliveryLocations:[m.deliveryLocation||'']),
+        r.deliveryLocation||''
+      ].map(location=>String(location||'').trim()).filter(Boolean))];
       locations.forEach(location=>{
         draw('Lieferort:',M,y,8,true,C.ink);
         draw(location,M+58,y,9,false,C.ink,W-2*M-58);
