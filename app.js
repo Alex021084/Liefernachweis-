@@ -10,6 +10,31 @@
   document.addEventListener('dblclick',function(event){event.preventDefault();},{passive:false});
 })();
 const $=id=>document.getElementById(id);const KEY='daelmann-liefernachweis-v1';
+let appAlertTimer=null;
+function showAppAlert(message){
+  const modal=$('appAlertModal');
+  if(!modal){console.log(message);return;}
+  const text=String(message??'');
+  const success=/(gespeichert|erfolgreich|abgeschlossen|erstellt|übernommen)/i.test(text);
+  const warning=/(bitte|fehler|nicht möglich|konnte nicht|ungültig|zuerst)/i.test(text)&&!success;
+  $('appAlertTitle').textContent=success?'Erfolgreich':warning?'Bitte beachten':'Hinweis';
+  $('appAlertMessage').textContent=text;
+  $('appAlertIcon').textContent=success?'✓':warning?'!':'i';
+  $('appAlertIcon').className='appAlertIcon '+(success?'is-success':warning?'is-warning':'is-info');
+  modal.hidden=false;modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('dialogOpen');
+  clearTimeout(appAlertTimer);
+}
+function closeAppAlert(){
+  const modal=$('appAlertModal');
+  if(!modal)return;
+  modal.hidden=true;modal.setAttribute('aria-hidden','true');
+  document.body.classList.remove('dialogOpen');
+}
+$('appAlertClose').onclick=closeAppAlert;
+document.querySelectorAll('[data-close-app-alert]').forEach(el=>el.addEventListener('click',closeAppAlert));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('appAlertModal').hidden)closeAppAlert();});
+window.alert=showAppAlert;
 const EMPTY_DB={customers:[],projects:[],materials:['Sand SE gesiebt','Schottertragschicht Naturstein'],services:[],reports:[],deliveryMaterials:null,haulMaterials:[]};
 // Defensives Laden: Ein beschädigter oder unvollständiger lokaler Speicher darf nicht die gesamte App lahmlegen.
 function loadDatabase(){try{const raw=localStorage.getItem(KEY);const parsed=raw?JSON.parse(raw):{};if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))return {...EMPTY_DB};return {...EMPTY_DB,...parsed,customers:Array.isArray(parsed.customers)?parsed.customers:[],projects:Array.isArray(parsed.projects)?parsed.projects:[],materials:Array.isArray(parsed.materials)?parsed.materials:EMPTY_DB.materials,services:Array.isArray(parsed.services)?parsed.services:[],reports:Array.isArray(parsed.reports)?parsed.reports:[],deliveryMaterials:Array.isArray(parsed.deliveryMaterials)?parsed.deliveryMaterials:(Array.isArray(parsed.materials)?parsed.materials:EMPTY_DB.materials),haulMaterials:Array.isArray(parsed.haulMaterials)?parsed.haulMaterials:[]};}catch(error){console.error('Lokale Daten konnten nicht gelesen werden:',error);return {...EMPTY_DB};}}
@@ -394,10 +419,10 @@ function renderMaterialSummary(){
     row.addEventListener('pointercancel',finish);
     del.addEventListener('click',()=>{
       const type=item.dataset.swipeType,name=item.dataset.swipeName,unit=item.dataset.swipeUnit;
-      if(confirm(`„${name}“ (${unit==='to'?'to':'cbm'}) wirklich aus den erfassten Materialien löschen?`)){
+      askAppConfirm(`„${name}“ (${unit==='to'?'to':'cbm'}) wirklich aus den erfassten Materialien löschen?`,()=>{
         const sourceIndex=item.dataset.sourceIndex;if(sourceIndex!==''){enteredMaterials.splice(Number(sourceIndex),1);}else{enteredMaterials=enteredMaterials.filter(m=>!(m.type===type&&m.name===name&&m.unit===unit&&!m.includeDateTime));}
         renderMaterialSummary();
-      }
+      });
     });
   });
 }
@@ -463,7 +488,7 @@ function attachServiceSwipe(item){
   row.addEventListener('pointerup',finish);row.addEventListener('pointercancel',finish);
   del.onclick=()=>{
     const name=row.querySelector('.servicePickButton')?.dataset.value||'Zusatzleistung';
-    if(confirm(`„${name}“ wirklich löschen?`))item.remove();
+    askAppConfirm(`„${name}“ wirklich löschen?`,()=>item.remove());
   };
 }
 let serviceTargetRow=null;

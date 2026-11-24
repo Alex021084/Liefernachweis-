@@ -1917,3 +1917,40 @@ canvas, .signaturePad, .signatureCanvas{
   box-shadow:none!important;
   outline:0!important;
 }
+
+
+/* Version 158: Einheitliche, markengerechte Dialoge statt Browser-Standardmeldungen */
+.appAlertModal[hidden]{display:none!important}
+.appAlertModal{
+  position:fixed;inset:0;z-index:23000;display:flex;align-items:center;justify-content:center;
+  padding:22px;background:rgba(24,31,40,.56);
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+  animation:appDialogFade .18s ease-out;
+}
+.appAlertBackdrop{position:absolute;inset:0}
+.appAlertCard{
+  position:relative;width:min(100%,430px);padding:28px 24px 22px;
+  border:1px solid #e5e9ee;border-radius:26px;background:#fff;
+  box-shadow:0 22px 70px rgba(20,28,38,.25);
+  text-align:center;animation:appDialogPop .2s cubic-bezier(.2,.8,.2,1);
+}
+.appAlertIcon{
+  width:58px;height:58px;margin:0 auto 16px;border-radius:19px;
+  display:grid;place-items:center;font-size:30px;font-weight:850;
+  background:#fff4dc;color:#9a6b16;
+}
+.appAlertIcon.is-success{background:#e8f4eb;color:#287747}
+.appAlertIcon.is-warning{background:#fff2df;color:#a36a13}
+.appAlertIcon.is-info{background:#edf2f8;color:#52657d}
+.appAlertCard h2{margin:0 0 10px;color:#252d38;font-size:23px;line-height:1.2;font-weight:800}
+.appAlertCard p{margin:0 0 23px;color:#626d7a;font-size:16px;line-height:1.5;overflow-wrap:anywhere}
+.appAlertButton{
+  display:block;width:100%;min-height:54px;border:0;border-radius:16px;
+  background:linear-gradient(135deg,#e4b64f,#f0cc70);color:#252b34;
+  font-size:17px;font-weight:750;box-shadow:0 5px 0 rgba(171,125,35,.13);
+}
+.appAlertButton:active{transform:translateY(1px);box-shadow:none}
+.dialogOpen{overflow:hidden}
+@keyframes appDialogFade{from{opacity:0}to{opacity:1}}
+@keyframes appDialogPop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:420px){.appAlertCard{padding:25px 20px 20px;border-radius:24px}.appAlertCard h2{font-size:22px}.appAlertCard p{font-size:16px}}
