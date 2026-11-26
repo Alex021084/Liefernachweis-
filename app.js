@@ -274,7 +274,7 @@ function openMaterialModal(type){
   $('modalQuantity').value='';
   setMaterialUnit('to');
   $('modalIncludeDateTime').checked=false;
-  $('materialIsDeliveredLabel').textContent=type==='haul'?'Material abgefahren':'Material geliefert';
+  // Die alte globale Liefer-Kachel wurde durch die Kennzeichnung pro Material ersetzt.
   materialDeliveryRequested=false;
   pendingMaterialDelivered=false;
   updateMaterialToggle();
