@@ -290,9 +290,21 @@ $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
 function updateMaterialToggle(){
   const button=$('materialIsDelivered');
-  if(!button)return;
-  button.setAttribute('aria-pressed',pendingMaterialDelivered?'true':'false');
-  button.classList.toggle('is-active',pendingMaterialDelivered);
+  if(button){
+    button.setAttribute('aria-pressed',pendingMaterialDelivered?'true':'false');
+    button.classList.toggle('is-active',pendingMaterialDelivered);
+  }
+  const delivery=$('classifyAsDelivery'),stock=$('classifyAsStock');
+  if(delivery&&stock){
+    const isDelivery=activeMaterialType==='delivery'&&pendingMaterialClassification==='delivery';
+    delivery.setAttribute('aria-pressed',isDelivery?'true':'false');
+    stock.setAttribute('aria-pressed',isDelivery?'false':'true');
+    delivery.classList.toggle('is-selected',isDelivery);
+    stock.classList.toggle('is-selected',!isDelivery);
+    const group=$('deliveryClassification');
+    if(group)group.hidden=activeMaterialType!=='delivery';
+    if(button)button.hidden=activeMaterialType!=='haul';
+  }
 }
 function setMaterialDelivered(value){
   pendingMaterialDelivered=Boolean(value);
@@ -317,6 +329,27 @@ function setMaterialDelivered(value){
   }
 }
 $('materialIsDelivered').onclick=()=>setMaterialDelivered(!pendingMaterialDelivered);
+$('classifyAsDelivery').onclick=()=>{
+  pendingMaterialClassification='delivery';
+  pendingMaterialDelivered=true;
+  materialDeliveryRequested=true;
+  updateMaterialToggle();
+  const invoiceAddress=$('address').value.trim();
+  const existingLocation=deliveryLocation||temporaryDeliveryLocation||'';
+  $('deliveryLocationInput').value=existingLocation;
+  $('deliveryLocationCity').value='';
+  $('deliverySameAsInvoice').checked=!!invoiceAddress&&existingLocation===invoiceAddress;
+  $('deliveryLocationModal').classList.add('open');
+  $('deliveryLocationModal').setAttribute('aria-hidden','false');
+};
+$('classifyAsStock').onclick=()=>{
+  pendingMaterialClassification='stock';
+  pendingMaterialDelivered=false;
+  materialDeliveryRequested=false;
+  deliveryLocation='';
+  temporaryDeliveryLocation='';
+  updateMaterialToggle();
+};
 $('deliverySameAsInvoice').onchange=()=>{
   if($('deliverySameAsInvoice').checked){
     const invoiceAddress=$('address').value.trim();
@@ -387,6 +420,7 @@ function renderMaterialChoiceButtons(){
       $('modalDateTimeFields').hidden=true;
       $('modalMaterialDate').value=localDateValue();
       $('modalMaterialTime').value=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',hour12:false});
+      updateMaterialToggle();
       setMaterialWizardStep(2);
     };
     host.appendChild(button);
@@ -432,7 +466,9 @@ $('confirmMaterial').onclick=()=>{
   // Der aktuelle Schalterzustand ist die maßgebliche Quelle für die Zuordnung.
   // So bleibt "Material geliefert" auch dann erhalten, wenn es erst nach
   // Zurückgehen vom Mengenschritt aktiviert wird.
-  const checked=Boolean(pendingMaterialDelivered);
+  const checked=activeMaterialType==='delivery'
+    ?pendingMaterialClassification==='delivery'
+    :Boolean(pendingMaterialDelivered);
   const materialType=activeMaterialType==='delivery'
     ?(checked?'delivery':'stock')
     :(checked?'haul_disposed':'disposed');
@@ -445,6 +481,8 @@ $('confirmMaterial').onclick=()=>{
   pendingMaterialName='';
   pendingMaterialDelivered=false;
   pendingMaterialClassification=activeMaterialType==='haul'?'disposed':'stock';
+  deliveryLocation='';
+  temporaryDeliveryLocation='';
   materialDeliveryRequested=false;
   updateMaterialToggle();
   renderMaterialChoiceButtons();
