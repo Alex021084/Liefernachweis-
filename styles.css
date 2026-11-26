@@ -1954,3 +1954,39 @@ canvas, .signaturePad, .signatureCanvas{
 @keyframes appDialogFade{from{opacity:0}to{opacity:1}}
 @keyframes appDialogPop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:420px){.appAlertCard{padding:25px 20px 20px;border-radius:24px}.appAlertCard h2{font-size:22px}.appAlertCard p{font-size:16px}}
+
+
+/* Materialauswahl direkt im Mengen-Dialog */
+.materialChoiceListInline{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px!important;
+  max-height:min(42vh,390px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:3px 3px 7px;
+}
+.materialChoiceListInline .materialChoiceOption{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  gap:5px!important;
+  min-height:66px!important;
+  padding:12px 13px!important;
+  text-align:left!important;
+}
+.materialChoiceListInline .materialChoiceOption.is-selected{
+  background:#e7f5eb!important;
+  border:2px solid #319653!important;
+  color:#185b30!important;
+  box-shadow:inset 0 0 0 1px #c5e8d0;
+}
+.materialChoiceName{display:block;font-weight:700}
+.materialChoiceQuantity{display:block;font-size:12px;font-weight:650;color:#247442}
+#materialStepSelect .materialChoiceCaption{margin-bottom:2px}
+#materialStepSelect .deliveryLocationToggle{margin-top:8px}
+#materialModalCard{max-height:min(90vh,850px);overflow-y:auto}
+@media(max-width:480px){
+  .materialChoiceListInline{grid-template-columns:1fr}
+}

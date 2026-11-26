@@ -257,8 +257,6 @@ function openMaterialModal(type){
   $('materialChoiceCaption').textContent=type==='haul'?'Abfuhrmaterial':'';
   fillSelect($('modalMaterial'),list,'Material wählen');
   renderMaterialChoiceButtons();
-  $('materialChoiceText').textContent='Material auswählen';
-  closeMaterialChoices();
   $('modalQuantity').value='';
   setMaterialUnit('to');
   $('modalIncludeDateTime').checked=false;
@@ -313,46 +311,59 @@ document.querySelectorAll('[data-close-material]').forEach(el=>el.onclick=closeM
 function renderMaterialChoiceButtons(){
   const select=$('modalMaterial'),host=$('materialChoiceList');
   host.innerHTML='';
-  Array.from(select.options).filter(option=>option.value).forEach(option=>{
+  const options=Array.from(select.options).filter(option=>option.value);
+  options.forEach(option=>{
     const button=document.createElement('button');
-    button.type='button';button.className='materialChoiceOption';
-    button.textContent=option.textContent;button.dataset.value=option.value;
+    button.type='button';
+    button.className='materialChoiceOption';
+    button.dataset.value=option.value;
+    const name=document.createElement('span');
+    name.className='materialChoiceName';
+    name.textContent=option.textContent;
+    button.appendChild(name);
+    const related=enteredMaterials.filter(m=>m.name===option.value&&(
+      activeMaterialType==='delivery'?['delivery','stock'].includes(m.type):['haul_disposed','disposed'].includes(m.type)
+    ));
+    if(related.length){
+      button.classList.add('is-selected');
+      const qty=document.createElement('small');
+      qty.className='materialChoiceQuantity';
+      const byUnit=new Map();
+      related.forEach(m=>byUnit.set(m.unit,(byUnit.get(m.unit)||0)+parseQuantity(m.qty)));
+      qty.textContent=[...byUnit.entries()].map(([unit,total])=>`${formatQuantity(total)} ${unit==='cbm'?'m³':'to'}`).join(' · ');
+      button.appendChild(qty);
+    }
+    button.setAttribute('aria-pressed',related.length?'true':'false');
     button.onclick=()=>{
       select.value=option.value;
-      $('materialChoiceText').textContent=option.textContent;
-      closeMaterialChoices();
+      $('materialChoiceText')?.replaceChildren(document.createTextNode(option.textContent));
       $('selectedMaterialHeading').textContent=`Menge für: ${option.textContent}`;
+      $('modalQuantity').value='';
+      setMaterialUnit('to');
+      $('modalIncludeDateTime').checked=false;
+      $('modalDateTimeFields').hidden=true;
+      $('modalMaterialDate').value=localDateValue();
+      $('modalMaterialTime').value=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',hour12:false});
       setMaterialWizardStep(2);
     };
     host.appendChild(button);
   });
   if(!host.children.length){
-    const empty=document.createElement('p');empty.className='materialChoiceEmpty';
+    const empty=document.createElement('p');
+    empty.className='materialChoiceEmpty';
     empty.textContent='Noch keine Materialien in den Stammdaten hinterlegt.';
     host.appendChild(empty);
   }
 }
-function openMaterialChoices(){
-  const modal=$('materialChoiceModal');
-  modal.hidden=false;modal.setAttribute('aria-hidden','false');
-  $('openMaterialChoices').setAttribute('aria-expanded','true');
-}
-function closeMaterialChoices(){
-  const modal=$('materialChoiceModal');
-  if(modal){modal.hidden=true;modal.setAttribute('aria-hidden','true');}
-  const trigger=$('openMaterialChoices');
-  if(trigger)trigger.setAttribute('aria-expanded','false');
-}
-$('openMaterialChoices').onclick=openMaterialChoices;
-$('cancelMaterialChoices').onclick=closeMaterialChoices;
-document.querySelectorAll('[data-close-material-choices]').forEach(el=>el.onclick=closeMaterialChoices);
-$('nextMaterialDetails').onclick=()=>{
-  const name=$('modalMaterial').value;
-  if(!name)return alert('Bitte zuerst ein Material auswählen.');
-  $('selectedMaterialHeading').textContent=`Menge für: ${name}`;
-  setMaterialWizardStep(2);
+$('finishMaterialSelection').onclick=()=>{
+  if(!enteredMaterials.length)return alert('Bitte mindestens ein Material übernehmen.');
+  closeMaterialModal();
 };
-$('backToMaterialSelect').onclick=()=>setMaterialWizardStep(1);
+$('nextMaterialDetails')?.remove();
+$('backToMaterialSelect').onclick=()=>{
+  renderMaterialChoiceButtons();
+  setMaterialWizardStep(1);
+};
 document.querySelectorAll('[data-material-unit]').forEach(btn=>btn.onclick=()=>setMaterialUnit(btn.dataset.materialUnit));
 document.querySelectorAll('[data-quantity-key]').forEach(btn=>btn.onclick=()=>{
   const input=$('modalQuantity'),key=btn.dataset.quantityKey;
@@ -377,7 +388,9 @@ $('confirmMaterial').onclick=()=>{
   const checked=$('materialIsDelivered').checked;
   const materialType=activeMaterialType==='delivery'?(checked?'delivery':'stock'):(checked?'haul_disposed':'disposed');
   enteredMaterials.push({name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked?(temporaryDeliveryLocation||deliveryLocation):''});
-  renderMaterialSummary();closeMaterialModal();
+  renderMaterialSummary();
+  renderMaterialChoiceButtons();
+  setMaterialWizardStep(1);
 };
 function parseQuantity(value){let s=String(value||'').trim().replace(/\s/g,'');if(!s)return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>0?n:0}
 function formatQuantity(n){return n.toLocaleString('de-DE',{maximumFractionDigits:3})}

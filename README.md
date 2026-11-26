@@ -24,3 +24,11 @@ Bereits unterschriebene und gesperrte Liefernachweise lassen sich über „PDF e
 
 ## Lieferort auf der PDF
 Der Lieferort kann getrennt nach Straße/Hausnummer und PLZ/Ort erfasst werden. Beide Angaben werden zusammen auf der PDF ausgegeben. Bei „Wie Rechnungsadresse“ wird die vollständige Rechnungsanschrift übernommen.
+
+
+## Materialauswahl – überarbeiteter Ablauf
+- Alle Materialien werden direkt im Materialdialog als Kacheln angezeigt.
+- Bereits übernommene Materialien sind grün markiert; darunter steht die bisher erfasste Menge.
+- Die Mengenansicht verwendet die Schaltfläche „Übernehmen“ und führt danach zurück zur Materialauswahl.
+- Weitere Materialien können nacheinander ergänzt werden. Mit „Fertig“ wird der Dialog geschlossen.
+- Lieferort und Zeitstempel bleiben im Ablauf verfügbar.
