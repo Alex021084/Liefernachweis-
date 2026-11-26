@@ -238,6 +238,7 @@ let deliveryLocation='';
 let temporaryDeliveryLocation='';
 let materialDeliveryRequested=false;
 let pendingMaterialDelivered=false;
+let pendingMaterialClassification='stock';
 function setMaterialWizardStep(step){
   materialWizardStep=step;
   $('materialStepSelect').hidden=step!==1;
@@ -260,6 +261,7 @@ function openMaterialModal(type){
   // übernommene Materialien bleiben im Nachweis, sind hier aber nicht mehr grün markiert.
   materialSessionEntries=[];
   pendingMaterialDelivered=false;
+  pendingMaterialClassification=type==='haul'?'disposed':'stock';
   const list=type==='haul'?(db.haulMaterials||[]):(db.deliveryMaterials||[]);
   $('materialModalTitle').textContent=type==='haul'?'Material abgefahren':type==='stock'?'Material ab Grube/Lager':'';
   $('materialChoiceCaption').textContent=type==='haul'?'Abfuhrmaterial':'';
@@ -294,6 +296,11 @@ function updateMaterialToggle(){
 }
 function setMaterialDelivered(value){
   pendingMaterialDelivered=Boolean(value);
+  if(activeMaterialType==='delivery'){
+    pendingMaterialClassification=pendingMaterialDelivered?'delivery':'stock';
+  }else{
+    pendingMaterialClassification=pendingMaterialDelivered?'haul_disposed':'disposed';
+  }
   materialDeliveryRequested=activeMaterialType==='delivery'&&pendingMaterialDelivered;
   updateMaterialToggle();
   if(activeMaterialType==='delivery'&&pendingMaterialDelivered){
@@ -330,7 +337,8 @@ $('confirmDeliveryLocation').onclick=()=>{
   deliveryLocation=location;
   materialDeliveryRequested=true;
   pendingMaterialDelivered=true;
-  setMaterialDelivered(true);
+  pendingMaterialClassification='delivery';
+  updateMaterialToggle();
   closeDeliveryLocationModal();
 };
 $('cancelMaterial').onclick=closeMaterialModal;
@@ -421,17 +429,17 @@ $('confirmMaterial').onclick=()=>{
   const includeDateTime=$('modalIncludeDateTime').checked;
   const date=$('modalMaterialDate').value,time=$('modalMaterialTime').value;
   if(includeDateTime&&(!date||!time))return alert('Bitte Datum und Uhrzeit vollständig eingeben.');
-  const checked=Boolean(pendingMaterialDelivered);
-  if(activeMaterialType==='delivery'&&checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
-  const materialType=activeMaterialType==='delivery'?(checked?'delivery':'stock'):(checked?'haul_disposed':'disposed');
-  const entry={name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked?(temporaryDeliveryLocation||deliveryLocation):''};
+  const materialType=pendingMaterialClassification;
+  const isDelivery=materialType==='delivery';
+  if(isDelivery&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
+  const entry={name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:isDelivery?(temporaryDeliveryLocation||deliveryLocation):''};
   enteredMaterials.push(entry);
   materialSessionEntries.push(entry);
   renderMaterialSummary();
   pendingMaterialName='';
   pendingMaterialDelivered=false;
+  pendingMaterialClassification=activeMaterialType==='haul'?'disposed':'stock';
   materialDeliveryRequested=false;
-  pendingMaterialDelivered=false;
   updateMaterialToggle();
   renderMaterialChoiceButtons();
   setMaterialWizardStep(1);
