@@ -46,3 +46,7 @@ Die zusätzliche Checkbox „Lieferort für diesen Nachweis speichern“ wurde e
 
 ## Korrektur: Material geliefert
 Die Auswahl „Material geliefert“ wird nun zusätzlich intern festgehalten, auch während der Lieferort-Dialog geöffnet und bestätigt wird. Beim Übernehmen der Menge wird dadurch zuverlässig der Typ „Material geliefert“ gespeichert und nicht „Material ab Grube/Lager“.
+
+
+## Materialauswahl – Auswahl pro Öffnung zurücksetzen
+Jede neue Öffnung des Materialdialogs startet mit einer leeren Auswahlrunde. Materialien, die in einer vorherigen Runde bereits übernommen wurden, bleiben im Liefernachweis erhalten, werden in der neuen Auswahl aber nicht mehr grün markiert und zeigen dort keine alte Mengenangabe. Innerhalb der aktuellen Runde bleiben übernommene Kacheln grün und zeigen ihre Mengen.

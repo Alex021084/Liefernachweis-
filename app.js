@@ -209,6 +209,7 @@ $('saveQuickMaterial').onclick=()=>{
 };
 let activeMaterialType='delivery';
 let pendingMaterialName='';
+let materialSessionEntries=[];
 let enteredMaterials=[];
 let currentDraftId=null;
 let autoSaveTimer=null;
@@ -254,6 +255,9 @@ function setMaterialUnit(unit){
 function openMaterialModal(type){
   activeMaterialType=type;
   pendingMaterialName='';
+  // Eine neue Öffnung startet eine frische Auswahlrunde. Bereits zuvor
+  // übernommene Materialien bleiben im Nachweis, sind hier aber nicht mehr grün markiert.
+  materialSessionEntries=[];
   const list=type==='haul'?(db.haulMaterials||[]):(db.deliveryMaterials||[]);
   $('materialModalTitle').textContent=type==='haul'?'Material abgefahren':type==='stock'?'Material ab Grube/Lager':'';
   $('materialChoiceCaption').textContent=type==='haul'?'Abfuhrmaterial':'';
@@ -326,7 +330,7 @@ function renderMaterialChoiceButtons(){
     name.className='materialChoiceName';
     name.textContent=option.textContent;
     button.appendChild(name);
-    const related=enteredMaterials.filter(m=>m.name===option.value&&(
+    const related=materialSessionEntries.filter(m=>m.name===option.value&&(
       activeMaterialType==='delivery'?['delivery','stock'].includes(m.type):['haul_disposed','disposed'].includes(m.type)
     ));
     if(related.length||pendingMaterialName===option.value){
@@ -342,7 +346,7 @@ function renderMaterialChoiceButtons(){
     button.onclick=()=>{
       pendingMaterialName=option.value;
       host.querySelectorAll('.materialChoiceOption').forEach(tile=>{
-        const active=tile.dataset.value===option.value||enteredMaterials.some(m=>m.name===tile.dataset.value);
+        const active=tile.dataset.value===option.value||materialSessionEntries.some(m=>m.name===tile.dataset.value);
         tile.classList.toggle('is-selected',active);
         tile.setAttribute('aria-pressed',active?'true':'false');
       });
@@ -400,7 +404,9 @@ $('confirmMaterial').onclick=()=>{
   const checked=activeMaterialType==='delivery'&&(materialDeliveryRequested||$('materialIsDelivered').checked);
   if(checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
   const materialType=activeMaterialType==='delivery'?(checked?'delivery':'stock'):(checked?'haul_disposed':'disposed');
-  enteredMaterials.push({name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked?(temporaryDeliveryLocation||deliveryLocation):''});
+  const entry={name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked?(temporaryDeliveryLocation||deliveryLocation):''};
+  enteredMaterials.push(entry);
+  materialSessionEntries.push(entry);
   renderMaterialSummary();
   pendingMaterialName='';
   renderMaterialChoiceButtons();
@@ -562,7 +568,7 @@ $('backToServices').onclick=()=>setWizardStep(3);
 $('summaryHomeButton').onclick=()=>{try{autoSaveDraft();}finally{show('welcome');}};
 
 $('formHomeButton').addEventListener('click',()=>{try{autoSaveDraft();}finally{show('welcome');}});
-function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';enteredMaterials=[];deliveryLocation='';temporaryDeliveryLocation='';materialDeliveryRequested=false;$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
+function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';enteredMaterials=[];materialSessionEntries=[];deliveryLocation='';temporaryDeliveryLocation='';materialDeliveryRequested=false;$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
 $('customer').onchange=()=>{let c=db.customers.find(c=>c.name===$('customer').value);$('address').value=c?.address||'';scheduleAutoSave()};
 function openQuickModal(id){
   const modal=$(id);modal.hidden=false;modal.setAttribute('aria-hidden','false');
@@ -645,7 +651,7 @@ function openDraft(r){
   $('address').value=r.address||'';
   const owner=db.customers.find(c=>c.name===r.customer);
   deliveryLocation=r.deliveryLocation||'';temporaryDeliveryLocation=deliveryLocation;materialDeliveryRequested=(r.materials||[]).some(m=>m.type==='delivery');
-  enteredMaterials=(r.materials||[]).map(m=>({...m}));
+  enteredMaterials=(r.materials||[]).map(m=>({...m}));materialSessionEntries=[];
   renderMaterialSummary();
   $('serviceRows').innerHTML='';
   (r.services||[]).forEach(v=>rowService(v));
