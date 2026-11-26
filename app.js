@@ -293,21 +293,33 @@ function closeMaterialModal(){$('materialModal').classList.remove('open');$('mat
 $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
 function updateMaterialToggle(){
-  const button=$('materialIsDelivered');
-  if(button){
-    button.setAttribute('aria-pressed',pendingMaterialDelivered?'true':'false');
-    button.classList.toggle('is-active',pendingMaterialDelivered);
-  }
   const delivery=$('classifyAsDelivery'),stock=$('classifyAsStock');
+  const hauled=$('classifyAsHauled'),disposed=$('classifyAsDisposed');
+  const group=$('deliveryClassification');
+  const isDelivery=activeMaterialType==='delivery';
+  const isHaul=activeMaterialType==='haul';
+  if(group){
+    group.hidden=false;
+    const heading=group.querySelector('h3');
+    if(heading)heading.textContent=isDelivery?'Wie soll dieses Material erfasst werden?':'Wie soll das Abfuhrmaterial erfasst werden?';
+  }
+  if(delivery)delivery.hidden=!isDelivery;
+  if(stock)stock.hidden=!isDelivery;
+  if(hauled)hauled.hidden=!isHaul;
+  if(disposed)disposed.hidden=!isHaul;
   if(delivery&&stock){
-    const isDelivery=activeMaterialType==='delivery'&&pendingMaterialClassification==='delivery';
-    delivery.setAttribute('aria-pressed',isDelivery?'true':'false');
-    stock.setAttribute('aria-pressed',isDelivery?'false':'true');
-    delivery.classList.toggle('is-selected',isDelivery);
-    stock.classList.toggle('is-selected',!isDelivery);
-    const group=$('deliveryClassification');
-    if(group)group.hidden=activeMaterialType!=='delivery';
-    if(button)button.hidden=activeMaterialType!=='haul';
+    const selected=pendingMaterialClassification==='delivery';
+    delivery.setAttribute('aria-pressed',selected?'true':'false');
+    stock.setAttribute('aria-pressed',selected?'false':'true');
+    delivery.classList.toggle('is-selected',selected);
+    stock.classList.toggle('is-selected',!selected);
+  }
+  if(hauled&&disposed){
+    const selected=pendingMaterialClassification==='haul_disposed';
+    hauled.setAttribute('aria-pressed',selected?'true':'false');
+    disposed.setAttribute('aria-pressed',selected?'false':'true');
+    hauled.classList.toggle('is-selected',selected);
+    disposed.classList.toggle('is-selected',!selected);
   }
 }
 function setMaterialDelivered(value){
@@ -352,6 +364,16 @@ $('classifyAsStock').onclick=()=>{
   materialDeliveryRequested=false;
   deliveryLocation='';
   temporaryDeliveryLocation='';
+  updateMaterialToggle();
+};
+$('classifyAsHauled').onclick=()=>{
+  pendingMaterialClassification='haul_disposed';
+  pendingMaterialDelivered=true;
+  updateMaterialToggle();
+};
+$('classifyAsDisposed').onclick=()=>{
+  pendingMaterialClassification='disposed';
+  pendingMaterialDelivered=false;
   updateMaterialToggle();
 };
 $('deliverySameAsInvoice').onchange=()=>{
@@ -469,12 +491,9 @@ $('confirmMaterial').onclick=()=>{
   // Der aktuelle Schalterzustand ist die maßgebliche Quelle für die Zuordnung.
   // So bleibt "Material geliefert" auch dann erhalten, wenn es erst nach
   // Zurückgehen vom Mengenschritt aktiviert wird.
-  const checked=activeMaterialType==='delivery'
-    ?pendingMaterialClassification==='delivery'
-    :Boolean(pendingMaterialDelivered);
   const materialType=activeMaterialType==='delivery'
-    ?(checked?'delivery':'stock')
-    :(checked?'haul_disposed':'disposed');
+    ?(pendingMaterialClassification==='delivery'?'delivery':'stock')
+    :(pendingMaterialClassification==='haul_disposed'?'haul_disposed':'disposed');
   const isDelivery=materialType==='delivery';
   if(isDelivery&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
   const entry={name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:isDelivery?(temporaryDeliveryLocation||deliveryLocation):''};
