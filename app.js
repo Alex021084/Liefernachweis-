@@ -429,7 +429,13 @@ $('confirmMaterial').onclick=()=>{
   const includeDateTime=$('modalIncludeDateTime').checked;
   const date=$('modalMaterialDate').value,time=$('modalMaterialTime').value;
   if(includeDateTime&&(!date||!time))return alert('Bitte Datum und Uhrzeit vollständig eingeben.');
-  const materialType=pendingMaterialClassification;
+  // Der aktuelle Schalterzustand ist die maßgebliche Quelle für die Zuordnung.
+  // So bleibt "Material geliefert" auch dann erhalten, wenn es erst nach
+  // Zurückgehen vom Mengenschritt aktiviert wird.
+  const checked=Boolean(pendingMaterialDelivered);
+  const materialType=activeMaterialType==='delivery'
+    ?(checked?'delivery':'stock')
+    :(checked?'haul_disposed':'disposed');
   const isDelivery=materialType==='delivery';
   if(isDelivery&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
   const entry={name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:isDelivery?(temporaryDeliveryLocation||deliveryLocation):''};
