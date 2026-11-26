@@ -32,3 +32,13 @@ Der Lieferort kann getrennt nach Straße/Hausnummer und PLZ/Ort erfasst werden. 
 - Die Mengenansicht verwendet die Schaltfläche „Übernehmen“ und führt danach zurück zur Materialauswahl.
 - Weitere Materialien können nacheinander ergänzt werden. Mit „Fertig“ wird der Dialog geschlossen.
 - Lieferort und Zeitstempel bleiben im Ablauf verfügbar.
+
+
+## Materialauswahl – Layoutkorrektur
+- Das Materialfenster ist deutlich breiter und höher, damit auch größere Materiallisten bequem passen.
+- Kacheln erscheinen in drei Spalten auf breiten Displays und zwei Spalten auf schmaleren Displays; die Liste ist scrollbar.
+- Ausgewählte bzw. bereits übernommene Materialien werden deutlich grün hervorgehoben.
+
+
+## Lieferort-Dialog
+Die zusätzliche Checkbox „Lieferort für diesen Nachweis speichern“ wurde entfernt. Der eingegebene Lieferort wird direkt für die aktuelle Lieferung übernommen.
