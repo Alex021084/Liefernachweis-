@@ -2029,3 +2029,28 @@ canvas, .signaturePad, .signatureCanvas{
   #materialModal .materialModalCard{width:98vw!important;padding:14px!important}
   #materialChoiceList.materialChoiceListInline .materialChoiceOption{padding:10px!important;font-size:15px!important}
 }
+
+
+/* Datum am Anfang gut sichtbar und direkt antippbar */
+.dateControl{min-height:72px;position:relative}
+.dateControl #dateDisplay{min-height:72px;padding-right:54px;text-align:left}
+.dateControl input#date{
+  position:absolute!important;
+  inset:0!important;
+  z-index:2!important;
+  width:100%!important;
+  height:100%!important;
+  opacity:0!important;
+  pointer-events:auto!important;
+  cursor:pointer!important;
+}
+.dateControl::after{
+  content:'▦';
+  position:absolute;
+  right:18px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#586575;
+  font-size:25px;
+  pointer-events:none;
+}

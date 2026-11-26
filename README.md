@@ -54,3 +54,8 @@ Jede neue Öffnung des Materialdialogs startet mit einer leeren Auswahlrunde. Ma
 
 ## Korrektur: Checkbox ist maßgeblich für die Materialkategorie
 Beim Übernehmen der Menge wird der Status der sichtbaren Checkbox „Material geliefert“ direkt ausgewertet. Dadurch kann ein gesetzter Haken nicht durch einen veralteten internen Status überschrieben werden; das Material wird als „Material geliefert“ gespeichert. Ohne Haken wird es weiterhin „Material ab Grube/Lager“ zugeordnet.
+
+
+## Korrektur Material geliefert und Datum
+- Der Haken „Material geliefert“ wird beim Antippen der Materialkachel zusätzlich als eigener Status gesichert und beim Übernehmen der Menge ausgewertet.
+- Das Datum im ersten Schritt ist direkt antippbar; der iPhone-/iPad-Datumsauswahldialog lässt sich über das gesamte Datumsfeld öffnen.
