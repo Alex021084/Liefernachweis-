@@ -59,3 +59,11 @@ Beim Übernehmen der Menge wird der Status der sichtbaren Checkbox „Material g
 ## Korrektur Material geliefert und Datum
 - Der Haken „Material geliefert“ wird beim Antippen der Materialkachel zusätzlich als eigener Status gesichert und beim Übernehmen der Menge ausgewertet.
 - Das Datum im ersten Schritt ist direkt antippbar; der iPhone-/iPad-Datumsauswahldialog lässt sich über das gesamte Datumsfeld öffnen.
+
+
+## Materialstatus und PDF-Kategorien – erneute Korrektur
+- Der Checkbox-Status wird bei jeder Änderung (input und change) unmittelbar übernommen.
+- Die Auswahl wird beim Antippen einer Materialkachel für genau diesen Mengeneintrag gesichert.
+- Die Logik gilt sowohl für „Material geliefert“ als auch für „Material abgefahren“.
+- Bei Material Annahme führt gesetzter Haken zum PDF-Abschnitt „Material abgefahren und entsorgt“; ohne Haken zum Abschnitt „Material entsorgt“.
+- Eine vorhandene Lieferadresse setzt den Haken bei einer neuen Auswahlrunde nicht automatisch.
