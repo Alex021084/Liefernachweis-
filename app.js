@@ -332,7 +332,7 @@ function setMaterialDelivered(value){
     temporaryDeliveryLocation='';
   }
 }
-$('materialIsDelivered').onclick=()=>setMaterialDelivered(!pendingMaterialDelivered);
+// Legacy-Schalter entfernt: Die Kennzeichnung erfolgt jetzt über classifyAsDelivery/classifyAsStock.
 $('classifyAsDelivery').onclick=()=>{
   pendingMaterialClassification='delivery';
   pendingMaterialDelivered=true;
