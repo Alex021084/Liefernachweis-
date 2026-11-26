@@ -293,7 +293,7 @@ function closeMaterialModal(){$('materialModal').classList.remove('open');$('mat
 $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
 function updateMaterialToggle(){
-  const delivery=$('classifyAsDelivery');
+  const delivery=$('classifyAsDelivery'),stock=$('classifyAsStock');
   const hauled=$('classifyAsHauled'),disposed=$('classifyAsDisposed');
   const group=$('deliveryClassification');
   const isDelivery=activeMaterialType==='delivery';
@@ -301,16 +301,19 @@ function updateMaterialToggle(){
   if(group){
     group.hidden=false;
     const heading=group.querySelector('h3');
-    if(heading)heading.textContent=isDelivery?'Lieferoption':'Wie soll das Abfuhrmaterial erfasst werden?';
+    if(heading)heading.textContent=isDelivery?'Wie soll dieses Material erfasst werden?':'Wie soll das Abfuhrmaterial erfasst werden?';
   }
-  if(delivery){
-    delivery.hidden=!isDelivery;
-    const selected=pendingMaterialClassification==='delivery';
-    delivery.setAttribute('aria-pressed',selected?'true':'false');
-    delivery.classList.toggle('is-selected',selected);
-  }
+  if(delivery)delivery.hidden=!isDelivery;
+  if(stock)stock.hidden=!isDelivery;
   if(hauled)hauled.hidden=!isHaul;
   if(disposed)disposed.hidden=!isHaul;
+  if(delivery&&stock){
+    const selected=pendingMaterialClassification==='delivery';
+    delivery.setAttribute('aria-pressed',selected?'true':'false');
+    stock.setAttribute('aria-pressed',selected?'false':'true');
+    delivery.classList.toggle('is-selected',selected);
+    stock.classList.toggle('is-selected',!selected);
+  }
   if(hauled&&disposed){
     const selected=pendingMaterialClassification==='haul_disposed';
     hauled.setAttribute('aria-pressed',selected?'true':'false');
@@ -341,7 +344,7 @@ function setMaterialDelivered(value){
     temporaryDeliveryLocation='';
   }
 }
-// Lieferoption wird bei Bedarf pro Materialposition aktiviert.
+// Legacy-Schalter entfernt: Die Kennzeichnung erfolgt jetzt über classifyAsDelivery/classifyAsStock.
 $('classifyAsDelivery').onclick=()=>{
   pendingMaterialClassification='delivery';
   pendingMaterialDelivered=true;
@@ -354,6 +357,14 @@ $('classifyAsDelivery').onclick=()=>{
   $('deliverySameAsInvoice').checked=!!invoiceAddress&&existingLocation===invoiceAddress;
   $('deliveryLocationModal').classList.add('open');
   $('deliveryLocationModal').setAttribute('aria-hidden','false');
+};
+$('classifyAsStock').onclick=()=>{
+  pendingMaterialClassification='stock';
+  pendingMaterialDelivered=false;
+  materialDeliveryRequested=false;
+  deliveryLocation='';
+  temporaryDeliveryLocation='';
+  updateMaterialToggle();
 };
 $('classifyAsHauled').onclick=()=>{
   pendingMaterialClassification='haul_disposed';
