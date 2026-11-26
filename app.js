@@ -425,7 +425,6 @@ function renderMaterialChoiceButtons(){
       $('modalMaterialDate').value=localDateValue();
       $('modalMaterialTime').value=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',hour12:false});
       updateMaterialToggle();
-      setMaterialWizardStep(2);
     };
     host.appendChild(button);
   });
@@ -436,11 +435,11 @@ function renderMaterialChoiceButtons(){
     host.appendChild(empty);
   }
 }
-$('finishMaterialSelection').onclick=()=>{
-  if(!enteredMaterials.length)return alert('Bitte mindestens ein Material übernehmen.');
-  pendingMaterialName='';
-  closeMaterialModal();
+$('continueMaterialSelection').onclick=()=>{
+  if(!pendingMaterialName)return alert('Bitte zuerst ein Material auswählen.');
+  setMaterialWizardStep(2);
 };
+// Nach dem Übernehmen einer Position schließt sich das Materialfenster automatisch.
 $('nextMaterialDetails')?.remove();
 $('backToMaterialSelect').onclick=()=>{
   pendingMaterialName='';
@@ -489,8 +488,7 @@ $('confirmMaterial').onclick=()=>{
   temporaryDeliveryLocation='';
   materialDeliveryRequested=false;
   updateMaterialToggle();
-  renderMaterialChoiceButtons();
-  setMaterialWizardStep(1);
+  closeMaterialModal();
 };
 function parseQuantity(value){let s=String(value||'').trim().replace(/\s/g,'');if(!s)return 0;if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>0?n:0}
 function formatQuantity(n){return n.toLocaleString('de-DE',{maximumFractionDigits:3})}
