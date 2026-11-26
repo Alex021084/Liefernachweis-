@@ -50,3 +50,7 @@ Die Auswahl „Material geliefert“ wird nun zusätzlich intern festgehalten, a
 
 ## Materialauswahl – Auswahl pro Öffnung zurücksetzen
 Jede neue Öffnung des Materialdialogs startet mit einer leeren Auswahlrunde. Materialien, die in einer vorherigen Runde bereits übernommen wurden, bleiben im Liefernachweis erhalten, werden in der neuen Auswahl aber nicht mehr grün markiert und zeigen dort keine alte Mengenangabe. Innerhalb der aktuellen Runde bleiben übernommene Kacheln grün und zeigen ihre Mengen.
+
+
+## Korrektur: Checkbox ist maßgeblich für die Materialkategorie
+Beim Übernehmen der Menge wird der Status der sichtbaren Checkbox „Material geliefert“ direkt ausgewertet. Dadurch kann ein gesetzter Haken nicht durch einen veralteten internen Status überschrieben werden; das Material wird als „Material geliefert“ gespeichert. Ohne Haken wird es weiterhin „Material ab Grube/Lager“ zugeordnet.

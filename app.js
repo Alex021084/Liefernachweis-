@@ -401,8 +401,8 @@ $('confirmMaterial').onclick=()=>{
   const includeDateTime=$('modalIncludeDateTime').checked;
   const date=$('modalMaterialDate').value,time=$('modalMaterialTime').value;
   if(includeDateTime&&(!date||!time))return alert('Bitte Datum und Uhrzeit vollständig eingeben.');
-  const checked=activeMaterialType==='delivery'&&(materialDeliveryRequested||$('materialIsDelivered').checked);
-  if(checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
+  const checked=$('materialIsDelivered').checked;
+  if(activeMaterialType==='delivery'&&checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
   const materialType=activeMaterialType==='delivery'?(checked?'delivery':'stock'):(checked?'haul_disposed':'disposed');
   const entry={name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked?(temporaryDeliveryLocation||deliveryLocation):''};
   enteredMaterials.push(entry);
