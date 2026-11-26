@@ -1,4 +1,4 @@
-# Dählmann – Liefernachweis (Version 145)
+# Dählmann – Liefernachweis
 
 ## Projektdateien
 - `index.html` – Einstiegspunkt der Web-App
@@ -8,18 +8,11 @@
 - `manifest.json` – Web-App-Manifest
 
 ## Bereitstellung
-Alle Dateien aus diesem Ordner gemeinsam in denselben Webserver-Ordner hochladen und anschließend `index.html` öffnen.
+Alle fünf Dateien gemeinsam in denselben Webserver-Ordner hochladen und anschließend `index.html` öffnen.
 
-Die App lädt benötigte Bibliotheken weiterhin extern über die in `index.html` bzw. `app.js` hinterlegten CDNs.
+Die Anwendung lädt die benötigte PDF-Bibliothek weiterhin extern über das in `index.html` eingebundene CDN.
 
-Historische, nummerierte Zwischenstände und nicht verwendete Vorlagenbilder sind in diesem Paket nicht enthalten. Die aktiven Dateien wurden nicht inhaltlich geändert.
-
-
-Version 147: PDF-Beschriftung für die Lieferadresse lautet ausschließlich „Lieferort“.
-
-
-## Änderungen
-- Bauvorhaben vollständig aus der Oberfläche, den Formularen, der Archiv-Navigation und den PDF-Ausgaben entfernt.
+## Enthaltene Anpassungen
+- Bauvorhaben vollständig aus Erfassung, Stammdaten, Archiv und PDF-Ausgaben entfernt.
 - Archivierte Liefernachweise werden direkt je Auftraggeber angezeigt.
-- Bei „Material geliefert“ kann im Lieferort-Dialog „Wie Rechnungsadresse“ gewählt werden. Die Rechnungsanschrift wird dafür aus dem Anschrift-Feld des Auftraggebers übernommen.
-- Vorhandene lokale Daten mit alten Bauvorhaben werden beim Laden nicht mehr verwendet; die übrigen Liefernachweise bleiben erhalten.
+- Im Lieferort-Dialog kann „Wie Rechnungsadresse“ ausgewählt werden.
