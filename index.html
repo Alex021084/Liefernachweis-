@@ -19,7 +19,6 @@
   <div class="step">Stammdaten verwalten</div>
   <div class="masterActions">
     <button class="soft masterButton" data-open="customers">Kunden verwalten</button>
-    <button class="soft masterButton" data-open="projects">Bauvorhaben verwalten</button>
     <button class="soft masterButton" data-open="deliveryMaterials">Liefermaterial verwalten</button>
     <button class="soft masterButton" data-open="haulMaterials">Abfuhrmaterial verwalten</button>
     <button class="soft masterButton" data-open="services">Leistungen verwalten</button>
@@ -43,8 +42,6 @@
       <label>Auftraggeber<select id="customer"></select></label>
       <button type="button" class="inlineAddButton" id="openQuickCustomer">Kunde hinzufügen</button>
       <label>Anschrift<textarea id="address" rows="2" placeholder="Straße, PLZ Ort"></textarea></label>
-      <label>Bauvorhaben (optional)<select id="project"></select></label>
-      <button type="button" class="inlineAddButton" id="openQuickProject">Bauvorhaben hinzufügen</button>
       
     </div>
     <div class="row actions"><button class="primary navPale" id="toMaterials">Weiter zu Material ›</button></div>
@@ -116,6 +113,7 @@
     <div class="materialModalBackdrop" data-close-delivery-location></div>
     <div class="materialModalCard deliveryLocationCard" role="dialog" aria-modal="true" aria-labelledby="deliveryLocationTitle">
       <h2 id="deliveryLocationTitle">Lieferort eingeben</h2>
+      <label class="modalDateTimeToggle"><input id="deliverySameAsInvoice" type="checkbox"> Wie Rechnungsadresse</label>
       <textarea id="deliveryLocationInput" rows="3" aria-label="Lieferort" placeholder="Straße, PLZ, Ort"></textarea>
       <label class="modalDateTimeToggle"><input id="saveDeliveryLocationForReport" type="checkbox" checked> Lieferort für diesen Nachweis speichern</label>
       <div class="row actions">
@@ -188,7 +186,6 @@
   </div>
 </section>
 <section id="customers" class="screen"><div class="panel"><h2>Kunden verwalten</h2><label>Kundenname<input id="newCustomer" placeholder="Firma / Auftraggeber"></label><label>Anschrift<textarea id="newAddress" rows="2"></textarea></label><button class="primary" id="saveCustomer">Kunden speichern</button></div><div id="customerList" class="stack"></div><button class="soft back">Zurück</button></section>
-<section id="projects" class="screen"><div class="panel"><h2>Bauvorhaben verwalten</h2><label>Auftraggeber<select id="projectOwner"></select></label><label>Bauvorhaben<input id="newProject" placeholder="Bezeichnung"></label><button class="primary" id="saveProject">Bauvorhaben speichern</button></div><div id="projectList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="deliveryMaterials" class="screen"><div class="panel"><h2>Liefermaterial verwalten</h2><label>Materialbezeichnung<input id="newDeliveryMaterial" placeholder="z. B. Sand SE gesiebt"></label><button class="primary" id="saveDeliveryMaterial">Liefermaterial speichern</button></div><div id="deliveryMaterialsList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="haulMaterials" class="screen"><div class="panel"><h2>Abfuhrmaterial verwalten</h2><label>Materialbezeichnung<input id="newHaulMaterial" placeholder="z. B. Boden, Bauschutt"></label><button class="primary" id="saveHaulMaterial">Abfuhrmaterial speichern</button></div><div id="haulMaterialsList" class="stack"></div><button class="soft back">Zurück</button></section>
 <section id="services" class="screen"><div class="panel"><h2>Leistungen verwalten</h2><label>Leistungsbezeichnung<input id="newService" placeholder="z. B. Radlader, Sieben, Waschen"></label><button class="primary" id="saveService">Leistung speichern</button></div><div id="servicesList" class="stack"></div><button class="soft back">Zurück</button></section>
@@ -204,18 +201,7 @@
       </div>
     </div>
   </div>
-  <div class="quickAddModal" id="quickProjectModal" hidden aria-hidden="true">
-    <div class="quickAddBackdrop" data-close-quick-project></div>
-    <div class="quickAddCard" role="dialog" aria-modal="true" aria-labelledby="quickProjectTitle">
-      <h2 id="quickProjectTitle">Bauvorhaben hinzufügen</h2>
-      <p class="quickAddHint" id="quickProjectOwnerHint"></p>
-      <label>Bezeichnung des Bauvorhabens<input id="quickProjectName" type="text" placeholder="z. B. Neubau Lagerhalle"></label>
-      <div class="quickAddActions">
-        <button type="button" class="soft" id="cancelQuickProject">Abbrechen</button>
-        <button type="button" class="primary" id="saveQuickProject">Bauvorhaben speichern</button>
-      </div>
-    </div>
-  </div>
+</div>
   <div class="quickAddModal" id="quickMaterialModal" hidden aria-hidden="true">
     <div class="quickAddBackdrop" data-close-quick-material></div>
     <div class="quickAddCard" role="dialog" aria-modal="true" aria-labelledby="quickMaterialTitle">

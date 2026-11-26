@@ -35,12 +35,12 @@ $('appAlertClose').onclick=closeAppAlert;
 document.querySelectorAll('[data-close-app-alert]').forEach(el=>el.addEventListener('click',closeAppAlert));
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('appAlertModal').hidden)closeAppAlert();});
 window.alert=showAppAlert;
-const EMPTY_DB={customers:[],projects:[],materials:['Sand SE gesiebt','Schottertragschicht Naturstein'],services:[],reports:[],deliveryMaterials:null,haulMaterials:[]};
+const EMPTY_DB={customers:[],materials:['Sand SE gesiebt','Schottertragschicht Naturstein'],services:[],reports:[],deliveryMaterials:null,haulMaterials:[]};
 // Defensives Laden: Ein beschädigter oder unvollständiger lokaler Speicher darf nicht die gesamte App lahmlegen.
-function loadDatabase(){try{const raw=localStorage.getItem(KEY);const parsed=raw?JSON.parse(raw):{};if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))return {...EMPTY_DB};return {...EMPTY_DB,...parsed,customers:Array.isArray(parsed.customers)?parsed.customers:[],projects:Array.isArray(parsed.projects)?parsed.projects:[],materials:Array.isArray(parsed.materials)?parsed.materials:EMPTY_DB.materials,services:Array.isArray(parsed.services)?parsed.services:[],reports:Array.isArray(parsed.reports)?parsed.reports:[],deliveryMaterials:Array.isArray(parsed.deliveryMaterials)?parsed.deliveryMaterials:(Array.isArray(parsed.materials)?parsed.materials:EMPTY_DB.materials),haulMaterials:Array.isArray(parsed.haulMaterials)?parsed.haulMaterials:[]};}catch(error){console.error('Lokale Daten konnten nicht gelesen werden:',error);return {...EMPTY_DB};}}
+function loadDatabase(){try{const raw=localStorage.getItem(KEY);const parsed=raw?JSON.parse(raw):{};if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))return {...EMPTY_DB};delete parsed.projects;return {...EMPTY_DB,...parsed,customers:Array.isArray(parsed.customers)?parsed.customers:[],materials:Array.isArray(parsed.materials)?parsed.materials:EMPTY_DB.materials,services:Array.isArray(parsed.services)?parsed.services:[],reports:Array.isArray(parsed.reports)?parsed.reports:[],deliveryMaterials:Array.isArray(parsed.deliveryMaterials)?parsed.deliveryMaterials:(Array.isArray(parsed.materials)?parsed.materials:EMPTY_DB.materials),haulMaterials:Array.isArray(parsed.haulMaterials)?parsed.haulMaterials:[]};}catch(error){console.error('Lokale Daten konnten nicht gelesen werden:',error);return {...EMPTY_DB};}}
 let db=loadDatabase();
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db));}catch(error){console.error('Speichern fehlgeschlagen:',error);alert('Die Daten konnten nicht im Browser gespeichert werden. Bitte prüfen Sie den freien Speicherplatz.');}};const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='home')renderArchive();if(id==='customers')renderCustomers();if(id==='projects')renderProjects();if(id==='deliveryMaterials')renderDeliveryMaterials();if(id==='haulMaterials')renderHaulMaterials();if(id==='services')renderServices()}
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='home')renderArchive();if(id==='customers')renderCustomers();if(id==='deliveryMaterials')renderDeliveryMaterials();if(id==='haulMaterials')renderHaulMaterials();if(id==='services')renderServices()}
 document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>show(b.dataset.open));
 $('masterBackButton').onclick=()=>show('welcome');
 $('goNew').onclick=fresh;$('goDeliveries').onclick=()=>show('home');$('goMaster').onclick=()=>show('master');$('archiveHomeButton').addEventListener('click',()=>show('welcome'));document.querySelectorAll('.back').forEach(b=>b.onclick=()=>show(b.closest('#master')?'welcome':'master'));
@@ -54,17 +54,6 @@ function renderCustomers(){
   });
   enableLongPressSorting('customerList','customers',renderCustomers);
   enableSwipeToDelete('customerList');
-}
-function renderProjects(){
-  fillSelect($('projectOwner'),db.customers.map(c=>c.name),'Auftraggeber wählen');
-  $('projectList').innerHTML=db.projects.map((p,i)=>`<div class="archiveCard sortableCard swipeRow" data-sort-index="${i}"><div class="swipeContent"><span class="dragGrip" aria-label="Gedrückt halten und verschieben" title="Gedrückt halten und verschieben"><i></i><i></i><i></i><i></i><i></i><i></i></span><div><b>${esc(p.name)}</b><small>${esc(p.owner)}</small></div></div><button class="remove swipeDelete" data-del-p="${i}" aria-label="Bauvorhaben löschen">Löschen</button></div>`).join('')||'<p class="hint">Noch keine Bauvorhaben angelegt.</p>';
-  document.querySelectorAll('[data-del-p]').forEach(b=>b.onclick=()=>{
-    const index=+b.dataset.delP, project=db.projects[index];
-    if(!project)return;
-    askAppConfirm(`Möchtest du das Bauvorhaben „${project.name}“ wirklich löschen?`,()=>{db.projects.splice(index,1);save();renderProjects();},'Bauvorhaben löschen?');
-  });
-  enableLongPressSorting('projectList','projects',renderProjects);
-  enableSwipeToDelete('projectList');
 }
 function renderDeliveryMaterials(){
   db.deliveryMaterials=db.deliveryMaterials||[];
@@ -191,7 +180,6 @@ document.addEventListener('pointerup',finishLongPressSort);
 document.addEventListener('pointercancel',finishLongPressSort);
 
 $('saveCustomer').onclick=()=>{let name=$('newCustomer').value.trim();if(!name)return alert('Bitte einen Kundennamen eingeben.');db.customers.push({name,address:$('newAddress').value.trim()});$('newCustomer').value='';$('newAddress').value='';save();renderCustomers()};
-$('saveProject').onclick=()=>{let name=$('newProject').value.trim(),owner=$('projectOwner').value;if(!name||!owner)return alert('Bitte Auftraggeber und Bauvorhaben angeben.');db.projects.push({name,owner});$('newProject').value='';save();renderProjects()};
 $('saveDeliveryMaterial').onclick=()=>{let m=$('newDeliveryMaterial').value.trim();if(!m)return;db.deliveryMaterials=db.deliveryMaterials||[];if(db.deliveryMaterials.includes(m))return alert('Dieses Liefermaterial ist bereits vorhanden.');db.deliveryMaterials.push(m);$('newDeliveryMaterial').value='';save();renderDeliveryMaterials()};
 $('saveHaulMaterial').onclick=()=>{let m=$('newHaulMaterial').value.trim();if(!m)return;db.haulMaterials=db.haulMaterials||[];if(db.haulMaterials.includes(m))return alert('Dieses Abfuhrmaterial ist bereits vorhanden.');db.haulMaterials.push(m);$('newHaulMaterial').value='';save();renderHaulMaterials()};
 $('saveService').onclick=()=>{let v=$('newService').value.trim();if(!v)return;db.services=db.services||[];if(db.services.includes(v))return alert('Diese Leistung ist bereits vorhanden.');db.services.push(v);$('newService').value='';save();renderServices()};
@@ -291,10 +279,20 @@ $('chooseHauled').onclick=()=>openMaterialModal('haul');
 $('materialIsDelivered').onchange=()=>{
   if(activeMaterialType!=='delivery')return;
   if($('materialIsDelivered').checked){
-    $('deliveryLocationInput').value=deliveryLocation||temporaryDeliveryLocation||'';
+    const invoiceAddress=$('address').value.trim();
+    const existingLocation=deliveryLocation||temporaryDeliveryLocation||'';
+    $('deliveryLocationInput').value=existingLocation;
+    $('deliverySameAsInvoice').checked=!!invoiceAddress&&existingLocation===invoiceAddress;
     $('saveDeliveryLocationForReport').checked=saveDeliveryLocation;
     $('deliveryLocationModal').classList.add('open');$('deliveryLocationModal').setAttribute('aria-hidden','false');
   }else{deliveryLocation='';temporaryDeliveryLocation='';saveDeliveryLocation=true;}
+};
+$('deliverySameAsInvoice').onchange=()=>{
+  if($('deliverySameAsInvoice').checked){
+    const invoiceAddress=$('address').value.trim();
+    if(!invoiceAddress){$('deliverySameAsInvoice').checked=false;return alert('Bitte zuerst eine Rechnungsadresse beim Auftraggeber hinterlegen.');}
+    $('deliveryLocationInput').value=invoiceAddress;
+  }
 };
 function closeDeliveryLocationModal(){ $('deliveryLocationModal').classList.remove('open');$('deliveryLocationModal').setAttribute('aria-hidden','true'); }
 $('cancelDeliveryLocation').onclick=()=>{ $('materialIsDelivered').checked=!!deliveryLocation;closeDeliveryLocationModal(); };
@@ -526,15 +524,15 @@ function renderReportSummary(){
   const mats=materialTotals(),delivered=mats.filter(m=>m.type==='delivery'),stock=mats.filter(m=>m.type==='stock'),haulDisposed=mats.filter(m=>m.type==='haul_disposed'),disposed=mats.filter(m=>m.type==='disposed'),hauled=mats.filter(m=>m.type==='haul');
   const block=(title,list,cls)=>list.length?`<section class="summaryBlock ${cls}"><h3>${title}</h3>${list.map(m=>`<div class="summaryLine"><b>${esc(m.name)}${m.includeDateTime?`<small class="materialDateStamp">${esc(formatMaterialDateTime(m.date,m.time))}</small>`:''}</b><span>${formatQuantity(m.qty)} ${m.unit==='to'?'to':'m³'}</span></div>`).join('')}</section>`:'';
   const services=r.services.map(s=>`<div class="summaryService"><b>${esc(s.job||'Leistung')}</b>${s.description?`<div>${esc(s.description)}</div>`:''}<small>${esc(s.hours||'—')} Std. · ${esc(s.start||'—')} bis ${esc(s.end||'—')} · Pause ${esc(s.pause||'0')} Min.</small></div>`).join('');
-  el.innerHTML=`<div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div><div>Bauvorhaben: ${esc(r.project||'Kein Bauvorhaben')}</div>${r.deliveryLocation?`<div>Lieferort: ${esc(r.deliveryLocation)}</div>`:''}</div>${block('Material geliefert',delivered,'deliveryGroup')}${block('Material ab Grube/Lager',stock,'deliveryGroup')}${block('Material abgefahren und entsorgt',haulDisposed,'haulGroup')}${block('Material entsorgt',disposed,'haulGroup')}${block('Material abgefahren',hauled,'haulGroup')}${services?`<section class="summaryBlock"><h3>Zusatzleistungen</h3>${services}</section>`:'<p class="hint">Keine Zusatzleistungen erfasst.</p>'}`;
+  el.innerHTML=`<div class="summaryMeta"><b>${esc(r.customer||'—')}</b><div>${esc(r.address||'')}</div><div>Datum: ${esc(r.date||'—')}</div>${r.deliveryLocation?`<div>Lieferort: ${esc(r.deliveryLocation)}</div>`:''}</div>${block('Material geliefert',delivered,'deliveryGroup')}${block('Material ab Grube/Lager',stock,'deliveryGroup')}${block('Material abgefahren und entsorgt',haulDisposed,'haulGroup')}${block('Material entsorgt',disposed,'haulGroup')}${block('Material abgefahren',hauled,'haulGroup')}${services?`<section class="summaryBlock"><h3>Zusatzleistungen</h3>${services}</section>`:'<p class="hint">Keine Zusatzleistungen erfasst.</p>'}`;
 }
 $('toSummary').onclick=()=>{renderReportSummary();setWizardStep(4)};
 $('backToServices').onclick=()=>setWizardStep(3);
 $('summaryHomeButton').onclick=()=>{try{autoSaveDraft();}finally{show('welcome');}};
 
 $('formHomeButton').addEventListener('click',()=>{try{autoSaveDraft();}finally{show('welcome');}});
-function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';fillSelect($('project'),[],'Bauvorhaben wählen');enteredMaterials=[];deliveryLocation='';temporaryDeliveryLocation='';saveDeliveryLocation=true;$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
-$('customer').onchange=()=>{let c=db.customers.find(c=>c.name===$('customer').value);$('address').value=c?.address||'';fillSelect($('project'),db.projects.filter(p=>p.owner===c?.name).map(p=>p.name),'Bauvorhaben wählen');scheduleAutoSave()};
+function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';enteredMaterials=[];deliveryLocation='';temporaryDeliveryLocation='';saveDeliveryLocation=true;$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
+$('customer').onchange=()=>{let c=db.customers.find(c=>c.name===$('customer').value);$('address').value=c?.address||'';scheduleAutoSave()};
 function openQuickModal(id){
   const modal=$(id);modal.hidden=false;modal.setAttribute('aria-hidden','false');
 }
@@ -559,30 +557,7 @@ $('saveQuickCustomer').onclick=()=>{
   fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');
   $('customer').value=name;
   $('address').value=address;
-  fillSelect($('project'),db.projects.filter(p=>p.owner===name).map(p=>p.name),'Bauvorhaben wählen');
   closeQuickModal('quickCustomerModal');
-};
-$('openQuickProject').onclick=()=>{
-  const owner=$('customer').value;
-  if(!owner)return alert('Bitte zuerst einen Auftraggeber auswählen oder hinzufügen.');
-  $('quickProjectName').value='';
-  $('quickProjectOwnerHint').textContent='Auftraggeber: '+owner;
-  openQuickModal('quickProjectModal');
-  setTimeout(()=> $('quickProjectName').focus(),50);
-};
-$('cancelQuickProject').onclick=()=>closeQuickModal('quickProjectModal');
-document.querySelectorAll('[data-close-quick-project]').forEach(el=>el.onclick=()=>closeQuickModal('quickProjectModal'));
-$('saveQuickProject').onclick=()=>{
-  const name=$('quickProjectName').value.trim(),owner=$('customer').value;
-  if(!owner)return alert('Bitte zuerst einen Auftraggeber auswählen.');
-  if(!name)return alert('Bitte eine Bezeichnung für das Bauvorhaben eingeben.');
-  const existing=db.projects.find(p=>p.owner===owner&&p.name.toLocaleLowerCase()===name.toLocaleLowerCase());
-  if(existing)return alert('Dieses Bauvorhaben ist für den Auftraggeber bereits vorhanden.');
-  db.projects.push({name,owner});
-  save();
-  fillSelect($('project'),db.projects.filter(p=>p.owner===owner).map(p=>p.name),'Bauvorhaben wählen');
-  $('project').value=name;
-  closeQuickModal('quickProjectModal');
 };
 
 if($('newBtn'))$('newBtn').onclick=fresh;if($('cancel'))$('cancel').onclick=()=>show('home');
@@ -593,7 +568,7 @@ function openSignature(){ const modal=$('signatureModal'); modal.hidden=false; m
 function closeSignature(){ const modal=$('signatureModal'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); modal.hidden=true; }
 $('openSignature').onclick=openSignature;$('cancelSignature').onclick=closeSignature;document.querySelectorAll('[data-close-signature]').forEach(el=>el.onclick=closeSignature);
 $('confirmSignature').onclick=()=>{if(!ink)return alert('Bitte zuerst unterschreiben.');signatureSaved=true;$('signatureStatus').textContent='✓ Unterschrift übernommen'+($('signer').value.trim()?' · '+$('signer').value.trim():'');$('signatureStatus').classList.add('signed');$('openSignature').classList.add('signatureDone');$('openSignature').textContent='✓ Unterschrift erledigt';closeSignature();};
-function collect(){return {id:currentDraftId||Date.now(),date:$('date').value,customer:$('customer').value,address:$('address').value,project:$('project').value||'',deliveryLocation,materials:enteredMaterials.map(m=>({...m})),services:[...$('serviceRows').querySelectorAll('.entry')].map(d=>({job:d.querySelector('.servicePickButton')?.dataset.value||'',description:d.querySelector('.descriptionv').value,hours:d.querySelector('.hoursv').value,start:d.querySelector('.startv').value,end:d.querySelector('.endv').value,pause:d.querySelector('.pausev').value})).filter(x=>Object.values(x).some(Boolean)),signature:signatureSaved&&ink?canvas.toDataURL('image/png'):null,signer:signatureSaved?$('signer').value:''}}
+function collect(){return {id:currentDraftId||Date.now(),date:$('date').value,customer:$('customer').value,address:$('address').value,deliveryLocation,materials:enteredMaterials.map(m=>({...m})),services:[...$('serviceRows').querySelectorAll('.entry')].map(d=>({job:d.querySelector('.servicePickButton')?.dataset.value||'',description:d.querySelector('.descriptionv').value,hours:d.querySelector('.hoursv').value,start:d.querySelector('.startv').value,end:d.querySelector('.endv').value,pause:d.querySelector('.pausev').value})).filter(x=>Object.values(x).some(Boolean)),signature:signatureSaved&&ink?canvas.toDataURL('image/png'):null,signer:signatureSaved?$('signer').value:''}}
 
 function persistDraft(){
   const r=collect();
@@ -622,7 +597,7 @@ function persistDocument(){
   if(existingIndex>=0)db.reports[existingIndex]={...existing,...r};
   else db.reports.push(r);
   currentDraftId=r.id;
-  archiveMode='customers';archiveCustomer='';archiveProject='';
+  archiveMode='customers';archiveCustomer='';
   save();renderArchive();
   alert(r.finalized
     ? 'Der unterschriebene Liefernachweis wurde unter „Nachweise“ abgeschlossen und ist jetzt gesperrt.'
@@ -638,8 +613,6 @@ function openDraft(r){
   $('date').value=r.date||localDateValue();updateDateDisplay();
   $('address').value=r.address||'';
   const owner=db.customers.find(c=>c.name===r.customer);
-  fillSelect($('project'),db.projects.filter(p=>p.owner===owner?.name).map(p=>p.name),'Bauvorhaben wählen');
-  $('project').value=r.project||'';
   deliveryLocation=r.deliveryLocation||'';temporaryDeliveryLocation=deliveryLocation;saveDeliveryLocation=!!deliveryLocation;
   enteredMaterials=(r.materials||[]).map(m=>({...m}));
   renderMaterialSummary();
@@ -654,7 +627,7 @@ function openDraft(r){
   }
   closeSignature();setWizardStep(Number(r.wizardStep)||2);setAutoSaveStatus('✓ Entwurf geladen');show('form');
 }
-let pdfPreviewUrl=null; let pdfPreviewBlob=null; let archiveMode='customers',archiveCustomer='',archiveProject='';
+let pdfPreviewUrl=null; let pdfPreviewBlob=null; let archiveMode='customers',archiveCustomer='';
 
 function closeResumeDraftModal(){
   const modal=$('resumeDraftModal');
@@ -667,7 +640,7 @@ function showResumeDraftModal(){
   if(!modal||!list)return;
   list.innerHTML=drafts.map((r,i)=>{
     const date=r.date?new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'):'';
-    const updated=r.updatedAt?new Date(r.updatedAt).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):''; const details=[r.project,date,updated?'Aktualisiert: '+updated:''].filter(Boolean).join(' · ');
+    const updated=r.updatedAt?new Date(r.updatedAt).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):''; const details=[date,updated?'Aktualisiert: '+updated:''].filter(Boolean).join(' · ');
     const customer=r.customer||'Noch ohne Auftraggeber';
     return `<button type="button" class="resumeDraftItem" data-resume-draft="${esc(String(r.id))}">
       <span class="resumeDraftItemMain"><strong>${esc(customer)}</strong><small>${esc(details||'Unvollständiger Liefernachweis')}</small></span>
@@ -716,7 +689,6 @@ document.addEventListener('click',function(event){
     try{if($('customer')){$('customer').innerHTML='<option value="">Auftraggeber wählen</option>'+db.customers.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');$('customer').value=draft.customer||'';}}catch(e){}
     try{if($('date'))$('date').value=draft.date||localDateValue();}catch(e){}
     try{if($('address'))$('address').value=draft.address||'';}catch(e){}
-    try{if($('project')){$('project').innerHTML='<option value="">Bauvorhaben wählen</option>'+db.projects.filter(x=>x.owner===draft.customer).map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join('');$('project').value=draft.project||'';}}catch(e){}
     try{enteredMaterials=(draft.materials||[]).map(m=>({...m}));renderMaterialSummary();}catch(e){}
     try{setAutoSaveStatus('✓ Entwurf teilweise geladen');}catch(e){}
   }
@@ -737,7 +709,7 @@ function archiveCard(r,buttonLabel){
   const locked=isFinalized(r);
   const status=locked?'Unterschrieben · gesperrt':(r.draft?'Entwurf · weiterbearbeiten':'Gespeichert · bearbeitbar');
   const action=buttonLabel||(locked?'PDF erstellen':'Bearbeiten');
-  return `<div class="archiveSwipeItem" data-archive-id="${r.id}"><button type="button" class="archiveDelete" aria-label="Liefernachweis löschen">×</button><div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${esc(r.project||'Ohne Bauvorhaben')} · ${status}${history?' · '+esc(history):''}</small></div><button class="soft" data-open-r="${r.id}">${action}</button></div></div>`;
+  return `<div class="archiveSwipeItem" data-archive-id="${r.id}"><button type="button" class="archiveDelete" aria-label="Liefernachweis löschen">×</button><div class="archiveCard"><div><b>${esc(r.customer||'Ohne Auftraggeber')}</b><small>${esc(new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'))} · ${status}${history?' · '+esc(history):''}</small></div><button class="soft" data-open-r="${r.id}">${action}</button></div></div>`;
 }
 function bindArchiveCards(){
   document.querySelectorAll('[data-open-r]').forEach(b=>b.onclick=(event)=>{event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();let r=db.reports.find(x=>String(x.id)===b.dataset.openR);if(!r)return;if(isFinalized(r)){openPdfPreview(r);}else{openDraft(r);setWizardStep(Number(r.wizardStep)||2);show('form');}});
@@ -779,21 +751,19 @@ function renderArchive(){
   let body='';
   if(archiveMode==='drafts'){
     body=`<div class="archiveCrumb"><b>Zwischengespeicherte Liefernachweise</b><span>${drafts.length} Entwurf/Entwürfe</span></div>`+(drafts.map(r=>archiveCard(r,'Weiterbearbeiten')).join('')||'<div class="panel hint">Keine zwischengespeicherten Liefernachweise vorhanden.</div>');
-  }else if(!archiveCustomer){
-    const names=[...new Set(completed.map(r=>r.customer||'Ohne Auftraggeber'))].sort((a,b)=>a.localeCompare(b,'de'));
-    body=`<div class="archiveCrumb"><b>Kunden</b><span>${names.length} Kunde/Kunden</span></div>`+(names.map(name=>{const count=completed.filter(r=>(r.customer||'Ohne Auftraggeber')===name).length;return `<button type="button" class="archiveNavCard" data-customer="${esc(name)}"><span><b>${esc(name)}</b><small>${count} abgeschlossene Nachweis${count===1?'':'e'}</small></span><strong>›</strong></button>`}).join('')||'<div class="panel hint">Noch keine abgeschlossenen Liefernachweise vorhanden.</div>');
-  }else if(!archiveProject){
-    const projects=[...new Set(completed.filter(r=>(r.customer||'Ohne Auftraggeber')===archiveCustomer).map(r=>r.project||'Ohne Bauvorhaben'))].sort((a,b)=>a.localeCompare(b,'de'));
-    body=`<button type="button" class="archiveBack" data-archive-back="customers">‹ Alle Kunden</button><div class="archiveCrumb"><b>${esc(archiveCustomer)}</b><span>Bauvorhaben auswählen</span></div>`+(projects.map(project=>{const count=completed.filter(r=>(r.customer||'Ohne Auftraggeber')===archiveCustomer&&(r.project||'Ohne Bauvorhaben')===project).length;return `<button type="button" class="archiveNavCard" data-project="${esc(project)}"><span><b>${esc(project)}</b><small>${count} abgeschlossene Nachweis${count===1?'':'e'}</small></span><strong>›</strong></button>`}).join('')||'<div class="panel hint">Für diesen Kunden sind keine Bauvorhaben mit Nachweisen vorhanden.</div>');
   }else{
-    const records=completed.filter(r=>(r.customer||'Ohne Auftraggeber')===archiveCustomer&&(r.project||'Ohne Bauvorhaben')===archiveProject);
-    body=`<button type="button" class="archiveBack" data-archive-back="projects">‹ Zurück zu den Bauvorhaben</button><div class="archiveCrumb"><b>${esc(archiveProject)}</b><span>${esc(archiveCustomer)}</span></div>`+records.map(r=>archiveCard(r)).join('');
+    const names=[...new Set(completed.map(r=>r.customer||'Ohne Auftraggeber'))].sort((a,b)=>a.localeCompare(b,'de'));
+    if(!archiveCustomer){
+      body=`<div class="archiveCrumb"><b>Kunden</b><span>${names.length} Kunde/Kunden</span></div>`+(names.map(name=>{const count=completed.filter(r=>(r.customer||'Ohne Auftraggeber')===name).length;return `<button type="button" class="archiveNavCard" data-customer="${esc(name)}"><span><b>${esc(name)}</b><small>${count} abgeschlossene Nachweis${count===1?'':'e'}</small></span><strong>›</strong></button>`}).join('')||'<div class="panel hint">Noch keine abgeschlossenen Liefernachweise vorhanden.</div>');
+    }else{
+      const records=completed.filter(r=>(r.customer||'Ohne Auftraggeber')===archiveCustomer);
+      body=`<button type="button" class="archiveBack" data-archive-back="customers">‹ Alle Kunden</button><div class="archiveCrumb"><b>${esc(archiveCustomer)}</b><span>Liefernachweise</span></div>`+records.map(r=>archiveCard(r)).join('');
+    }
   }
   host.innerHTML=archiveTabs()+body;
-  host.querySelectorAll('[data-archive-tab]').forEach(b=>b.onclick=()=>{archiveMode=b.dataset.archiveTab;archiveCustomer='';archiveProject='';renderArchive()});
-  host.querySelectorAll('[data-customer]').forEach(b=>b.onclick=()=>{archiveCustomer=b.dataset.customer;archiveProject='';renderArchive()});
-  host.querySelectorAll('[data-project]').forEach(b=>b.onclick=()=>{archiveProject=b.dataset.project;renderArchive()});
-  host.querySelectorAll('[data-archive-back]').forEach(b=>b.onclick=()=>{if(b.dataset.archiveBack==='customers'){archiveCustomer='';archiveProject=''}else archiveProject='';renderArchive()});
+  host.querySelectorAll('[data-archive-tab]').forEach(b=>b.onclick=()=>{archiveMode=b.dataset.archiveTab;archiveCustomer='';renderArchive()});
+  host.querySelectorAll('[data-customer]').forEach(b=>b.onclick=()=>{archiveCustomer=b.dataset.customer;renderArchive()});
+    host.querySelectorAll('[data-archive-back]').forEach(b=>b.onclick=()=>{if(b.dataset.archiveBack==='customers'){archiveCustomer=''}renderArchive()});
   bindArchiveCards();
 }
 
@@ -890,15 +860,8 @@ async function makePdf(r){
       draw('LIEFERDATUM',W-M-150,H-188,7,true,C.muted);
       const continuationDate=r.date?new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'):'—';
       draw(continuationDate,W-M-150,H-201,9,true,C.ink,150);
-      if(r.project){
-        draw('BAUVORHABEN',M,H-218,7,true,C.muted);
-        draw(String(r.project),M,H-231,9,true,C.ink,400);
-        line(M,H-244,W-M,H-244,C.line,.8);
-        y=H-265;
-      }else{
-        line(M,H-218,W-M,H-218,C.line,.8);
-        y=H-239;
-      }
+      line(M,H-218,W-M,H-218,C.line,.8);
+      y=H-239;
     }
   };
   const sectionTitle=(title,subtitle=null)=>{
@@ -949,10 +912,7 @@ async function makePdf(r){
   y-=17;
   (r.address||'').split(/\n/).filter(Boolean).slice(0,3).forEach(s=>{draw(s,M,y,9,false,C.ink,290);y-=13});
   y-=12;
-  rect(M,y-42,W-2*M,42,C.pale);
-  draw('BAUVORHABEN',M+12,y-15,8,true,C.ink);
-  draw(r.project||'Kein Bauvorhaben angegeben',M+12,y-31,10,true,r.project?C.ink:C.muted,W-2*M-24);
-  y-=62;
+  y-=12;
 
   const materials=aggregateReportMaterials(r.materials||[]);
   const delivered=materials.filter(m=>m.type==='delivery');
@@ -1022,14 +982,12 @@ function cleanCustomerFilePart(value){
     .replace(/\b(GmbH\s*&\s*Co\.\s*KG|GmbH\s*&\s*Co\.?\s*KG|g\.?GmbH|GmbH|g\.Gmb\.H\.|mbH|AG|KG|OHG|UG(?:\s*\(haftungsbeschränkt\))?|KGaA|Ltd\.?|Limited|Inc\.?|Corporation|Corp\.?|PLC|e\.?K\.?|e\.?V\.)\b/gi,'')
     .replace(/[\\/:*?\"<>|]/g,'').replace(/\s+/g,' ').trim().replace(/^[, ._-]+|[, ._-]+$/g,'');
 }
-function cleanProjectFilePart(value){return String(value||'').trim().replace(/[\\/:*?\"<>|]/g,'').replace(/\s+/g,' ').replace(/\s*,\s*/g,', ').replace(/^[ ._-]+|[ ._-]+$/g,'')}
 function pdfFileName(r){
   const customer=cleanCustomerFilePart(r.customer)||'Kunde';
-  const project=cleanProjectFilePart(r.project)||'Ohne Bauvorhaben';
   const createdValue=Number(r.createdAt||r.id);
   const createdDate=Number.isFinite(createdValue)&&createdValue>0?new Date(createdValue):new Date();
   const date=String(createdDate.getDate()).padStart(2,'0')+'.'+String(createdDate.getMonth()+1).padStart(2,'0')+'.'+createdDate.getFullYear();
-  return `${customer} - LN ${date} - ${project}.pdf`;
+  return `${customer} - LN ${date}.pdf`;
 }
 function savePreviewPdf(r){
   if(!pdfPreviewBlob){alert('Die PDF-Datei ist noch nicht bereit. Bitte öffne die Vorschau erneut.');return;}

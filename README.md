@@ -16,3 +16,10 @@ Historische, nummerierte Zwischenstände und nicht verwendete Vorlagenbilder sin
 
 
 Version 147: PDF-Beschriftung für die Lieferadresse lautet ausschließlich „Lieferort“.
+
+
+## Änderungen
+- Bauvorhaben vollständig aus der Oberfläche, den Formularen, der Archiv-Navigation und den PDF-Ausgaben entfernt.
+- Archivierte Liefernachweise werden direkt je Auftraggeber angezeigt.
+- Bei „Material geliefert“ kann im Lieferort-Dialog „Wie Rechnungsadresse“ gewählt werden. Die Rechnungsanschrift wird dafür aus dem Anschrift-Feld des Auftraggebers übernommen.
+- Vorhandene lokale Daten mit alten Bauvorhaben werden beim Laden nicht mehr verwendet; die übrigen Liefernachweise bleiben erhalten.
