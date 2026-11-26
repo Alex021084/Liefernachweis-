@@ -271,7 +271,9 @@ function openMaterialModal(type){
   $('materialIsDeliveredLabel').textContent=type==='haul'?'Material abgefahren':'Material geliefert';
   materialDeliveryRequested=false;
   pendingMaterialDelivered=false;
-  $('materialIsDelivered').checked=false;
+  updateMaterialToggle();
+  pendingMaterialDelivered=false;
+  updateMaterialToggle();
   $('modalMaterialDate').value=localDateValue();
   $('modalMaterialTime').value=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',hour12:false});
   $('modalDateTimeFields').hidden=true;
@@ -284,14 +286,16 @@ function openMaterialModal(type){
 function closeMaterialModal(){$('materialModal').classList.remove('open');$('materialModal').setAttribute('aria-hidden','true')}
 $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
-const updateMaterialFlag=()=>{
-  pendingMaterialDelivered=Boolean($('materialIsDelivered').checked);
+function updateMaterialToggle(){
+  const button=$('materialIsDelivered');
+  if(!button)return;
+  button.setAttribute('aria-pressed',pendingMaterialDelivered?'true':'false');
+  button.classList.toggle('is-active',pendingMaterialDelivered);
+}
+function setMaterialDelivered(value){
+  pendingMaterialDelivered=Boolean(value);
   materialDeliveryRequested=activeMaterialType==='delivery'&&pendingMaterialDelivered;
-};
-$('materialIsDelivered').addEventListener('click',()=>{setTimeout(updateMaterialFlag,0);});
-$('materialIsDelivered').addEventListener('input',updateMaterialFlag);
-$('materialIsDelivered').addEventListener('change',()=>{
-  updateMaterialFlag();
+  updateMaterialToggle();
   if(activeMaterialType==='delivery'&&pendingMaterialDelivered){
     const invoiceAddress=$('address').value.trim();
     const existingLocation=deliveryLocation||temporaryDeliveryLocation||'';
@@ -304,7 +308,8 @@ $('materialIsDelivered').addEventListener('change',()=>{
     deliveryLocation='';
     temporaryDeliveryLocation='';
   }
-});
+}
+$('materialIsDelivered').onclick=()=>setMaterialDelivered(!pendingMaterialDelivered);
 $('deliverySameAsInvoice').onchange=()=>{
   if($('deliverySameAsInvoice').checked){
     const invoiceAddress=$('address').value.trim();
@@ -314,8 +319,8 @@ $('deliverySameAsInvoice').onchange=()=>{
   }
 };
 function closeDeliveryLocationModal(){ $('deliveryLocationModal').classList.remove('open');$('deliveryLocationModal').setAttribute('aria-hidden','true'); }
-$('cancelDeliveryLocation').onclick=()=>{ materialDeliveryRequested=false;pendingMaterialDelivered=false;$('materialIsDelivered').checked=false;closeDeliveryLocationModal(); };
-document.querySelectorAll('[data-close-delivery-location]').forEach(el=>el.onclick=()=>{materialDeliveryRequested=false;pendingMaterialDelivered=false;$('materialIsDelivered').checked=false;closeDeliveryLocationModal();});
+$('cancelDeliveryLocation').onclick=()=>{ materialDeliveryRequested=false;setMaterialDelivered(false);closeDeliveryLocationModal(); };
+document.querySelectorAll('[data-close-delivery-location]').forEach(el=>el.onclick=()=>{materialDeliveryRequested=false;setMaterialDelivered(false);closeDeliveryLocationModal();});
 $('confirmDeliveryLocation').onclick=()=>{
   const street=$('deliveryLocationInput').value.trim();
   const city=$('deliveryLocationCity').value.trim();
@@ -325,7 +330,7 @@ $('confirmDeliveryLocation').onclick=()=>{
   deliveryLocation=location;
   materialDeliveryRequested=true;
   pendingMaterialDelivered=true;
-  $('materialIsDelivered').checked=true;
+  setMaterialDelivered(true);
   closeDeliveryLocationModal();
 };
 $('cancelMaterial').onclick=closeMaterialModal;
@@ -359,7 +364,7 @@ function renderMaterialChoiceButtons(){
     button.onclick=()=>{
       pendingMaterialName=option.value;
       // Checkbox-Status beim Verlassen der Auswahlseite sichern, bevor der Mengen-Schritt geöffnet wird.
-      pendingMaterialDelivered=$('materialIsDelivered').checked;
+      pendingMaterialDelivered=Boolean(pendingMaterialDelivered);
       host.querySelectorAll('.materialChoiceOption').forEach(tile=>{
         const active=tile.dataset.value===option.value||materialSessionEntries.some(m=>m.name===tile.dataset.value);
         tile.classList.toggle('is-selected',active);
@@ -416,7 +421,7 @@ $('confirmMaterial').onclick=()=>{
   const includeDateTime=$('modalIncludeDateTime').checked;
   const date=$('modalMaterialDate').value,time=$('modalMaterialTime').value;
   if(includeDateTime&&(!date||!time))return alert('Bitte Datum und Uhrzeit vollständig eingeben.');
-  const checked=Boolean(pendingMaterialDelivered || $('materialIsDelivered').checked);
+  const checked=Boolean(pendingMaterialDelivered);
   if(activeMaterialType==='delivery'&&checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
   const materialType=activeMaterialType==='delivery'?(checked?'delivery':'stock'):(checked?'haul_disposed':'disposed');
   const entry={name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked?(temporaryDeliveryLocation||deliveryLocation):''};
@@ -426,7 +431,8 @@ $('confirmMaterial').onclick=()=>{
   pendingMaterialName='';
   pendingMaterialDelivered=false;
   materialDeliveryRequested=false;
-  $('materialIsDelivered').checked=false;
+  pendingMaterialDelivered=false;
+  updateMaterialToggle();
   renderMaterialChoiceButtons();
   setMaterialWizardStep(1);
 };

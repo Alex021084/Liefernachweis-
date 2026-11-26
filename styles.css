@@ -2054,3 +2054,26 @@ canvas, .signaturePad, .signatureCanvas{
   font-size:25px;
   pointer-events:none;
 }
+
+
+/* Zuverlässiger, iOS-freundlicher Status-Schalter statt nativer Checkbox */
+#materialModal .materialStatusToggle{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:14px!important;width:100%!important;min-height:66px!important;
+  padding:12px 16px!important;margin:12px 0 0!important;
+  border:2px solid #d9e1e8!important;border-radius:16px!important;
+  background:#f5f7f9!important;color:#566170!important;
+  font:inherit!important;font-size:17px!important;font-weight:700!important;
+  text-align:left!important;cursor:pointer!important;touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+#materialModal .materialStatusToggle .materialStatusMark{
+  display:flex;align-items:center;justify-content:center;flex:0 0 34px;height:34px;
+  border-radius:10px;background:#e3e8ed;color:transparent;font-size:24px;font-weight:800;
+}
+#materialModal .materialStatusToggle.is-active{
+  background:#e4f3e8!important;border-color:#31834b!important;color:#205c32!important;
+}
+#materialModal .materialStatusToggle.is-active .materialStatusMark{
+  background:#34864f;color:#fff;
+}

@@ -74,3 +74,7 @@ Beim Übernehmen der Menge wird der Status der sichtbaren Checkbox „Material g
 - Der Status wird weiterhin beim Wechsel zur Mengeneingabe gesichert und beim Übernehmen verwendet.
 - Nach jeder übernommenen Materialposition wird die Checkbox zurückgesetzt, damit die nächste Position unabhängig gewählt werden kann.
 - Die bereits vorhandene PDF-Unterscheidung für „Material abgefahren und entsorgt“ (Haken) und „Material entsorgt“ (kein Haken) bleibt erhalten.
+
+
+## Status-Schalter neu aufgebaut
+Der native HTML-Checkbox-Schalter wurde vollständig durch einen iOS-freundlichen, zustandsgesteuerten Button ersetzt. Der Button zeigt den aktiven Status sichtbar grün an und speichert den Status direkt in der Materialposition. Dadurch hängt die Zuordnung nicht mehr von Safari-Checkbox-Events ab.
