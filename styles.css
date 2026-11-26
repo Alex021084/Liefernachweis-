@@ -2090,3 +2090,23 @@ canvas, .signaturePad, .signatureCanvas{
 .materialClassificationOption.is-selected{border-color:#16a34a;background:rgba(22,163,74,.07)}
 .materialClassificationOption.is-selected .materialClassificationCheck{opacity:1}
 @media(min-width:640px){.materialClassificationOptions{grid-template-columns:1fr 1fr}}
+
+/* Kompaktere Mengeneinheiten im Material-Pop-up */
+.materialUnitPicker{gap:10px}
+.materialUnitPicker button,
+.materialUnitPicker .unitOption,
+.materialUnitPicker label{
+  min-height:64px;
+  padding:10px 12px;
+  font-size:clamp(1rem,2.8vw,1.25rem);
+  border-width:1.5px;
+  border-radius:16px;
+}
+@media(max-width:600px){
+  .materialUnitPicker button,
+  .materialUnitPicker .unitOption,
+  .materialUnitPicker label{
+    min-height:58px;
+    padding:8px 10px;
+  }
+}
