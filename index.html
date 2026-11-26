@@ -114,7 +114,8 @@
     <div class="materialModalCard deliveryLocationCard" role="dialog" aria-modal="true" aria-labelledby="deliveryLocationTitle">
       <h2 id="deliveryLocationTitle">Lieferort eingeben</h2>
       <label class="modalDateTimeToggle"><input id="deliverySameAsInvoice" type="checkbox"> Wie Rechnungsadresse</label>
-      <textarea id="deliveryLocationInput" rows="3" aria-label="Lieferort" placeholder="Straße, PLZ, Ort"></textarea>
+      <textarea id="deliveryLocationInput" rows="2" aria-label="Straße und Hausnummer" placeholder="Straße und Hausnummer"></textarea>
+      <input id="deliveryLocationCity" type="text" aria-label="PLZ und Ort" placeholder="PLZ und Ort">
       <label class="modalDateTimeToggle"><input id="saveDeliveryLocationForReport" type="checkbox" checked> Lieferort für diesen Nachweis speichern</label>
       <div class="row actions">
         <button type="button" class="soft" id="cancelDeliveryLocation">Abbrechen</button>
@@ -258,7 +259,7 @@
       </div>
     </div>
   </div>
-</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js?v=159"></script><script>
+</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js?v=161"></script><script>
 (function(){
   document.addEventListener('click', function(event){
     var button = event.target && event.target.closest ? event.target.closest('#goNew') : null;

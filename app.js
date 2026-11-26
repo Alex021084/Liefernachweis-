@@ -282,6 +282,7 @@ $('materialIsDelivered').onchange=()=>{
     const invoiceAddress=$('address').value.trim();
     const existingLocation=deliveryLocation||temporaryDeliveryLocation||'';
     $('deliveryLocationInput').value=existingLocation;
+    $('deliveryLocationCity').value='';
     $('deliverySameAsInvoice').checked=!!invoiceAddress&&existingLocation===invoiceAddress;
     $('saveDeliveryLocationForReport').checked=saveDeliveryLocation;
     $('deliveryLocationModal').classList.add('open');$('deliveryLocationModal').setAttribute('aria-hidden','false');
@@ -292,13 +293,16 @@ $('deliverySameAsInvoice').onchange=()=>{
     const invoiceAddress=$('address').value.trim();
     if(!invoiceAddress){$('deliverySameAsInvoice').checked=false;return alert('Bitte zuerst eine Rechnungsadresse beim Auftraggeber hinterlegen.');}
     $('deliveryLocationInput').value=invoiceAddress;
+    $('deliveryLocationCity').value='';
   }
 };
 function closeDeliveryLocationModal(){ $('deliveryLocationModal').classList.remove('open');$('deliveryLocationModal').setAttribute('aria-hidden','true'); }
 $('cancelDeliveryLocation').onclick=()=>{ $('materialIsDelivered').checked=!!deliveryLocation;closeDeliveryLocationModal(); };
 document.querySelectorAll('[data-close-delivery-location]').forEach(el=>el.onclick=()=>{$('materialIsDelivered').checked=!!deliveryLocation;closeDeliveryLocationModal();});
 $('confirmDeliveryLocation').onclick=()=>{
-  const location=$('deliveryLocationInput').value.trim();
+  const street=$('deliveryLocationInput').value.trim();
+  const city=$('deliveryLocationCity').value.trim();
+  const location=[street,city].filter(Boolean).join(', ');
   if(!location)return alert('Bitte den Lieferort eingeben.');
   temporaryDeliveryLocation=location;saveDeliveryLocation=$('saveDeliveryLocationForReport').checked;
   deliveryLocation=saveDeliveryLocation?location:'';
@@ -946,7 +950,7 @@ async function makePdf(r){
       ].map(location=>String(location||'').trim()).filter(Boolean))];
       locations.forEach(location=>{
         draw('Lieferort:',M,y,8,true,C.ink);
-        draw(location,M+58,y,9,false,C.ink,W-2*M-58);
+        draw(String(location).replace(/\s*\n\s*/g,', '),M+58,y,9,false,C.ink,W-2*M-58);
         y-=15;
       });
     }
@@ -1034,7 +1038,16 @@ $('closePdfPreview').onclick=closePdfPreview;
 $('savePdf').onclick=async()=>{
   const r=collect();
   if(!validateDocument(r))return;
-  // PDF darf auch ohne Unterschrift erstellt werden.
+  // Ein bereits unterschriebener Nachweis bleibt gesperrt, darf aber
+  // jederzeit erneut als PDF geöffnet und gespeichert werden.
+  const existing=currentDraftId
+    ? db.reports.find(x=>String(x.id)===String(currentDraftId))
+    : null;
+  if(isFinalized(existing)){
+    await openPdfPreview(existing);
+    return;
+  }
+  // Neue bzw. noch bearbeitbare Nachweise zuerst speichern, dann PDF anzeigen.
   if(!persistDocument())return;
   const saved=db.reports.find(x=>String(x.id)===String(r.id));
   if(saved)await openPdfPreview(saved);
