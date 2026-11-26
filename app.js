@@ -12,6 +12,7 @@
 const $=id=>document.getElementById(id);const KEY='daelmann-liefernachweis-v1';
 const canvas=$('signature');
 const ctx=canvas?canvas.getContext('2d'):null;
+let drawing=false,ink=false,signatureSaved=false;
 let appAlertTimer=null;
 function showAppAlert(message){
   const modal=$('appAlertModal');
@@ -678,7 +679,7 @@ $('saveQuickCustomer').onclick=()=>{
 if($('newBtn'))$('newBtn').onclick=fresh;if($('cancel'))$('cancel').onclick=()=>show('home');
 const serviceModal=$('serviceModal');serviceModal.hidden=true;serviceModal.classList.remove('open');
 const signatureModal=$('signatureModal'); signatureModal.hidden=true; signatureModal.classList.remove('open');
-let drawing=false,ink=false,signatureSaved=false;function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){if(!canvas||!ctx)return;ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='× Noch nicht unterschrieben';$('signatureStatus').classList.remove('signed');$('openSignature').classList.remove('signatureDone');$('openSignature').textContent='✍ Unterschreiben'} $('clearSig').onclick=clearSig;
+function pos(e){let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}canvas.onpointerdown=e=>{drawing=true;ink=true;canvas.setPointerCapture(e.pointerId);let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};canvas.onpointermove=e=>{if(!drawing)return;let p=pos(e);ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#18212b';ctx.lineTo(p.x,p.y);ctx.stroke()};canvas.onpointerup=()=>drawing=false;canvas.onpointercancel=()=>drawing=false;function clearSig(){if(!canvas||!ctx)return;ctx.clearRect(0,0,canvas.width,canvas.height);ink=false;signatureSaved=false;$('signatureStatus').textContent='× Noch nicht unterschrieben';$('signatureStatus').classList.remove('signed');$('openSignature').classList.remove('signatureDone');$('openSignature').textContent='✍ Unterschreiben'} $('clearSig').onclick=clearSig;
 function openSignature(){ const modal=$('signatureModal'); modal.hidden=false; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
 function closeSignature(){ const modal=$('signatureModal'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); modal.hidden=true; }
 $('openSignature').onclick=openSignature;$('cancelSignature').onclick=closeSignature;document.querySelectorAll('[data-close-signature]').forEach(el=>el.onclick=closeSignature);
