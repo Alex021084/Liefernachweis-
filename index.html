@@ -261,7 +261,7 @@
       </div>
     </div>
   </div>
-</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js?v=178"></script><script>
+</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js?v=179"></script><script>
 (function(){
   document.addEventListener('click', function(event){
     var button = event.target && event.target.closest ? event.target.closest('#goNew') : null;
@@ -278,4 +278,34 @@
     }
   }, true);
 })();
+
+(function(){
+  document.addEventListener('click', function(event){
+    var button = event.target && event.target.closest ? event.target.closest('#toMaterials') : null;
+    if (!button) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    var customer = document.getElementById('customer');
+    if (!customer || !customer.value) {
+      alert('Bitte zuerst einen Auftraggeber auswählen.');
+      return;
+    }
+    try {
+      if (typeof window.setWizardStep === 'function') {
+        window.setWizardStep(2);
+      } else {
+        document.querySelectorAll('.wizardStep').forEach(function(el){
+          el.classList.toggle('active', Number(el.dataset.wizard) === 2);
+        });
+        var progress = document.getElementById('wizardProgress');
+        if (progress) progress.textContent = 'Schritt 2 von 4 · Material';
+        window.scrollTo(0,0);
+      }
+    } catch (error) {
+      console.error('Wechsel zum Material-Schritt fehlgeschlagen:', error);
+      alert('Der Wechsel zur Materialauswahl ist fehlgeschlagen: ' + (error && error.message ? error.message : error));
+    }
+  }, true);
+})();
+
 </script></body></html>
