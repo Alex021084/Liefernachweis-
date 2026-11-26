@@ -42,3 +42,7 @@ Der Lieferort kann getrennt nach Straße/Hausnummer und PLZ/Ort erfasst werden. 
 
 ## Lieferort-Dialog
 Die zusätzliche Checkbox „Lieferort für diesen Nachweis speichern“ wurde entfernt. Der eingegebene Lieferort wird direkt für die aktuelle Lieferung übernommen.
+
+
+## Korrektur: Material geliefert
+Die Auswahl „Material geliefert“ wird nun zusätzlich intern festgehalten, auch während der Lieferort-Dialog geöffnet und bestätigt wird. Beim Übernehmen der Menge wird dadurch zuverlässig der Typ „Material geliefert“ gespeichert und nicht „Material ab Grube/Lager“.

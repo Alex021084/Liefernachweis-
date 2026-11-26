@@ -235,6 +235,7 @@ function scheduleAutoSave(){if(autoSaveTimer)clearTimeout(autoSaveTimer);setAuto
 let materialWizardStep=1;
 let deliveryLocation='';
 let temporaryDeliveryLocation='';
+let materialDeliveryRequested=false;
 function setMaterialWizardStep(step){
   materialWizardStep=step;
   $('materialStepSelect').hidden=step!==1;
@@ -262,7 +263,8 @@ function openMaterialModal(type){
   setMaterialUnit('to');
   $('modalIncludeDateTime').checked=false;
   $('materialIsDeliveredLabel').textContent=type==='haul'?'Material abgefahren':'Material geliefert';
-  $('materialIsDelivered').checked=type==='delivery'&&!!(deliveryLocation||temporaryDeliveryLocation);
+  materialDeliveryRequested=type==='delivery'&&!!(deliveryLocation||temporaryDeliveryLocation);
+  $('materialIsDelivered').checked=materialDeliveryRequested;
   $('modalMaterialDate').value=localDateValue();
   $('modalMaterialTime').value=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',hour12:false});
   $('modalDateTimeFields').hidden=true;
@@ -277,14 +279,15 @@ $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
 $('materialIsDelivered').onchange=()=>{
   if(activeMaterialType!=='delivery')return;
-  if($('materialIsDelivered').checked){
+  materialDeliveryRequested=$('materialIsDelivered').checked;
+  if(materialDeliveryRequested){
     const invoiceAddress=$('address').value.trim();
     const existingLocation=deliveryLocation||temporaryDeliveryLocation||'';
     $('deliveryLocationInput').value=existingLocation;
     $('deliveryLocationCity').value='';
     $('deliverySameAsInvoice').checked=!!invoiceAddress&&existingLocation===invoiceAddress;
     $('deliveryLocationModal').classList.add('open');$('deliveryLocationModal').setAttribute('aria-hidden','false');
-  }else{deliveryLocation='';temporaryDeliveryLocation='';}
+  }else{deliveryLocation='';temporaryDeliveryLocation='';materialDeliveryRequested=false;}
 };
 $('deliverySameAsInvoice').onchange=()=>{
   if($('deliverySameAsInvoice').checked){
@@ -295,8 +298,8 @@ $('deliverySameAsInvoice').onchange=()=>{
   }
 };
 function closeDeliveryLocationModal(){ $('deliveryLocationModal').classList.remove('open');$('deliveryLocationModal').setAttribute('aria-hidden','true'); }
-$('cancelDeliveryLocation').onclick=()=>{ $('materialIsDelivered').checked=!!deliveryLocation;closeDeliveryLocationModal(); };
-document.querySelectorAll('[data-close-delivery-location]').forEach(el=>el.onclick=()=>{$('materialIsDelivered').checked=!!deliveryLocation;closeDeliveryLocationModal();});
+$('cancelDeliveryLocation').onclick=()=>{ materialDeliveryRequested=!!deliveryLocation; $('materialIsDelivered').checked=materialDeliveryRequested;closeDeliveryLocationModal(); };
+document.querySelectorAll('[data-close-delivery-location]').forEach(el=>el.onclick=()=>{materialDeliveryRequested=!!deliveryLocation;$('materialIsDelivered').checked=materialDeliveryRequested;closeDeliveryLocationModal();});
 $('confirmDeliveryLocation').onclick=()=>{
   const street=$('deliveryLocationInput').value.trim();
   const city=$('deliveryLocationCity').value.trim();
@@ -304,6 +307,8 @@ $('confirmDeliveryLocation').onclick=()=>{
   if(!location)return alert('Bitte den Lieferort eingeben.');
   temporaryDeliveryLocation=location;
   deliveryLocation=location;
+  materialDeliveryRequested=true;
+  $('materialIsDelivered').checked=true;
   closeDeliveryLocationModal();
 };
 $('cancelMaterial').onclick=closeMaterialModal;
@@ -392,8 +397,8 @@ $('confirmMaterial').onclick=()=>{
   const includeDateTime=$('modalIncludeDateTime').checked;
   const date=$('modalMaterialDate').value,time=$('modalMaterialTime').value;
   if(includeDateTime&&(!date||!time))return alert('Bitte Datum und Uhrzeit vollständig eingeben.');
-  if($('materialIsDelivered').checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
-  const checked=$('materialIsDelivered').checked;
+  const checked=activeMaterialType==='delivery'&&(materialDeliveryRequested||$('materialIsDelivered').checked);
+  if(checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
   const materialType=activeMaterialType==='delivery'?(checked?'delivery':'stock'):(checked?'haul_disposed':'disposed');
   enteredMaterials.push({name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked?(temporaryDeliveryLocation||deliveryLocation):''});
   renderMaterialSummary();
@@ -557,7 +562,7 @@ $('backToServices').onclick=()=>setWizardStep(3);
 $('summaryHomeButton').onclick=()=>{try{autoSaveDraft();}finally{show('welcome');}};
 
 $('formHomeButton').addEventListener('click',()=>{try{autoSaveDraft();}finally{show('welcome');}});
-function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';enteredMaterials=[];deliveryLocation='';temporaryDeliveryLocation='';$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
+function fresh(){ if(autoSaveTimer)clearTimeout(autoSaveTimer);currentDraftId=null;setAutoSaveStatus('Noch kein Entwurf begonnen'); $('date').value=localDateValue();updateDateDisplay();fillSelect($('customer'),db.customers.map(c=>c.name),'Auftraggeber wählen');$('address').value='';enteredMaterials=[];deliveryLocation='';temporaryDeliveryLocation='';materialDeliveryRequested=false;$('materialRows').innerHTML='<p class="hint">Noch keine Materialien erfasst.</p>';$('serviceRows').innerHTML='';$('signer').value='';clearSig();closeSignature();setWizardStep(1);show('form')}
 $('customer').onchange=()=>{let c=db.customers.find(c=>c.name===$('customer').value);$('address').value=c?.address||'';scheduleAutoSave()};
 function openQuickModal(id){
   const modal=$(id);modal.hidden=false;modal.setAttribute('aria-hidden','false');
@@ -639,7 +644,7 @@ function openDraft(r){
   $('date').value=r.date||localDateValue();updateDateDisplay();
   $('address').value=r.address||'';
   const owner=db.customers.find(c=>c.name===r.customer);
-  deliveryLocation=r.deliveryLocation||'';temporaryDeliveryLocation=deliveryLocation;
+  deliveryLocation=r.deliveryLocation||'';temporaryDeliveryLocation=deliveryLocation;materialDeliveryRequested=(r.materials||[]).some(m=>m.type==='delivery');
   enteredMaterials=(r.materials||[]).map(m=>({...m}));
   renderMaterialSummary();
   $('serviceRows').innerHTML='';
