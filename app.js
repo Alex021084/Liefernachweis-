@@ -210,6 +210,7 @@ $('saveQuickMaterial').onclick=()=>{
   save();
   closeQuickModal('quickMaterialModal');
 };
+let wizardStep=1;
 let activeMaterialType='delivery';
 let pendingMaterialName='';
 let materialSessionEntries=[];
@@ -629,7 +630,6 @@ function localDateValue(){const d=new Date();return [d.getFullYear(),String(d.ge
 function updateDateDisplay(){const value=$('date').value;const button=$('dateDisplay');if(!value){button.textContent='Datum auswählen';return;}const parts=value.split('-').map(Number);const d=new Date(parts[0],parts[1]-1,parts[2],12);button.textContent=d.toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});}
 $('date').addEventListener('change',updateDateDisplay);
 $('dateDisplay').addEventListener('click',()=>{const input=$('date');if(typeof input.showPicker==='function'){try{input.showPicker();return;}catch(e){}}input.click();});
-let wizardStep=1;
 function setWizardStep(step){wizardStep=step;document.querySelectorAll('.wizardStep').forEach(el=>el.classList.toggle('active',Number(el.dataset.wizard)===step));if($('wizardProgress'))$('wizardProgress').textContent=['','Schritt 1 von 4 · Auftraggeber','Schritt 2 von 4 · Material','Schritt 3 von 4 · Zusatzleistungen','Schritt 4 von 4 · Zusammenfassung'][step];window.scrollTo(0,0);}
 $('toMaterials').onclick=()=>{if(!$('customer').value)return alert('Bitte zuerst einen Auftraggeber auswählen.');setWizardStep(2)};
 $('backToCustomer').onclick=()=>setWizardStep(1);
