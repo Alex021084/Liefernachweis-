@@ -2130,3 +2130,9 @@ canvas, .signaturePad, .signatureCanvas{
   height:58px!important;
   padding:7px 10px!important;
 }
+
+/* Im Abfuhr-Popup nur die beiden passenden Kennzeichnungen anzeigen.
+   Das !important verhindert, dass das Flex-Layout das hidden-Attribut überstimmt. */
+#deliveryClassification .materialClassificationOption[hidden]{
+  display:none !important;
+}
