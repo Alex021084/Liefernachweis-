@@ -67,3 +67,10 @@ Beim Übernehmen der Menge wird der Status der sichtbaren Checkbox „Material g
 - Die Logik gilt sowohl für „Material geliefert“ als auch für „Material abgefahren“.
 - Bei Material Annahme führt gesetzter Haken zum PDF-Abschnitt „Material abgefahren und entsorgt“; ohne Haken zum Abschnitt „Material entsorgt“.
 - Eine vorhandene Lieferadresse setzt den Haken bei einer neuen Auswahlrunde nicht automatisch.
+
+
+## Checkbox Material geliefert – iOS-Safari Absicherung
+- Ergänzter Click-Sync nach dem nativen Checkbox-Toggle für iOS Safari.
+- Der Status wird weiterhin beim Wechsel zur Mengeneingabe gesichert und beim Übernehmen verwendet.
+- Nach jeder übernommenen Materialposition wird die Checkbox zurückgesetzt, damit die nächste Position unabhängig gewählt werden kann.
+- Die bereits vorhandene PDF-Unterscheidung für „Material abgefahren und entsorgt“ (Haken) und „Material entsorgt“ (kein Haken) bleibt erhalten.

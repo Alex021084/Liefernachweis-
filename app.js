@@ -285,9 +285,10 @@ function closeMaterialModal(){$('materialModal').classList.remove('open');$('mat
 $('chooseDelivered').onclick=()=>openMaterialModal('delivery');
 $('chooseHauled').onclick=()=>openMaterialModal('haul');
 const updateMaterialFlag=()=>{
-  pendingMaterialDelivered=$('materialIsDelivered').checked;
+  pendingMaterialDelivered=Boolean($('materialIsDelivered').checked);
   materialDeliveryRequested=activeMaterialType==='delivery'&&pendingMaterialDelivered;
 };
+$('materialIsDelivered').addEventListener('click',()=>{setTimeout(updateMaterialFlag,0);});
 $('materialIsDelivered').addEventListener('input',updateMaterialFlag);
 $('materialIsDelivered').addEventListener('change',()=>{
   updateMaterialFlag();
@@ -415,7 +416,7 @@ $('confirmMaterial').onclick=()=>{
   const includeDateTime=$('modalIncludeDateTime').checked;
   const date=$('modalMaterialDate').value,time=$('modalMaterialTime').value;
   if(includeDateTime&&(!date||!time))return alert('Bitte Datum und Uhrzeit vollständig eingeben.');
-  const checked=pendingMaterialDelivered;
+  const checked=Boolean(pendingMaterialDelivered || $('materialIsDelivered').checked);
   if(activeMaterialType==='delivery'&&checked&&!temporaryDeliveryLocation&&!deliveryLocation)return alert('Bitte zuerst den Lieferort eingeben.');
   const materialType=activeMaterialType==='delivery'?(checked?'delivery':'stock'):(checked?'haul_disposed':'disposed');
   const entry={name,type:materialType,qty,unit,includeDateTime,date:includeDateTime?date:'',time:includeDateTime?time:'',vehicle:'',deliveryLocation:activeMaterialType==='delivery'&&checked?(temporaryDeliveryLocation||deliveryLocation):''};
@@ -425,6 +426,7 @@ $('confirmMaterial').onclick=()=>{
   pendingMaterialName='';
   pendingMaterialDelivered=false;
   materialDeliveryRequested=false;
+  $('materialIsDelivered').checked=false;
   renderMaterialChoiceButtons();
   setMaterialWizardStep(1);
 };
