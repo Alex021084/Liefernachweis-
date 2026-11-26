@@ -2136,3 +2136,33 @@ canvas, .signaturePad, .signatureCanvas{
 #deliveryClassification .materialClassificationOption[hidden]{
   display:none !important;
 }
+
+/* Material-Auswahl: Text mittig, auf iPhones etwas kleiner */
+#materialChoiceList.materialChoiceListInline .materialChoiceOption{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  gap:5px!important;
+}
+#materialChoiceList.materialChoiceListInline .materialChoiceName,
+#materialChoiceList.materialChoiceListInline .materialChoiceQuantity{
+  display:block!important;
+  width:100%!important;
+  text-align:center!important;
+}
+@media(max-width:600px){
+  #materialChoiceList.materialChoiceListInline .materialChoiceOption{
+    font-size:15px!important;
+    line-height:1.22!important;
+    padding:11px 9px!important;
+    min-height:72px!important;
+  }
+  #materialChoiceList.materialChoiceListInline .materialChoiceName{
+    font-size:15px!important;
+  }
+  #materialChoiceList.materialChoiceListInline .materialChoiceQuantity{
+    font-size:13px!important;
+  }
+}
