@@ -344,17 +344,22 @@ function setMaterialDelivered(value){
   }
 }
 // Legacy-Schalter entfernt: Die Kennzeichnung erfolgt jetzt über classifyAsDelivery/classifyAsStock.
+function openDeliveryLocationModal(){
+  const invoiceAddress=$('address').value.trim();
+  const existingLocation=deliveryLocation||temporaryDeliveryLocation||'';
+  $('deliveryLocationInput').value=existingLocation;
+  $('deliverySameAsInvoice').checked=!!invoiceAddress&&existingLocation===invoiceAddress;
+  const modal=$('deliveryLocationModal');
+  modal.hidden=false;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+}
 $('classifyAsDelivery').onclick=()=>{
   pendingMaterialClassification='delivery';
   pendingMaterialDelivered=true;
   materialDeliveryRequested=true;
   updateMaterialToggle();
-  const invoiceAddress=$('address').value.trim();
-  const existingLocation=deliveryLocation||temporaryDeliveryLocation||'';
-  $('deliveryLocationInput').value=existingLocation;
-  $('deliverySameAsInvoice').checked=!!invoiceAddress&&existingLocation===invoiceAddress;
-  $('deliveryLocationModal').classList.add('open');
-  $('deliveryLocationModal').setAttribute('aria-hidden','false');
+  openDeliveryLocationModal();
 };
 $('classifyAsStock').onclick=()=>{
   pendingMaterialClassification='stock';
@@ -381,7 +386,7 @@ $('deliverySameAsInvoice').onchange=()=>{
     $('deliveryLocationInput').value=invoiceAddress;
   }
 };
-function closeDeliveryLocationModal(){ $('deliveryLocationModal').classList.remove('open');$('deliveryLocationModal').setAttribute('aria-hidden','true'); }
+function closeDeliveryLocationModal(){ const modal=$('deliveryLocationModal'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
 $('cancelDeliveryLocation').onclick=()=>{ materialDeliveryRequested=false;setMaterialDelivered(false);closeDeliveryLocationModal(); };
 document.querySelectorAll('[data-close-delivery-location]').forEach(el=>el.onclick=()=>{materialDeliveryRequested=false;setMaterialDelivered(false);closeDeliveryLocationModal();});
 $('confirmDeliveryLocation').onclick=()=>{
