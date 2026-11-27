@@ -1057,15 +1057,29 @@ async function makePdf(r){
     const hasTimestamps=list.some(m=>m.includeDateTime&&m.date);
     const hasVehicles=list.some(m=>m.vehicle);
     const headers=['Bezeichnung'];
-    const widths=[hasTimestamps||hasVehicles?180:390];
-    if(hasVehicles){headers.push('Fahrzeug');widths.push(105);}
-    if(hasTimestamps){headers.push('Zeitstempel');widths.push(145);}
-    headers.push('Menge');widths.push(81);
+    let widths;
+    if(hasVehicles){
+      headers.push('Fahrzeug');
+      if(hasTimestamps){
+        headers.push('Zeitstempel');
+        widths=[145,75,125,85,85];
+      }else{
+        widths=[270,75,85,85];
+      }
+    }else if(hasTimestamps){
+      headers.push('Zeitstempel');
+      widths=[205,140,85,85];
+    }else{
+      widths=[345,85,85];
+    }
+    headers.push('Menge (m³)','Menge (to)');
     const rows=list.map(m=>{
       const row=[m.name];
       if(hasVehicles)row.push(m.vehicle||'');
-      if(hasTimestamps)row.push(m.includeDateTime?formatMaterialDateTime(m.date,m.time):'');
-      row.push(formatQuantity(m.qty)+' '+(m.unit==='to'?'to':'m³'));
+      if(hasTimestamps)row.push(m.includeDateTime&&m.date?formatMaterialDateTime(m.date,m.time):'');
+      const isTonnes=m.unit==='to';
+      row.push(isTonnes?'':formatQuantity(m.qty));
+      row.push(isTonnes?formatQuantity(m.qty):'');
       return row;
     });
     drawTable(headers,rows,widths);
