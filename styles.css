@@ -2180,3 +2180,28 @@ canvas, .signaturePad, .signatureCanvas{
 
 /* Lieferort-Dialog sicher über dem Materialdialog anzeigen */
 #deliveryLocationModal{z-index:1100}
+
+/* iPhone: Materialnamen auch bei langen Bezeichnungen exakt mittig umbrechen */
+@media(max-width:600px){
+  #materialChoiceList.materialChoiceListInline .materialChoiceOption{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    white-space:normal!important;
+  }
+  #materialChoiceList.materialChoiceListInline .materialChoiceName{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin-inline:auto!important;
+    text-align:center!important;
+    white-space:normal!important;
+    overflow-wrap:break-word!important;
+    word-break:normal!important;
+    hyphens:auto!important;
+  }
+}
