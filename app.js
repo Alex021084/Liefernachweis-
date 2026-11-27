@@ -1019,17 +1019,39 @@ async function makePdf(r){
     if(y<headerH+rowH+165)newPage();
     rect(x,y-headerH,W-2*M,headerH,rgb(.88,.91,.94));
     let xx=x+9;
-    headers.forEach((h,i)=>{draw(h,xx,y-17,9.5,true,C.ink,widths[i]-12);xx+=widths[i]});
+    headers.forEach((h,i)=>{
+      const center=i>=headers.length-2;
+      const f=fontBold, size=9.5, tw=f.widthOfTextAtSize(String(h),size);
+      draw(h,center?xx+(widths[i]-tw)/2:xx,y-17,size,true,C.ink,widths[i]-12);
+      xx+=widths[i];
+    });
     y-=headerH;
     rows.forEach((row,ri)=>{
       const cells=row.map((v,i)=>String(v??''));
       const wrapped=cells.map((v,i)=>wrap(v,widths[i]-12,8,false));
       const maxLines=Math.max(1,...wrapped.map(a=>a.length));
       const h=Math.max(rowH,maxLines*10+12);
-      if(y-h<165){newPage();rect(x,y-headerH,W-2*M,headerH,rgb(.88,.91,.94));let hx=x+9;headers.forEach((t,i)=>{draw(t,hx,y-17,9.5,true,C.ink,widths[i]-12);hx+=widths[i]});y-=headerH}
+      if(y-h<165){
+        newPage();rect(x,y-headerH,W-2*M,headerH,rgb(.88,.91,.94));
+        let hx=x+9;
+        headers.forEach((t,i)=>{
+          const center=i>=headers.length-2;
+          const tw=fontBold.widthOfTextAtSize(String(t),9.5);
+          draw(t,center?hx+(widths[i]-tw)/2:hx,y-17,9.5,true,C.ink,widths[i]-12);
+          hx+=widths[i];
+        });
+        y-=headerH;
+      }
       rect(x,y-h,W-2*M,h,ri%2===0?C.white:C.pale);
       let cx=x+9;
-      wrapped.forEach((ls,i)=>{ls.slice(0,4).forEach((t,j)=>draw(t,cx,y-15-j*10,8,false,C.ink,widths[i]-12));cx+=widths[i]});
+      wrapped.forEach((ls,i)=>{
+        const center=i>=headers.length-2;
+        ls.slice(0,4).forEach((t,j)=>{
+          const tw=font.widthOfTextAtSize(String(t),8);
+          draw(t,center?cx+(widths[i]-tw)/2:cx,y-15-j*10,8,false,C.ink,widths[i]-12);
+        });
+        cx+=widths[i];
+      });
       line(x,y-h,x+W-2*M,y-h,C.line,.45);y-=h;
     });
     y-=18;
