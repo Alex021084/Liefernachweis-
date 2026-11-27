@@ -961,6 +961,12 @@ async function makePdf(r){
     targetPage.drawText('Unterschrift Auftraggeber / Abholer',{
       x:M,y:sigLineY-13,size:7,font,color:C.muted,maxWidth:250
     });
+    const signerName=String(r.signer||'').trim();
+    if(signerName){
+      targetPage.drawText(`Name: ${signerName}`,{
+        x:M,y:sigLineY-26,size:8,font,color:C.ink,maxWidth:300
+      });
+    }
     signatureDrawn=true;
   };
   const wrap=(text,maxWidth,size,bold=false)=>{
