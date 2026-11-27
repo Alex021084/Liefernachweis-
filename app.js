@@ -1054,30 +1054,24 @@ async function makePdf(r){
   const disposed=materials.filter(m=>m.type==='disposed');
   const hauled=materials.filter(m=>m.type==='haul');
   const drawMaterialTable=list=>{
-    const hasTimestamps=list.some(m=>m.includeDateTime&&m.date);
     const hasVehicles=list.some(m=>m.vehicle);
     const headers=['Bezeichnung'];
     let widths;
     if(hasVehicles){
       headers.push('Fahrzeug');
-      if(hasTimestamps){
-        headers.push('Zeitstempel');
-        widths=[145,75,125,85,85];
-      }else{
-        widths=[270,75,85,85];
-      }
-    }else if(hasTimestamps){
       headers.push('Zeitstempel');
-      widths=[205,140,85,85];
+      widths=[145,70,105,95,96.28];
     }else{
-      widths=[345,85,85];
+      headers.push('Zeitstempel');
+      widths=[190,105,108,108.28];
     }
     headers.push('Menge (m³)','Menge (to)');
     const rows=list.map(m=>{
-      const row=[m.name];
+      const row=[m.name||''];
       if(hasVehicles)row.push(m.vehicle||'');
-      if(hasTimestamps)row.push(m.includeDateTime&&m.date?formatMaterialDateTime(m.date,m.time):'');
-      const isTonnes=m.unit==='to';
+      row.push(m.includeDateTime&&m.date?formatMaterialDateTime(m.date,m.time):'');
+      const unit=String(m.unit||'').toLowerCase();
+      const isTonnes=unit==='to'||unit==='tonne'||unit==='tonnen'||unit==='t';
       row.push(isTonnes?'':formatQuantity(m.qty));
       row.push(isTonnes?formatQuantity(m.qty):'');
       return row;
@@ -1142,7 +1136,7 @@ function savePreviewPdf(r){
   const file=new File([pdfPreviewBlob],filename,{type:'application/pdf'});
   // Auf iPad/iPhone öffnet die Teilen-Funktion den iOS-Dialog „In Dateien sichern“.
   if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-    navigator.share({files:[file],title:filename}).catch(error=>{if(error&&error.name!=='AbortError')alert('Das Speichern wurde nicht abgeschlossen: '+error.message)});
+    navigator.share({files:[file]}).catch(error=>{if(error&&error.name!=='AbortError')alert('Das Speichern wurde nicht abgeschlossen: '+error.message)});
     return;
   }
   // Browser mit nativem Dateiauswahldialog können den Speicherort direkt wählen lassen.
@@ -1186,7 +1180,7 @@ async function createAndSavePdf(r){
     const file=new File([blob],filename,{type:'application/pdf'});
     // iPad/iPhone: direkt den iOS-Teilen-Dialog öffnen; dort „In Dateien sichern“ wählen.
     if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:filename});
+      await navigator.share({files:[file]});
       return;
     }
     // Unterstützte Browser: nativen Dialog zur Wahl des Speicherorts öffnen.
