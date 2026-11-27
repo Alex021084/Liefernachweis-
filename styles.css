@@ -2205,3 +2205,53 @@ canvas, .signaturePad, .signatureCanvas{
     hyphens:auto!important;
   }
 }
+
+/* Druckvorschau: Liefernachweis möglichst ganzseitig und mit festen Zurück-/Teilen-Aktionen */
+.pdfPreviewModal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:5000!important;
+  padding:0!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
+  background:#e9edf1!important;
+}
+.pdfPreviewCard{
+  width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+  height:100dvh!important;
+  max-height:none!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+.pdfPreviewHeader{
+  flex:0 0 auto!important;
+  min-height:58px;
+  padding:8px 14px!important;
+}
+.pdfPreviewHeader h2{font-size:17px!important}
+.pdfPreviewClose{font-size:14px!important;min-height:42px!important}
+#pdfPreviewFrame{
+  flex:1 1 auto!important;
+  width:100%!important;
+  min-height:0!important;
+  background:#dfe4e9!important;
+}
+.pdfPreviewFooter{
+  flex:0 0 auto!important;
+  justify-content:center!important;
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom))!important;
+}
+.pdfPreviewFooter button{
+  flex:1 1 100%!important;
+  width:100%!important;
+  max-width:520px!important;
+  min-height:50px!important;
+}
+@media(max-width:600px){
+  .pdfPreviewHeader{align-items:center!important}
+  .pdfPreviewHeader>div{min-width:0}
+  .pdfPreviewHeader .hint{display:none}
+  .pdfPreviewClose{white-space:nowrap!important}
+}

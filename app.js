@@ -1238,12 +1238,12 @@ $('savePdf').onclick=async()=>{
     ? db.reports.find(x=>String(x.id)===String(currentDraftId))
     : null;
   if(isFinalized(existing)){
-    await createAndSavePdf(existing);
+    await openPdfPreview(existing);
     return;
   }
   if(!persistDocument())return;
   const saved=db.reports.find(x=>String(x.id)===String(r.id));
-  if(saved)await createAndSavePdf(saved);
+  if(saved)await openPdfPreview(saved);
 };
 $('saveDocument').onclick=()=>{if(persistDocument())show('home')};
 renderArchive();
