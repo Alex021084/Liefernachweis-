@@ -2154,16 +2154,16 @@ canvas, .signaturePad, .signatureCanvas{
 }
 @media(max-width:600px){
   #materialChoiceList.materialChoiceListInline .materialChoiceOption{
-    font-size:15px!important;
-    line-height:1.22!important;
+    font-size:14px!important;
+    line-height:1.18!important;
     padding:11px 9px!important;
     min-height:72px!important;
   }
   #materialChoiceList.materialChoiceListInline .materialChoiceName{
-    font-size:15px!important;
+    font-size:14px!important;
   }
   #materialChoiceList.materialChoiceListInline .materialChoiceQuantity{
-    font-size:13px!important;
+    font-size:12px!important;
   }
 }
 
