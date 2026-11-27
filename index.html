@@ -264,13 +264,14 @@
         <div><h2 id="pdfPreviewHeading">PDF-Vorschau</h2><p id="pdfPreviewTitle" class="hint"></p></div>
         <button type="button" class="soft pdfPreviewClose" id="closePdfPreview">Zurück</button>
       </div>
-      <iframe id="pdfPreviewFrame" title="Vorschau des Liefernachweises"></iframe>
+      <div id="pdfPreviewPages" aria-label="PDF-Vorschau, alle Seiten untereinander"></div>
       <div class="pdfPreviewFooter">
         <button type="button" class="primary" id="downloadPreviewPdf">Teilen / Sichern</button>
       </div>
     </div>
   </div>
-</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script src="app.js?v=20261127-preview2"></script><script>
+</main><script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script><script src="app.js?v=20261127-preview3"></script><script>
 (function(){
   document.addEventListener('click', function(event){
     var button = event.target && event.target.closest ? event.target.closest('#goNew') : null;

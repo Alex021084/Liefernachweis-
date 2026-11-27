@@ -711,7 +711,7 @@ function persistDraft(){
   else {db.reports.push(r);currentDraftId=r.id;}
   save();renderArchive();alert('Zwischenstand wurde gespeichert. Du kannst den Liefernachweis später unter „Liefernachweise“ öffnen und weiterbearbeiten.');return true;
 }
-function persistDocument(){
+function persistDocument(silent=false){
   if(autoSaveTimer)clearTimeout(autoSaveTimer);
   const r=collect();
   if(!r.customer){alert('Bitte zuerst einen Auftraggeber auswählen.');return false;}
@@ -732,9 +732,11 @@ function persistDocument(){
   currentDraftId=r.id;
   archiveMode='customers';archiveCustomer='';
   save();renderArchive();
-  alert(r.finalized
-    ? 'Der unterschriebene Liefernachweis wurde unter „Nachweise“ abgeschlossen und ist jetzt gesperrt.'
-    : 'Der Liefernachweis wurde unter „Nachweise“ gespeichert und kann weiter bearbeitet werden.');
+  if(!silent){
+    alert(r.finalized
+      ? 'Der unterschriebene Liefernachweis wurde unter „Nachweise“ abgeschlossen und ist jetzt gesperrt.'
+      : 'Der Liefernachweis wurde unter „Nachweise“ gespeichert und kann weiter bearbeitet werden.');
+  }
   return true;
 }
 function isFinalized(r){return !!(r&&(r.finalized===true||(!r.draft&&r.signature)));}
@@ -1176,26 +1178,53 @@ function savePreviewPdf(r){
 }
 async function downloadPdf(r){try{let bytes=await makePdf(r);let blob=new Blob([bytes],{type:'application/pdf'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=pdfFileName(r);a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}catch(e){alert('PDF konnte nicht erstellt werden: '+e.message)}}
 function validateDocument(r){if(!r.customer){alert('Bitte einen Auftraggeber auswählen.');return false;}if(!r.materials.length&&!r.services.length){alert('Bitte mindestens ein Material oder eine Zusatzleistung eintragen.');return false;}return true}
+async function renderPdfPreviewPages(bytes){
+  const host=$('pdfPreviewPages');
+  host.innerHTML='';
+  if(!window.pdfjsLib){
+    host.textContent='Die PDF-Vorschau konnte nicht geladen werden. Bitte Internetverbindung prüfen.';
+    return;
+  }
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf=await pdfjsLib.getDocument({data:bytes}).promise;
+  const availableWidth=Math.max(260,host.clientWidth-24);
+  for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){
+    const page=await pdf.getPage(pageNo);
+    const base=page.getViewport({scale:1});
+    const scale=availableWidth/base.width;
+    const viewport=page.getViewport({scale});
+    const canvas=document.createElement('canvas');
+    canvas.className='pdfPreviewPage';
+    canvas.width=Math.floor(viewport.width*devicePixelRatio);
+    canvas.height=Math.floor(viewport.height*devicePixelRatio);
+    canvas.style.width=viewport.width+'px';
+    canvas.style.height=viewport.height+'px';
+    const context=canvas.getContext('2d');
+    context.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    host.appendChild(canvas);
+    await page.render({canvasContext:context,viewport}).promise;
+  }
+}
 async function openPdfPreview(r){
   try{
     const bytes=await makePdf(r);
     if(pdfPreviewUrl)URL.revokeObjectURL(pdfPreviewUrl);
     pdfPreviewBlob=new Blob([bytes],{type:'application/pdf'});
     pdfPreviewUrl=URL.createObjectURL(pdfPreviewBlob);
-    $('pdfPreviewFrame').src=pdfPreviewUrl+'#view=Fit';
     $('pdfPreviewTitle').textContent=pdfFileName(r);
     $('closePdfPreview').textContent=isFinalized(r)?'Zurück zu Nachweisen':'Zurück zur Bearbeitung';
     $('pdfPreviewModal').hidden=false;
     $('pdfPreviewModal').setAttribute('aria-hidden','false');
     $('pdfPreviewModal').classList.add('open');
-    $('downloadPreviewPdf').onclick=()=>savePreviewPdf(r);
+    await renderPdfPreviewPages(bytes);
+    $('downloadPreviewPdf').onclick=async()=>{if(!isFinalized(r)&&!persistDocument(true))return;await savePreviewPdf(r);};
   }catch(e){alert('PDF konnte nicht erstellt werden: '+e.message)}
 }
 function closePdfPreview(){
   $('pdfPreviewModal').classList.remove('open');
   $('pdfPreviewModal').hidden=true;
   $('pdfPreviewModal').setAttribute('aria-hidden','true');
-  $('pdfPreviewFrame').src='about:blank';
+  $('pdfPreviewPages').innerHTML='';
   if(pdfPreviewUrl){URL.revokeObjectURL(pdfPreviewUrl);pdfPreviewUrl=null;}
   pdfPreviewBlob=null;
 }
@@ -1241,9 +1270,7 @@ $('savePdf').onclick=async()=>{
     await openPdfPreview(existing);
     return;
   }
-  if(!persistDocument())return;
-  const saved=db.reports.find(x=>String(x.id)===String(r.id));
-  if(saved)await openPdfPreview(saved);
+  await openPdfPreview(r);
 };
 $('saveDocument').onclick=()=>{if(persistDocument())show('home')};
 renderArchive();
