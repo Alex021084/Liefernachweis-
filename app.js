@@ -998,8 +998,8 @@ async function makePdf(r){
       draw('Fortsetzung zu Seite 1',M,H-165,8,false,C.muted);
       draw('AUFTRAGGEBER',M,H-188,7,true,C.muted);
       draw(String(r.customer||'—'),M,H-201,9,true,C.ink,260);
-      draw('LIEFERDATUM',W-M-150,H-188,7,true,C.muted);
-      const continuationDate=r.date?new Date(r.date+'T12:00:00').toLocaleDateString('de-DE'):'—';
+      draw('LIEFERDATUM',W-M-150,H-188,8,true,C.ink);
+      const continuationDate=r.date?new Date(r.date+'T12:00:00').toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}):'—';
       draw(continuationDate,W-M-150,H-201,9,true,C.ink,150);
       line(M,H-218,W-M,H-218,C.line,.8);
       y=H-239;
