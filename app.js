@@ -335,7 +335,6 @@ function setMaterialDelivered(value){
     const invoiceAddress=$('address').value.trim();
     const existingLocation=deliveryLocation||temporaryDeliveryLocation||'';
     $('deliveryLocationInput').value=existingLocation;
-    $('deliveryLocationCity').value='';
     $('deliverySameAsInvoice').checked=!!invoiceAddress&&existingLocation===invoiceAddress;
     $('deliveryLocationModal').classList.add('open');
     $('deliveryLocationModal').setAttribute('aria-hidden','false');
@@ -353,7 +352,6 @@ $('classifyAsDelivery').onclick=()=>{
   const invoiceAddress=$('address').value.trim();
   const existingLocation=deliveryLocation||temporaryDeliveryLocation||'';
   $('deliveryLocationInput').value=existingLocation;
-  $('deliveryLocationCity').value='';
   $('deliverySameAsInvoice').checked=!!invoiceAddress&&existingLocation===invoiceAddress;
   $('deliveryLocationModal').classList.add('open');
   $('deliveryLocationModal').setAttribute('aria-hidden','false');
@@ -381,16 +379,13 @@ $('deliverySameAsInvoice').onchange=()=>{
     const invoiceAddress=$('address').value.trim();
     if(!invoiceAddress){$('deliverySameAsInvoice').checked=false;return alert('Bitte zuerst eine Rechnungsadresse beim Auftraggeber hinterlegen.');}
     $('deliveryLocationInput').value=invoiceAddress;
-    $('deliveryLocationCity').value='';
   }
 };
 function closeDeliveryLocationModal(){ $('deliveryLocationModal').classList.remove('open');$('deliveryLocationModal').setAttribute('aria-hidden','true'); }
 $('cancelDeliveryLocation').onclick=()=>{ materialDeliveryRequested=false;setMaterialDelivered(false);closeDeliveryLocationModal(); };
 document.querySelectorAll('[data-close-delivery-location]').forEach(el=>el.onclick=()=>{materialDeliveryRequested=false;setMaterialDelivered(false);closeDeliveryLocationModal();});
 $('confirmDeliveryLocation').onclick=()=>{
-  const street=$('deliveryLocationInput').value.trim();
-  const city=$('deliveryLocationCity').value.trim();
-  const location=[street,city].filter(Boolean).join(', ');
+  const location=$('deliveryLocationInput').value.trim();
   if(!location)return alert('Bitte den Lieferort eingeben.');
   temporaryDeliveryLocation=location;
   deliveryLocation=location;
