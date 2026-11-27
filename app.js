@@ -1005,7 +1005,7 @@ async function makePdf(r){
   };
   const materialSectionTitle=(title)=>{
     // Genug Platz für Überschrift, Lieferort, Tabellenkopf und erste Materialzeile reservieren.
-    if(y<310)newPage();
+    if(y<265)newPage();
     // Nur mehr Weißraum und eine feine neutrale Trennlinie – keine Farbflächen.
     y-=16;
     draw(title,M,y,14,true,C.ink);
@@ -1164,22 +1164,50 @@ function closePdfPreview(){
   pdfPreviewBlob=null;
 }
 $('closePdfPreview').onclick=closePdfPreview;
+async function createAndSavePdf(r){
+  try{
+    const bytes=await makePdf(r);
+    const blob=new Blob([bytes],{type:'application/pdf'});
+    const filename=pdfFileName(r);
+    const file=new File([blob],filename,{type:'application/pdf'});
+    // iPad/iPhone: direkt den iOS-Teilen-Dialog öffnen; dort „In Dateien sichern“ wählen.
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:filename});
+      return;
+    }
+    // Unterstützte Browser: nativen Dialog zur Wahl des Speicherorts öffnen.
+    if(window.showSaveFilePicker){
+      const handle=await window.showSaveFilePicker({
+        suggestedName:filename,
+        types:[{description:'PDF-Dokument',accept:{'application/pdf':['.pdf']}}]
+      });
+      const writable=await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return;
+    }
+    // Fallback für Browser ohne Teilen- oder Dateiauswahldialog.
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),3000);
+  }catch(e){
+    if(e&&e.name!=='AbortError')alert('PDF konnte nicht erstellt oder gespeichert werden: '+e.message);
+  }
+}
 $('savePdf').onclick=async()=>{
   const r=collect();
   if(!validateDocument(r))return;
-  // Ein bereits unterschriebener Nachweis bleibt gesperrt, darf aber
-  // jederzeit erneut als PDF geöffnet und gespeichert werden.
   const existing=currentDraftId
     ? db.reports.find(x=>String(x.id)===String(currentDraftId))
     : null;
   if(isFinalized(existing)){
-    await openPdfPreview(existing);
+    await createAndSavePdf(existing);
     return;
   }
-  // Neue bzw. noch bearbeitbare Nachweise zuerst speichern, dann PDF anzeigen.
   if(!persistDocument())return;
   const saved=db.reports.find(x=>String(x.id)===String(r.id));
-  if(saved)await openPdfPreview(saved);
+  if(saved)await createAndSavePdf(saved);
 };
 $('saveDocument').onclick=()=>{if(persistDocument())show('home')};
 renderArchive();

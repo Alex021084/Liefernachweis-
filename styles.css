@@ -2085,7 +2085,7 @@ canvas, .signaturePad, .signatureCanvas{
 .materialClassificationOption{display:flex;align-items:center;gap:12px;width:100%;padding:13px;text-align:left;border:1.5px solid var(--line,#d8dee8);border-radius:12px;background:var(--surface,#fff);color:inherit;cursor:pointer}
 .materialClassificationOption>span:nth-child(2){display:flex;flex-direction:column;gap:3px;flex:1}
 .materialClassificationOption small{font-size:.82rem;color:var(--muted,#667085)}
-.materialClassificationIcon{font-size:1.35rem}
+.materialClassificationIcon{font-size:1.35rem}.materialClassificationIcon svg{display:block;width:1.55rem;height:1.55rem}
 .materialClassificationCheck{opacity:0;width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#16a34a;color:white;font-weight:700}
 .materialClassificationOption.is-selected{border-color:#16a34a;background:rgba(22,163,74,.07)}
 .materialClassificationOption.is-selected .materialClassificationCheck{opacity:1}
