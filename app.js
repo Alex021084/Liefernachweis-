@@ -1182,7 +1182,7 @@ async function openPdfPreview(r){
     if(pdfPreviewUrl)URL.revokeObjectURL(pdfPreviewUrl);
     pdfPreviewBlob=new Blob([bytes],{type:'application/pdf'});
     pdfPreviewUrl=URL.createObjectURL(pdfPreviewBlob);
-    $('pdfPreviewFrame').src=pdfPreviewUrl;
+    $('pdfPreviewFrame').src=pdfPreviewUrl+'#view=Fit';
     $('pdfPreviewTitle').textContent=pdfFileName(r);
     $('closePdfPreview').textContent=isFinalized(r)?'Zurück zu Nachweisen':'Zurück zur Bearbeitung';
     $('pdfPreviewModal').hidden=false;
