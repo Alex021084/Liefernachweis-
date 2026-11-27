@@ -1072,8 +1072,8 @@ async function makePdf(r){
       row.push(m.includeDateTime&&m.date?formatMaterialDateTime(m.date,m.time):'');
       const unit=String(m.unit||'').toLowerCase();
       const isTonnes=unit==='to'||unit==='tonne'||unit==='tonnen'||unit==='t';
-      row.push(isTonnes?'':formatQuantity(m.qty));
-      row.push(isTonnes?formatQuantity(m.qty):'');
+      row.push(isTonnes?'':`${formatQuantity(m.qty)} m³`);
+      row.push(isTonnes?`${formatQuantity(m.qty)} to`:'');
       return row;
     });
     drawTable(headers,rows,widths);
